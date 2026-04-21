@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About the Whimsiverse — Woobly & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+
+.page-hero {
+  position:relative; min-height:55vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:9rem 2rem 4rem; text-align:center; overflow:hidden;
+}
+.page-hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background-image:url('../assets/purplebg.jpg');
+  background-size:cover; background-position:center;
+}
+.page-hero-bg-fallback {
+  position:absolute; inset:0; z-index:0;
+  background:linear-gradient(160deg,#3d1f6e 0%,#5a2d8f 60%,#2a1250 100%);
+}
+.page-hero > * { position:relative; z-index:2; }
+.page-hero-title {
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(2.5rem,6vw,4.5rem); line-height:1.05;
+  color:var(--white); -webkit-text-stroke:2px var(--purple-dark); paint-order:stroke fill;
+  opacity:0; animation:popIn 0.55s ease forwards 0.2s;
+}
+.page-hero-title .c-yellow { color:var(--yellow); -webkit-text-stroke:2px var(--orange); }
+.page-hero-title .c-pink   { color:var(--pink); -webkit-text-stroke:2px #a03060; }
+.page-hero-sub {
+  font-size:1.1rem; color:var(--cream); max-width:480px; line-height:1.7;
+  margin:1rem auto 0; opacity:0; animation:popIn 0.5s ease forwards 0.4s;
+}
+
+/* ── WORLD SECTION ── */
+.section-world {
+  background:var(--purple-dark); padding:5rem 2rem; text-align:center;
+}
+.world-content {
+  max-width:680px; margin:0 auto;
+}
+.world-art {
+  width:min(480px,90vw); border-radius:1.75rem;
+  border:4px solid rgba(157,102,242,0.5);
+  box-shadow:8px 8px 0 var(--purple-deep);
+  display:block; margin:2rem auto;
+  animation:float 5s ease-in-out infinite;
+}
+
+/* ── CREATOR SECTION ── */
+.section-creator {
+  position:relative; padding:5rem 2rem; text-align:center; overflow:hidden;
+}
+.creator-card {
+  background:rgba(42,18,80,0.75);
+  border:3px solid rgba(157,102,242,0.4);
+  border-radius:2rem; padding:3rem 2.5rem;
+  max-width:640px; margin:2rem auto 0;
+  backdrop-filter:blur(8px);
+  box-shadow:8px 8px 0 rgba(0,0,0,0.3);
+  position:relative; z-index:2;
+}
+.creator-avatar {
+  width:90px; height:90px; border-radius:50%;
+  background:var(--purple-cloud);
+  display:flex; align-items:center; justify-content:center;
+  font-size:3rem; margin:0 auto 1.25rem;
+  border:4px solid var(--yellow);
+  box-shadow:0 0 20px rgba(255,213,79,0.3);
+  animation:bob 3s ease-in-out infinite;
+}
+.creator-name {
+  font-family:'Fredoka One',cursive; font-size:1.5rem;
+  color:var(--yellow); -webkit-text-stroke:1px var(--orange);
+  margin-bottom:0.25rem;
+}
+.creator-role { font-size:0.85rem; color:var(--pink); font-weight:500; letter-spacing:2px; text-transform:uppercase; margin-bottom:1.25rem; }
+.creator-bio { font-size:1rem; color:var(--cream); line-height:1.8; }
+.creator-bio strong { color:var(--yellow); }
+.creator-bio em     { color:var(--pink); font-style:normal; }
+
+/* ── CHARACTERS SECTION ── */
+.section-chars {
+  background:var(--purple-dark); padding:5rem 2rem 4rem; text-align:center;
+}
+.char-full-grid {
+  display:flex; gap:1.5rem; justify-content:center;
+  flex-wrap:wrap; margin:2.5rem auto 0; max-width:960px;
+}
+.char-full-card {
+  background:var(--purple-deep);
+  border:3px solid rgba(157,102,242,0.45);
+  border-radius:2rem; padding:2rem 1.5rem;
+  width:210px; text-align:center;
+  box-shadow:6px 6px 0 rgba(0,0,0,0.3);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.char-full-card:hover { transform:translateY(-8px) rotate(1deg); box-shadow:8px 11px 0 rgba(0,0,0,0.4); }
+.char-full-card.fluffy { border-color:var(--pink); }
+.char-full-card.bella  { border-color:var(--yellow); }
+.char-full-card.mimi   { border-color:var(--lilac); }
+.char-full-card.gregy  { border-color:var(--green); }
+.char-full-pfp {
+  width:100px; height:100px; border-radius:50%;
+  object-fit:cover; display:block; margin:0 auto 1rem;
+  border:4px solid rgba(255,255,255,0.15);
+  box-shadow:0 6px 18px rgba(0,0,0,0.4);
+  animation:bob 3.5s ease-in-out infinite;
+}
+.char-full-card:nth-child(2) .char-full-pfp { animation-delay:0.6s; }
+.char-full-card:nth-child(3) .char-full-pfp { animation-delay:1.2s; }
+.char-full-card:nth-child(4) .char-full-pfp { animation-delay:1.8s; }
+.char-full-name {
+  font-family:'Fredoka One',cursive; font-size:1.2rem; margin-bottom:0.2rem;
+}
+.char-full-card.fluffy .char-full-name { color:var(--pink); }
+.char-full-card.bella  .char-full-name { color:var(--yellow); }
+.char-full-card.mimi   .char-full-name { color:var(--lilac); }
+.char-full-card.gregy  .char-full-name { color:var(--green); }
+.char-full-species { font-size:0.78rem; color:rgba(255,255,255,0.5); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.75rem; }
+.char-full-desc { font-size:0.85rem; color:rgba(255,255,255,0.75); line-height:1.65; }
+
+/* ── FAQ ── */
+.section-faq {
+  position:relative; padding:5rem 2rem; overflow:hidden;
+}
+.faq-list {
+  max-width:680px; margin:2.5rem auto 0; position:relative; z-index:2;
+}
+.faq-item {
+  background:rgba(42,18,80,0.7);
+  border:2px solid rgba(157,102,242,0.35);
+  border-radius:1.25rem; margin-bottom:1rem;
+  overflow:hidden; backdrop-filter:blur(6px);
+  transition:border-color 0.2s;
+}
+.faq-item:hover { border-color:rgba(157,102,242,0.65); }
+.faq-q {
+  width:100%; text-align:left;
+  background:none; border:none; cursor:pointer;
+  padding:1.25rem 1.5rem;
+  font-family:'Fredoka One',cursive; font-size:1rem;
+  color:var(--cream); display:flex; justify-content:space-between; align-items:center;
+  gap:1rem;
+}
+.faq-q:hover { color:var(--yellow); }
+.faq-arrow { font-size:1.2rem; transition:transform 0.3s; flex-shrink:0; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-a {
+  max-height:0; overflow:hidden;
+  transition:max-height 0.35s ease, padding 0.2s;
+  font-size:0.92rem; color:rgba(255,255,255,0.78); line-height:1.75;
+  padding:0 1.5rem;
+}
+.faq-item.open .faq-a { max-height:300px; padding:0 1.5rem 1.25rem; }
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════ -->
+<nav id="mainNav">
+  <a href="../index.html" class="nav-logo">
+    <img src="../assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="nav-logo-text" style="display:none">Woobly & Friends</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../story/index.html">Stories</a></li>
+    <li><a href="index.html" class="active">About</a></li>
+    <li><a href="https://shop.wooblynfrens.com" target="_blank" class="nav-shop">Shop ✦</a></li>
+  </ul>
+</nav>
+
+<!-- ════ PAGE HERO ════ -->
+<section class="page-hero">
+  <div class="page-hero-bg-fallback"></div>
+  <div class="page-hero-bg"></div>
+  <div class="stars-layer" aria-hidden="true">
+    <span class="star twinkle" style="top:15%;left:6%;width:24px;animation-delay:0s"><img src="../assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:25%;right:8%;width:18px;animation-delay:0.8s"><img src="../assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:25%;left:12%;width:16px;animation-delay:0.4s"><img src="../assets/star_blue.svg" alt=""></span>
+    <span class="star twinkle" style="bottom:20%;right:10%;width:20px;animation-delay:1.2s"><img src="../assets/star_white.svg" alt=""></span>
+  </div>
+  <p class="section-eyebrow" style="opacity:0;animation:popIn 0.5s ease forwards 0.1s">✦ the lore ✦</p>
+  <h1 class="page-hero-title">What is the <span class="c-yellow">Whimsiverse?</span></h1>
+  <p class="page-hero-sub">A world built from the power of imagination, where Imaginary Friends come to life.</p>
+  <!-- wave -->
+  <svg style="position:absolute;bottom:0;left:0;right:0;z-index:3" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,25 C300,50 600,0 900,30 C1100,50 1300,10 1440,25 L1440,50 L0,50 Z" fill="#3d1f6e"/>
+  </svg>
+</section>
+
+<!-- ════ WORLD ════ -->
+<section class="section-world">
+  <div class="world-content">
+    <p class="section-eyebrow reveal">✦ once upon a time ✦</p>
+    <h2 class="section-heading reveal">The <span class="c-yellow">Whimsiverse</span></h2>
+    <p class="section-body reveal" style="max-width:100%">
+      Deep within the space between imagination and dreams lives a world called the <strong>Whimsiverse</strong> — a magical realm where Imaginary Friends come to life, go on adventures, and remind us of the things that matter most.<br><br>
+      The Whimsiverse is home to creatures of all kinds: brave adventurers, gentle souls, creative dreamers, and curious wonderers. Each one carries a piece of the magic that lives in every child's heart — and the heart of every adult who remembers.<br><br>
+      <em>Their stories are for every heart that ever forgot how to dream.</em>
+    </p>
+    <img class="world-art reveal" src="../Grow_The_Kindness_.jpg" alt="Bella the bear growing kindness in the Whimsiverse"
+         onerror="this.src='../assets/hero_image.jpg'">
+  </div>
+</section>
+
+<!-- wave -->
+<svg class="wave" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:#3d1f6e">
+  <path d="M0,20 C240,48 480,2 720,28 C960,50 1200,6 1440,28 L1440,0 L0,0 Z" fill="#3d1f6e"/>
+  <path d="M0,20 C240,48 480,2 720,28 C960,50 1200,6 1440,28 L1440,50 L0,50 Z" fill="var(--purple)"/>
+</svg>
+
+<!-- ════ CREATOR ════ -->
+<section class="section-creator bg-purple" id="creator">
+  <div class="stars-layer" aria-hidden="true">
+    <span class="star twinkle" style="top:10%;left:5%;width:20px;animation-delay:0.3s"><img src="../assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:20%;right:6%;width:16px;animation-delay:1s"><img src="../assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:15%;right:8%;width:18px;animation-delay:0.6s"><img src="../assets/star_blue.svg" alt=""></span>
+  </div>
+  <p class="section-eyebrow reveal" style="position:relative;z-index:2">✦ behind the magic ✦</p>
+  <h2 class="section-heading reveal" style="position:relative;z-index:2">Meet <span class="c-pink">Sachi</span></h2>
+  <div class="creator-card reveal">
+    <div class="creator-avatar">🎨</div>
+    <p class="creator-name">Sachi</p>
+    <p class="creator-role">Illustrator · Whimsiverse Creator · Dream Builder</p>
+    <p class="creator-bio">
+      Hi, I'm Sachi — a digital illustrator from <strong>Sri Lanka</strong> and the creator of the Whimsiverse. ✦<br><br>
+      I made Woobly & Friends because I believe the world needs more magic. More colour. More of that feeling you get when you're a child and anything is possible.<br><br>
+      My art is a reminder that <em>your inner child is still alive</em> — it's just waiting for a reason to come out and play. Every character I draw is a little piece of that reminder.<br><br>
+      I draw everything in <strong>Procreate</strong> on my iPad. Every Whimsiverse piece starts as a dream and ends as something you can hold in your hands. 🌸
+    </p>
+  </div>
+</section>
+
+<!-- wave -->
+<svg class="wave" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:var(--purple)">
+  <path d="M0,30 C200,8 400,50 600,24 C800,2 1000,48 1200,20 C1320,6 1390,42 1440,28 L1440,50 L0,50 Z" fill="#3d1f6e"/>
+</svg>
+
+<!-- ════ CHARACTERS ════ -->
+<section class="section-chars" id="characters">
+  <p class="section-eyebrow reveal">✦ the crew ✦</p>
+  <h2 class="section-heading reveal">Woobly & <span class="c-pink">Friends</span></h2>
+  <p class="section-body reveal">The Imaginary Friends of the Whimsiverse. Each one unique, each one magical.</p>
+  <div class="char-full-grid">
+    <div class="char-full-card fluffy reveal">
+      <img class="char-full-pfp" src="../assets/fluffyPFP.png" alt="Fluffy"
+           onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div style=\'width:100px;height:100px;border-radius:50%;background:#5a1f60;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem;border:4px solid rgba(255,255,255,0.15)\'>🌸</div>')">
+      <p class="char-full-name">Fluffy</p>
+      <p class="char-full-species">The Woobly</p>
+      <p class="char-full-desc">Brave, joyful, and the first to leap into any adventure. Fluffy is the heart of every story — the one who says "let's go!" when everyone else hesitates.</p>
+    </div>
+    <div class="char-full-card bella reveal">
+      <img class="char-full-pfp" src="../assets/bellabennyPFP.png" alt="Bella"
+           onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div style=\'width:100px;height:100px;border-radius:50%;background:#5a3f00;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem;border:4px solid rgba(255,255,255,0.15)\'>🐻</div>')">
+      <p class="char-full-name">Bella</p>
+      <p class="char-full-species">The Bear</p>
+      <p class="char-full-desc">Warm, gentle, and the heart that holds everyone together. Bella grows kindness like a garden — tending to every friendship with care.</p>
+    </div>
+    <div class="char-full-card mimi reveal">
+      <img class="char-full-pfp" src="../assets/MimiPFP.png" alt="Mimi"
+           onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div style=\'width:100px;height:100px;border-radius:50%;background:#3a1f60;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem;border:4px solid rgba(255,255,255,0.15)\'>🦄</div>')">
+      <p class="char-full-name">Mimi</p>
+      <p class="char-full-species">The Unicorn</p>
+      <p class="char-full-desc">Dreamy, creative, and leaves magic wherever she goes. Mimi paints rainbows across enchanted forests and sees beauty in everything.</p>
+    </div>
+    <div class="char-full-card gregy reveal">
+      <img class="char-full-pfp" src="../assets/greggyPfp.png" alt="Gregy"
+           onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div style=\'width:100px;height:100px;border-radius:50%;background:#1a4020;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem;border:4px solid rgba(255,255,255,0.15)\'>🐸</div>')">
+      <p class="char-full-name">Gregy</p>
+      <p class="char-full-species">The Frog</p>
+      <p class="char-full-desc">Curious, a little sleepy, and finds wonder in the smallest things. Gregy's favourite place is a lily pad — but he'll follow his friends anywhere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- wave -->
+<svg class="wave" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:#3d1f6e">
+  <path d="M0,15 C180,45 360,5 540,35 C720,55 900,10 1080,38 C1200,55 1350,15 1440,28 L1440,0 L0,0 Z" fill="#3d1f6e"/>
+  <path d="M0,15 C180,45 360,5 540,35 C720,55 900,10 1080,38 C1200,55 1350,15 1440,28 L1440,50 L0,50 Z" fill="var(--purple)"/>
+</svg>
+
+<!-- ════ FAQ ════ -->
+<section class="section-faq bg-purple" id="faq">
+  <div class="stars-layer" aria-hidden="true">
+    <span class="star twinkle" style="top:8%;left:4%;width:18px;animation-delay:0.5s"><img src="../assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:20%;right:5%;width:14px;animation-delay:1.2s"><img src="../assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:12%;left:6%;width:16px;animation-delay:0.8s"><img src="../assets/star_blue.svg" alt=""></span>
+  </div>
+  <p class="section-eyebrow reveal" style="text-align:center;position:relative;z-index:2">✦ questions ✦</p>
+  <h2 class="section-heading reveal" style="text-align:center;position:relative;z-index:2">Got <span class="c-yellow">Questions?</span></h2>
+
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <button class="faq-q">What is the Whimsiverse? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">The Whimsiverse is an original fictional universe created by Sachi — a world where Imaginary Friends come to life. Think of it as the studio, and Woobly & Friends as the first series set in that world — like Disney is the studio and Mickey & Friends is the cartoon.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Where is everything shipped from? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">Everything is made and shipped from Sri Lanka 🌿 with love. International shipping is included in every physical Patreon tier.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How does the Mail Club work? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">Join any physical tier on Patreon and every month Sachi will hand-pack and ship your reward — stickers, prints, or the full bundle depending on your tier. Exclusive, limited, and made with care.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I buy individual prints without a subscription? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">Yes! The shop at shop.wooblynfrens.com has one-off digital downloads and prints available anytime. The Patreon tiers are for the mail club experience — monthly deliveries and exclusive pieces.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What tools do you use to make the art? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">Everything is drawn in Procreate on iPad. Flat colours, painted textures, no gradients — a style developed entirely by hand. Every character, every world, every tiny star. ✦</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Will there be more characters? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a">The Whimsiverse is a big place! Fluffy, Bella, Mimi and Gregy are just the beginning. New friends are always waiting to be discovered. Stay tuned. 🌸</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <a href="../index.html" class="footer-logo">
+    <img src="../assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span style="display:none">Woobly & Friends</span>
+  </a>
+  <div class="footer-links">
+    <a href="https://shop.wooblynfrens.com" target="_blank">Shop</a>
+    <a href="https://www.patreon.com/c/wooblynfrens" target="_blank">Patreon</a>
+    <a href="https://instagram.com/wooblynfrens" target="_blank">Instagram</a>
+    <a href="https://pinterest.com/wooblynfrens" target="_blank">Pinterest</a>
+    <a href="https://x.com/wooblynfrens" target="_blank">X</a>
+    <a href="../story/index.html">Stories</a>
+  </div>
+  <p class="footer-copy">Made with ✦ imagination by Sachi · Whimsiverse © 2025</p>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll reveal
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if (e.isIntersecting) { setTimeout(() => e.target.classList.add('on'), i * 90); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

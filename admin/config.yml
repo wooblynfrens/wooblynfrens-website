@@ -1,0 +1,51 @@
+# ══════════════════════════════════════════
+# Decap CMS Configuration
+# Whimsiverse / Woobly & Friends
+# ══════════════════════════════════════════
+
+# Your Git provider + repo — fill these in
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/wooblynfrens-website   # e.g. sachi/wooblynfrens-website
+  branch: main
+
+# Netlify Identity handles login (only you can log in)
+# You MUST enable Netlify Identity in your Netlify site settings
+
+# Where media/images are stored
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+# ── COLLECTIONS ──
+collections:
+
+  # BLOG POSTS
+  - name: "posts"
+    label: "Stories & Blog Posts"
+    label_singular: "Post"
+    folder: "posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    # After saving, auto-update posts/index.json
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "MMMM D, YYYY" }
+      - { label: "Tag / Category", name: "tag", widget: "string", default: "Story", hint: "e.g. Story, Behind the Scenes, Lore, Update" }
+      - { label: "Excerpt", name: "excerpt", widget: "text", hint: "Short description shown on the blog card (1-2 sentences)" }
+      - { label: "Cover Image", name: "cover", widget: "image", required: false, hint: "Optional cover image for the post" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  # SITE SETTINGS (edit homepage text, patreon link, etc.)
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - label: "Homepage"
+        name: "homepage"
+        file: "_data/homepage.json"
+        fields:
+          - { label: "Hero Tagline", name: "tagline", widget: "text" }
+          - { label: "Shop URL", name: "shop_url", widget: "string" }
+          - { label: "Patreon URL", name: "patreon_url", widget: "string" }
+          - { label: "Instagram URL", name: "instagram_url", widget: "string" }
