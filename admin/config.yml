@@ -6,7 +6,7 @@
 # Your Git provider + repo — fill these in
 backend:
   name: github
-  repo: YOUR_GITHUB_USERNAME/wooblynfrens-website   # e.g. sachi/wooblynfrens-website
+  repo: wooblynfrens/wooblynfrens-website   # e.g. sachi/wooblynfrens-website
   branch: main
 
 # Netlify Identity handles login (only you can log in)
