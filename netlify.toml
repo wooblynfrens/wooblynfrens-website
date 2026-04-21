@@ -1,0 +1,26 @@
+# ══════════════════════════════════════════
+# netlify.toml — Woobly & Friends Website
+# ══════════════════════════════════════════
+
+[build]
+  publish = "."
+
+# Redirect /admin to the CMS dashboard
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+# Netlify Identity redirect (required for CMS login)
+[[redirects]]
+  from = "/.netlify/identity"
+  to = "/.netlify/identity"
+  status = 200
+  force = true
+
+# Security headers — prevents /admin from being indexed by Google
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "SAMEORIGIN"
