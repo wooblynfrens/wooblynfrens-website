@@ -9,8 +9,8 @@
 // ════════════════════════════════════════════
 // REPLACE THESE TWO VALUES WITH YOUR OWN
 // ════════════════════════════════════════════
-const SUPABASE_URL      = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL      = 'https://ubfscsqjirqmuuqctook.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InViZnNjc3FqaXJxbXV1cWN0b29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDI2MjUsImV4cCI6MjA5MjQxODYyNX0.j9fi_89oBRMOK7Pyc5-RtiM2kIJbOkWnI92-8nzn02g';
 // ════════════════════════════════════════════
 
 let _sb = null;
