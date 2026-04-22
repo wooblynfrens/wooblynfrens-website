@@ -4,24 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Whimsiverse Admin — Woobly & Friends</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <!-- Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script defer src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </head>
 <body>
-  <!-- Decap CMS mounts here automatically -->
+  <div id="nc-root"></div>
   <script>
     // After login, Netlify Identity can land on the site root.
     // Bring the user back to the admin route so the CMS opens normally.
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on('init', function(user) {
-        if (!user) {
-          window.netlifyIdentity.on('login', function() {
-            document.location.href = '/admin/';
-          });
-        }
-      });
-    }
+    window.addEventListener('load', function() {
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', function(user) {
+          if (!user) {
+            window.netlifyIdentity.on('login', function() {
+              document.location.href = '/admin/';
+            });
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
