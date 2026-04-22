@@ -4,252 +4,320 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Woobly & Friends — Welcome to the Whimsiverse</title>
+<!-- Favicon: put your favicon file in assets/ and link it here -->
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <style>
 
-/* ── HERO ── */
+/* ══ HERO — FULL BLEED IMAGE ══ */
 .hero {
-  position:relative; min-height:100vh;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  padding:7rem 2rem 2rem; text-align:center;
+  position:relative;
+  height:100vh; min-height:600px;
   overflow:hidden;
-}
-.hero-bg {
-  position:absolute; inset:0; z-index:0;
-  background-image: url('assets/purplebg.jpg');
-  background-size:cover; background-position:center;
-}
-.hero-bg-fallback {
-  position:absolute; inset:0; z-index:0;
-  background: linear-gradient(160deg, #3d1f6e 0%, #5a2d8f 50%, #2a1250 100%);
+  display:flex; align-items:flex-end;
 }
 
+/* The hero image fills the entire section */
+.hero-img {
+  position:absolute; inset:0; z-index:0;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center bottom;
+  display:block;
+}
+
+/* Gradient overlay: dark at top for text readability, fades to transparent in middle, dark again at bottom for wave */
+.hero-overlay {
+  position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(30,10,64,0.82) 0%,
+      rgba(30,10,64,0.45) 22%,
+      rgba(30,10,64,0.08) 45%,
+      rgba(30,10,64,0.0)  60%,
+      rgba(30,10,64,0.55) 80%,
+      rgba(30,10,64,0.85) 100%
+    );
+}
+
+/* Stars */
+.hero .stars-layer { z-index:2; }
+
+/* Text block: sits at the top, overlaid on image */
+.hero-text {
+  position:absolute; top:0; left:0; right:0; z-index:3;
+  padding:6.5rem 3rem 0;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
 .hero-eyebrow {
-  font-family:'Fredoka One',cursive;
-  font-size:0.8rem; letter-spacing:4px; text-transform:uppercase;
-  color:var(--yellow); margin-bottom:0.6rem;
-  position:relative; z-index:2;
+  font-family:'Fredoka One',cursive; font-size:0.8rem;
+  letter-spacing:4px; text-transform:uppercase; color:var(--yellow);
+  margin-bottom:0.5rem;
   opacity:0; animation:popIn 0.5s ease forwards 0.2s;
+  text-shadow:0 2px 8px rgba(0,0,0,0.6);
 }
 .hero-title {
   font-family:'Fredoka One',cursive;
-  font-size:clamp(2.8rem,7vw,5rem); line-height:1.05;
+  font-size:clamp(2.8rem,7vw,5.5rem); line-height:1.0;
   color:var(--white);
-  -webkit-text-stroke:2px var(--purple-dark);
+  -webkit-text-stroke:2px rgba(42,18,80,0.8);
   paint-order:stroke fill;
-  position:relative; z-index:2;
+  text-shadow:0 4px 16px rgba(0,0,0,0.5);
   opacity:0; animation:popIn 0.55s ease forwards 0.35s;
+  max-width:800px;
 }
 .hero-title .c-yellow { color:var(--yellow); -webkit-text-stroke:2px var(--orange); }
 .hero-title .c-pink   { color:var(--pink);   -webkit-text-stroke:2px #a03060; }
-
 .hero-tagline {
-  font-size:clamp(1rem,2.5vw,1.15rem); font-weight:500;
-  color:var(--cream); max-width:500px; line-height:1.75;
-  margin:1.1rem auto 0;
-  position:relative; z-index:2;
+  font-size:clamp(0.95rem,2.2vw,1.1rem); font-weight:500;
+  color:var(--cream); max-width:460px; line-height:1.75;
+  margin:0.9rem auto 0;
+  text-shadow:0 2px 8px rgba(0,0,0,0.7);
   opacity:0; animation:popIn 0.5s ease forwards 0.5s;
 }
-
-.hero-art-wrap {
-  position:relative; z-index:2; margin-top:2rem;
-  opacity:0; animation:popIn 0.6s ease forwards 0.65s;
-}
-.hero-art {
-  width:min(580px,88vw);
-  border-radius:2rem;
-  border:5px solid rgba(157,102,242,0.6);
-  box-shadow:8px 8px 0 var(--purple-deep), 0 0 40px rgba(157,102,242,0.3);
-  display:block;
-  animation:float 5s ease-in-out infinite;
-}
-
 .hero-ctas {
   display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
-  margin-top:2rem; position:relative; z-index:2;
-  opacity:0; animation:popIn 0.5s ease forwards 0.8s;
+  margin-top:1.5rem;
+  opacity:0; animation:popIn 0.5s ease forwards 0.7s;
 }
 
-/* wave at bottom of hero */
-.hero-wave {
-  position:absolute; bottom:0; left:0; right:0; z-index:2;
+/* Bottom of hero */
+.hero-bottom {
+  position:absolute; bottom:0; left:0; right:0; z-index:3;
 }
+.hero-wave-svg { display:block; width:100%; }
 
-/* ── SHOP SECTION ── */
+/* ══ SHOP SECTION ══ */
 .section-shop {
-  background: var(--purple-dark);
-  padding:4rem 2rem 3.5rem; text-align:center;
+  background:var(--purple-dark);
+  padding:4.5rem 2rem 4rem; text-align:center;
+  position:relative;
 }
+
+/* 4-item grid */
 .shop-grid {
-  display:flex; gap:1.25rem; justify-content:center;
-  flex-wrap:wrap; margin:2rem auto 0; max-width:900px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.25rem;
+  max-width:900px; margin:2rem auto 0;
 }
 .shop-card {
-  background: var(--purple-deep);
-  border:3px solid rgba(157,102,242,0.5);
-  border-radius:1.5rem; width:200px;
+  background:var(--purple-deep);
+  border:3px solid rgba(157,102,242,0.45);
+  border-radius:1.5rem; overflow:hidden;
   box-shadow:5px 5px 0 rgba(0,0,0,0.4);
-  overflow:hidden;
   transition:transform 0.2s, box-shadow 0.2s;
   text-decoration:none; color:var(--white);
-  display:block;
+  display:block; cursor:pointer;
 }
 .shop-card:hover { transform:translateY(-7px) rotate(1deg); box-shadow:7px 9px 0 rgba(0,0,0,0.5); }
 .shop-card-img {
   width:100%; aspect-ratio:1;
-  background:rgba(157,102,242,0.15);
-  display:flex; align-items:center; justify-content:center;
-  font-size:3rem; overflow:hidden;
+  background:rgba(157,102,242,0.12);
+  overflow:hidden; display:flex; align-items:center; justify-content:center;
+  font-size:3rem;
 }
-.shop-card-img img { width:100%; height:100%; object-fit:cover; }
-.shop-card-body { padding:0.9rem 1rem 1rem; }
+.shop-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.shop-card-body { padding:0.85rem 1rem 1rem; }
 .shop-card-name {
   font-family:'Fredoka One',cursive; font-size:0.9rem;
-  color:var(--cream); margin-bottom:0.2rem;
+  color:var(--cream); margin-bottom:0.25rem; line-height:1.3;
 }
 .shop-card-price {
   font-family:'Fredoka One',cursive; font-size:1.2rem;
   color:var(--yellow); -webkit-text-stroke:0.5px var(--orange);
 }
-.shop-embed-note {
-  font-size:0.82rem; color:rgba(255,255,255,0.45);
-  margin-top:1.75rem;
-  font-style:italic;
+/* "edit" pencil button — only visible when admin is logged in */
+.shop-edit-btn {
+  display:none; /* shown via JS when admin unlocked */
+  position:absolute; top:8px; right:8px;
+  background:var(--orange); border:none; border-radius:50%;
+  width:30px; height:30px; cursor:pointer; font-size:0.85rem;
+  align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+  z-index:10;
 }
 
-/* Payhip embed container */
-.payhip-embed-wrap {
-  margin:2rem auto 0; max-width:900px;
-  min-height:300px;
-}
 
-/* ── FRIENDS SECTION ── */
+
+/* ══ FRIENDS ══ */
 .section-friends {
-  position:relative;
-  padding:5rem 2rem 4rem; text-align:center;
-  overflow:hidden;
+  position:relative; padding:5rem 2rem 4rem; text-align:center; overflow:hidden;
 }
-.chars-grid {
-  display:flex; gap:1.25rem; justify-content:center;
-  flex-wrap:wrap; margin:2.5rem auto 0; max-width:860px;
+.crew-stage {
   position:relative; z-index:2;
+  max-width:900px; margin:2.5rem auto 0;
 }
-.char-card {
-  background:rgba(42,18,80,0.75);
-  border:3px solid rgba(157,102,242,0.5);
-  border-radius:1.75rem; padding:1.5rem 1.25rem 1.25rem;
-  width:185px;
-  box-shadow:5px 5px 0 rgba(0,0,0,0.35);
-  transition:transform 0.2s, box-shadow 0.2s; cursor:default;
-  backdrop-filter:blur(6px);
-}
-.char-card:hover { transform:translateY(-7px) rotate(1.5deg); box-shadow:7px 10px 0 rgba(0,0,0,0.4); }
-.char-card.fluffy { border-color:var(--pink); }
-.char-card.bella  { border-color:var(--yellow); }
-.char-card.mimi   { border-color:var(--lilac); }
-.char-card.gregy  { border-color:var(--green); }
 
-.char-pfp {
-  width:80px; height:80px; border-radius:50%;
-  display:block; margin:0 auto 0.85rem;
-  border:3px solid rgba(255,255,255,0.2);
-  object-fit:cover;
+/* Row of pfp bubbles */
+.crew-bubbles {
+  display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;
+}
+.crew-bubble {
+  display:flex; flex-direction:column; align-items:center; gap:0.6rem;
+  cursor:pointer; transition:transform 0.25s;
+}
+.crew-bubble:hover { transform:translateY(-5px) scale(1.04); }
+.crew-pfp {
+  width:120px; height:120px; border-radius:50%;
+  object-fit:cover; border:4px solid rgba(255,255,255,0.2);
+  box-shadow:0 6px 20px rgba(0,0,0,0.45);
+  transition:width 0.35s, height 0.35s, opacity 0.35s, border-color 0.25s;
   animation:bob 3.5s ease-in-out infinite;
-  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  display:block;
 }
-.char-card:nth-child(2) .char-pfp { animation-delay:0.6s; }
-.char-card:nth-child(3) .char-pfp { animation-delay:1.2s; }
-.char-card:nth-child(4) .char-pfp { animation-delay:1.8s; }
+.crew-bubble:nth-child(2) .crew-pfp { animation-delay:0.7s; }
+.crew-bubble:nth-child(3) .crew-pfp { animation-delay:1.4s; }
+.crew-bubble:nth-child(4) .crew-pfp { animation-delay:2.1s; }
 
-.char-name {
-  font-family:'Fredoka One',cursive; font-size:1.05rem; margin-bottom:0.3rem;
+/* active state — larger pfp, coloured border */
+.crew-bubble.active .crew-pfp {
+  width:150px; height:150px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);
 }
-.char-card.fluffy .char-name { color:var(--pink); }
-.char-card.bella  .char-name { color:var(--yellow); }
-.char-card.mimi   .char-name { color:var(--lilac); }
-.char-card.gregy  .char-name { color:var(--green); }
-.char-desc { font-size:0.8rem; color:rgba(255,255,255,0.72); line-height:1.55; }
+.crew-bubble.active.fluffy .crew-pfp { border-color:var(--pink); }
+.crew-bubble.active.bella  .crew-pfp { border-color:var(--yellow); }
+.crew-bubble.active.mimi   .crew-pfp { border-color:var(--lilac); }
+.crew-bubble.active.gregy  .crew-pfp { border-color:var(--green); }
 
-/* ── MAIL CLUB ── */
+/* inactive: shrink + dim */
+.crew-bubble.inactive .crew-pfp { width:80px; height:80px; opacity:0.45; }
+
+.crew-name {
+  font-family:'Fredoka One',cursive; font-size:0.95rem;
+  transition:color 0.2s, font-size 0.25s;
+}
+.crew-bubble.active.fluffy .crew-name { color:var(--pink);   font-size:1.05rem; }
+.crew-bubble.active.bella  .crew-name { color:var(--yellow); font-size:1.05rem; }
+.crew-bubble.active.mimi   .crew-name { color:var(--lilac);  font-size:1.05rem; }
+.crew-bubble.active.gregy  .crew-name { color:var(--green);  font-size:1.05rem; }
+.crew-bubble.inactive .crew-name { color:rgba(255,255,255,0.45); font-size:0.85rem; }
+
+/* Description panel */
+.crew-desc-panel {
+  background:rgba(42,18,80,0.75); backdrop-filter:blur(8px);
+  border:3px solid rgba(157,102,242,0.35); border-radius:1.75rem;
+  padding:1.75rem 2rem; margin-top:2rem;
+  max-width:560px; margin-left:auto; margin-right:auto;
+  box-shadow:6px 6px 0 rgba(0,0,0,0.3);
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.35s ease, transform 0.35s ease;
+  pointer-events:none;
+}
+.crew-desc-panel.visible { opacity:1; transform:none; pointer-events:auto; }
+.crew-desc-name {
+  font-family:'Fredoka One',cursive; font-size:1.5rem; margin-bottom:0.2rem;
+}
+.crew-desc-species { font-size:0.78rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:0.85rem; color:rgba(255,255,255,0.55); }
+.crew-desc-text { font-size:0.97rem; color:var(--cream); line-height:1.8; }
+
+/* ══ MAIL CLUB ══ */
 .section-mailclub {
-  background: var(--purple-dark);
-  padding:5rem 2rem 5rem; text-align:center;
-  position:relative; overflow:hidden;
+  background:var(--purple-dark);
+  padding:5rem 2rem 5rem; text-align:center; position:relative; overflow:hidden;
 }
 .tiers-wrap {
-  display:flex; gap:1.1rem; justify-content:center;
-  flex-wrap:wrap; margin:2.5rem auto 0; max-width:860px;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1.25rem; max-width:920px; margin:2.5rem auto 0;
 }
 .tier-card {
-  background:var(--purple); border:3px solid rgba(157,102,242,0.45);
-  border-radius:1.75rem; padding:1.75rem 1.25rem 1.5rem; width:190px;
+  background:var(--purple);
+  border:3px solid rgba(157,102,242,0.4);
+  border-radius:1.75rem; overflow:hidden;
   box-shadow:5px 5px 0 rgba(0,0,0,0.3);
   transition:transform 0.2s, box-shadow 0.2s; position:relative;
 }
 .tier-card:hover { transform:translateY(-6px); box-shadow:6px 8px 0 rgba(0,0,0,0.4); }
 .tier-card.featured { border-color:var(--pink); background:#5a2575; }
 .tier-badge {
-  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  position:absolute; top:10px; left:50%; transform:translateX(-50%);
   background:var(--pink); color:var(--white);
-  font-family:'Fredoka One',cursive; font-size:0.68rem;
+  font-family:'Fredoka One',cursive; font-size:0.62rem;
   letter-spacing:1px; padding:3px 12px; border-radius:50px;
-  border:2px solid #a03060; white-space:nowrap;
+  border:2px solid #a03060; white-space:nowrap; z-index:2;
 }
-.tier-icon { font-size:2.4rem; display:block; margin-bottom:0.7rem; animation:bob 4s ease-in-out infinite; }
-.tier-card:nth-child(2) .tier-icon { animation-delay:0.7s; }
-.tier-card:nth-child(3) .tier-icon { animation-delay:1.4s; }
-.tier-card:nth-child(4) .tier-icon { animation-delay:2.1s; }
-.tier-name { font-family:'Fredoka One',cursive; font-size:0.95rem; color:var(--cream); margin-bottom:0.2rem; }
+/* Tier image — top half of card */
+.tier-img-wrap {
+  width:100%; aspect-ratio:1; overflow:hidden;
+  background:rgba(157,102,242,0.12);
+  display:flex; align-items:center; justify-content:center; font-size:3rem;
+}
+.tier-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.tier-body { padding:1rem 1rem 1.25rem; }
+.tier-name { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); margin-bottom:0.2rem; }
 .tier-price {
-  font-family:'Fredoka One',cursive; font-size:1.9rem;
+  font-family:'Fredoka One',cursive; font-size:1.75rem;
   color:var(--yellow); -webkit-text-stroke:1px var(--orange);
-  paint-order:stroke fill; line-height:1; margin-bottom:0.6rem;
+  paint-order:stroke fill; line-height:1; margin-bottom:0.5rem;
 }
-.tier-desc { font-size:0.78rem; color:rgba(255,255,255,0.72); line-height:1.6; }
+.tier-desc { font-size:0.75rem; color:rgba(255,255,255,0.7); line-height:1.55; }
 
-/* ── NEWSLETTER ── */
+/* ══ NEWSLETTER ══ */
 .section-newsletter {
-  position:relative;
-  padding:5rem 2rem 5rem; text-align:center;
-  overflow:hidden;
+  position:relative; padding:5rem 2rem; text-align:center; overflow:hidden;
 }
 .newsletter-box {
-  background:rgba(42,18,80,0.7);
-  border:3px solid rgba(157,102,242,0.4);
+  background:rgba(42,18,80,0.72); border:3px solid rgba(157,102,242,0.4);
   border-radius:2rem; padding:3rem 2.5rem;
   max-width:560px; margin:2rem auto 0;
   backdrop-filter:blur(8px);
-  box-shadow:8px 8px 0 rgba(0,0,0,0.3);
-  position:relative; z-index:2;
+  box-shadow:8px 8px 0 rgba(0,0,0,0.3); position:relative; z-index:2;
 }
 .newsletter-mascot {
-  width:80px; height:80px; border-radius:50%;
-  object-fit:cover; margin:0 auto 1rem; display:block;
-  border:3px solid var(--pink);
+  width:82px; height:82px; border-radius:50%; object-fit:cover;
+  margin:0 auto 1rem; display:block; border:3px solid var(--pink);
   box-shadow:0 4px 16px rgba(254,93,159,0.4);
   animation:bob 3s ease-in-out infinite;
 }
 .newsletter-title {
   font-family:'Fredoka One',cursive; font-size:1.6rem;
   color:var(--white); margin-bottom:0.5rem;
-  -webkit-text-stroke:1px var(--purple-dark);
 }
-.newsletter-sub { font-size:0.95rem; color:var(--cream); margin-bottom:1.5rem; line-height:1.6; }
-
-/* Mailerlite embed goes here */
-.mailerlite-embed {
-  min-height:120px;
-  border:2px dashed rgba(157,102,242,0.4);
+.newsletter-sub { font-size:0.95rem; color:var(--cream); margin-bottom:1.5rem; line-height:1.65; }
+.mailerlite-placeholder {
+  min-height:110px; border:2px dashed rgba(157,102,242,0.4);
   border-radius:1rem; padding:1.5rem;
   color:rgba(255,255,255,0.4); font-size:0.85rem;
   display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:0.5rem;
+  flex-direction:column; gap:0.4rem;
 }
-.mailerlite-embed span { font-size:2rem; }
 
+/* ══ RESPONSIVE ══ */
+@media (max-width:768px) {
+  .hero-text { padding:5.5rem 1.5rem 0; }
+  .hero-title { font-size:clamp(2.2rem,10vw,3.5rem); }
+
+  .shop-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
+  .tiers-wrap { grid-template-columns:repeat(2,1fr); }
+
+  .crew-pfp { width:95px; height:95px; }
+  .crew-bubble.active .crew-pfp { width:120px; height:120px; }
+  .crew-bubble.inactive .crew-pfp { width:65px; height:65px; }
+
+  .newsletter-box { padding:2rem 1.25rem; }
+}
+
+@media (max-width:480px) {
+  .hero-text { padding:5rem 1rem 0; }
+  .hero-tagline { font-size:0.9rem; }
+  .hero-ctas { flex-direction:column; align-items:center; }
+
+  .shop-grid { grid-template-columns:repeat(2,1fr); gap:0.75rem; }
+  .shop-card-body { padding:0.65rem 0.75rem 0.85rem; }
+  .shop-card-name { font-size:0.8rem; }
+
+  .tiers-wrap { grid-template-columns:repeat(2,1fr); gap:0.85rem; }
+  .tier-name { font-size:0.82rem; }
+
+  .crew-bubbles { gap:1rem; }
+  .crew-pfp { width:80px; height:80px; }
+
+  .modal-box { padding:1.5rem 1.25rem; }
+}
 </style>
 </head>
 <body>
@@ -257,10 +325,14 @@
 <!-- ════ NAV ════ -->
 <nav id="mainNav">
   <a href="index.html" class="nav-logo">
-    <img src="assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+    <img src="assets/logo.png" alt="Woobly & Friends"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
     <span class="nav-logo-text" style="display:none">Woobly & Friends</span>
   </a>
-  <ul class="nav-links">
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="story/index.html">Stories</a></li>
     <li><a href="about/index.html">About</a></li>
@@ -268,79 +340,64 @@
   </ul>
 </nav>
 
-<!-- ════ HERO ════ -->
+<!-- ════ HERO — FULL BLEED ════ -->
 <section class="hero">
-  <!-- background: purplebg.jpg with fallback -->
-  <div class="hero-bg-fallback"></div>
-  <div class="hero-bg" style="background-image:url('assets/purplebg.jpg')"></div>
 
-  <!-- Stars scattered across hero -->
+  <!-- Full bleed hero image -->
+  <img class="hero-img" src="assets/hero_image.jpg" alt="Fluffy and Friends adventuring through the Whimsiverse"
+       onerror="this.src='Cosmic_Break.jpg'">
+
+  <!-- Gradient overlay for text legibility -->
+  <div class="hero-overlay"></div>
+
+  <!-- Scattered stars -->
   <div class="stars-layer" aria-hidden="true">
-    <span class="star twinkle" style="top:8%;left:6%;width:28px;animation-delay:0s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star float"   style="top:12%;left:16%;width:18px;animation-delay:0.8s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star twinkle" style="top:7%;right:10%;width:26px;animation-delay:0.4s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star spin"    style="top:18%;right:20%;width:16px;animation-delay:1s"><img src="assets/star_white.svg" alt=""></span>
-    <span class="star float"   style="top:35%;left:3%;width:22px;animation-delay:0.2s"><img src="assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="top:60%;right:5%;width:20px;animation-delay:1.3s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star float"   style="top:75%;left:8%;width:18px;animation-delay:0.6s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star spin"    style="top:55%;right:12%;width:24px;animation-delay:0.3s"><img src="assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="bottom:22%;left:22%;width:14px;animation-delay:1.8s"><img src="assets/star_white.svg" alt=""></span>
-    <span class="star float"   style="top:25%;right:6%;width:20px;animation-delay:2s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star twinkle" style="top:45%;left:12%;width:16px;animation-delay:0.9s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star spin"    style="bottom:30%;right:18%;width:18px;animation-delay:1.5s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star twinkle" style="top:8%;left:5%;width:38px;animation-delay:0s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:14%;left:18%;width:26px;animation-delay:0.7s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star twinkle" style="top:6%;right:8%;width:34px;animation-delay:0.4s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star spin"    style="top:20%;right:22%;width:22px;animation-delay:1s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star float"   style="top:38%;left:2%;width:30px;animation-delay:0.2s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star pulse"   style="top:55%;right:4%;width:28px;animation-delay:1.3s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star twinkle" style="top:72%;left:7%;width:24px;animation-delay:0.6s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star spin"    style="top:48%;right:14%;width:32px;animation-delay:0.3s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star float"   style="top:28%;right:3%;width:22px;animation-delay:1.8s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star pulse"   style="top:65%;left:20%;width:20px;animation-delay:0.9s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star twinkle" style="top:18%;left:42%;width:18px;animation-delay:1.5s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="bottom:28%;right:20%;width:26px;animation-delay:2s"><img src="assets/star_blue.svg" alt=""></span>
   </div>
 
-  <p class="hero-eyebrow">✦ Welcome to the Whimsiverse ✦</p>
-  <h1 class="hero-title">
-    <span class="c-yellow">Magical Friends</span><br>
-    adventuring <span class="c-pink">together</span>
-  </h1>
-  <p class="hero-tagline">
-    A reminder that your inner child is still alive — take a break, escape from this tiring reality, and be yourself with <strong style="color:var(--yellow)">Woobly & Friends.</strong>
-  </p>
-
-  <div class="hero-art-wrap">
-    <img class="hero-art" src="assets/hero_image.jpg" alt="Fluffy and Friends adventuring through the Whimsiverse"
-         onerror="this.src='Cosmic_Break.jpg'">
+  <!-- Text overlaid at top of hero -->
+  <div class="hero-text">
+    <p class="hero-eyebrow">✦ Welcome to the Whimsiverse ✦</p>
+    <h1 class="hero-title">
+      <span class="c-yellow">Magical Friends</span><br>
+      adventuring <span class="c-pink">together</span>
+    </h1>
+    <p class="hero-tagline">
+      A reminder that your inner child is still alive — take a break, escape from this tiring reality, and be yourself with <strong style="color:var(--yellow);text-shadow:none">Woobly & Friends.</strong>
+    </p>
+    <div class="hero-ctas">
+      <a class="btn btn-fill" href="https://shop.wooblynfrens.com" target="_blank">Enter the Shop ✦</a>
+      <a class="btn btn-ghost" href="about/index.html">Discover the World</a>
+    </div>
   </div>
 
-  <div class="hero-ctas">
-    <a class="btn btn-fill" href="https://shop.wooblynfrens.com" target="_blank">Enter the Shop ✦</a>
-    <a class="btn btn-ghost" href="about/index.html">Discover the World</a>
+  <!-- Wave at bottom -->
+  <div class="hero-bottom">
+    <svg class="hero-wave-svg" viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,32 C200,62 400,4 600,32 C800,60 1000,4 1200,32 C1320,48 1390,16 1440,32 L1440,64 L0,64 Z" fill="#3d1f6e"/>
+    </svg>
   </div>
-
-  <!-- wave at bottom -->
-  <svg class="hero-wave" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path d="M0,30 C200,58 400,4 600,30 C800,56 1000,4 1200,30 C1320,44 1390,18 1440,30 L1440,60 L0,60 Z" fill="#3d1f6e"/>
-  </svg>
 </section>
 
-<!-- ════ SHOP — Recently Listed ════ -->
-<section class="section-shop">
+<!-- ════ NEW ON SHOP ════ -->
+<section class="section-shop" id="shopSection">
   <p class="section-eyebrow reveal">✦ fresh from the studio ✦</p>
   <h2 class="section-heading reveal">New on <span class="c-yellow">Shop</span></h2>
-  <p class="section-body reveal" style="margin-bottom:0.5rem">
-    Prints, stickers & digital magic — shipped from Sri Lanka with love. 🌿
-  </p>
+  <p class="section-body reveal" style="margin-bottom:0">Freshly emerged from the Magic of Whimsy ✨</p>
 
-  <!-- 
-    ══ PAYHIP EMBED ══
-    Payhip lets you embed your store or individual products as a widget.
-    To get your embed code:
-      1. Go to payhip.com → your dashboard
-      2. Go to Store Settings → Embed Store
-      3. Copy the <script> embed code and paste it below in place of the placeholder div
-    Or embed individual product buttons:
-      Add ?embed=1 to a product URL in a button, or use their JS embed widget.
-  -->
-  <div class="payhip-embed-wrap reveal">
-    <!-- REPLACE THIS DIV WITH YOUR PAYHIP EMBED CODE -->
-    <div style="border:2px dashed rgba(157,102,242,0.4);border-radius:1.5rem;padding:3rem 2rem;color:rgba(255,255,255,0.4);font-size:0.9rem;">
-      <div style="font-size:2.5rem;margin-bottom:0.75rem">🛍️</div>
-      <strong style="color:rgba(255,255,255,0.6);font-family:'Fredoka One',cursive;">Payhip Store Embed</strong><br><br>
-      Replace this block with your Payhip embed code.<br>
-      Go to Payhip → Store Settings → Embed Store to get it.
-    </div>
+  <div class="shop-grid reveal" id="shopGrid">
+    <!-- 4 cards rendered by JS from localStorage -->
   </div>
 
   <div style="margin-top:2rem" class="reveal">
@@ -348,117 +405,153 @@
   </div>
 </section>
 
-<!-- wave -->
+<!-- Wave -->
 <svg class="wave" viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:#3d1f6e">
   <path d="M0,18 C240,52 480,0 720,32 C960,56 1200,8 1440,32 L1440,0 L0,0 Z" fill="#3d1f6e"/>
-  <path d="M0,18 C240,52 480,0 720,32 C960,56 1200,8 1440,32 L1440,56 L0,56 Z" fill="#2a1250" style="display:none"/>
+  <path d="M0,18 C240,52 480,0 720,32 C960,56 1200,8 1440,32 L1440,56 L0,56 Z" fill="#5a2d8f"/>
 </svg>
-<!-- simpler transition -->
-<div style="height:4px;background:linear-gradient(90deg,#3d1f6e,#5a2d8f,#3d1f6e)"></div>
 
-<!-- ════ FRIENDS ════ -->
+<!-- ════ MEET THE CREW ════ -->
 <section class="section-friends bg-purple">
 
-  <!-- Stars -->
   <div class="stars-layer" aria-hidden="true">
-    <span class="star twinkle" style="top:10%;left:4%;width:22px;animation-delay:0.3s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star float"   style="top:20%;right:5%;width:18px;animation-delay:1s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star spin"    style="bottom:15%;left:10%;width:20px;animation-delay:0.7s"><img src="assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="bottom:20%;right:8%;width:16px;animation-delay:1.5s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star twinkle" style="top:8%;left:4%;width:36px;animation-delay:0.3s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star float"   style="top:18%;right:4%;width:28px;animation-delay:1s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star spin"    style="bottom:12%;left:8%;width:30px;animation-delay:0.7s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star pulse"   style="bottom:18%;right:6%;width:24px;animation-delay:1.5s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star twinkle" style="top:45%;left:2%;width:22px;animation-delay:0.5s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star float"   style="top:60%;right:3%;width:26px;animation-delay:1.8s"><img src="assets/star_yellow.svg" alt=""></span>
   </div>
 
-  <p class="section-eyebrow reveal">✦ the crew ✦</p>
-  <h2 class="section-heading reveal">Meet <span class="c-pink">Woobly & Friends</span></h2>
+  <p class="section-eyebrow reveal" style="position:relative;z-index:2">✦ the crew ✦</p>
+  <h2 class="section-heading reveal" style="position:relative;z-index:2">Meet <span class="c-pink">Woobly & Friends</span></h2>
   <p class="section-body reveal" style="margin-bottom:0;position:relative;z-index:2">
-    Every adventure needs a crew. Here's ours.
+    Tap a friend to meet them. ✨
   </p>
 
-  <div class="chars-grid">
-    <div class="char-card fluffy reveal">
-      <img class="char-pfp" src="assets/fluffyPFP.png" alt="Fluffy the Woobly"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div style="display:none;width:80px;height:80px;border-radius:50%;background:#5a1f60;font-size:2.2rem;align-items:center;justify-content:center;margin:0 auto 0.85rem;border:3px solid rgba(255,255,255,0.2)">🌸</div>
-      <p class="char-name">Fluffy</p>
-      <p class="char-desc">The Woobly — brave, joyful, first to leap into any adventure</p>
+  <div class="crew-stage reveal">
+    <div class="crew-bubbles" id="crewBubbles">
+
+      <div class="crew-bubble fluffy" data-char="fluffy">
+        <img class="crew-pfp"
+             src="assets/fluffyPFP.png"
+             alt="Fluffy"
+             onerror="this.style.background='#5a1f60';this.removeAttribute('src')">
+        <span class="crew-name" style="color:var(--pink)">Fluffy</span>
+      </div>
+
+      <div class="crew-bubble bella" data-char="bella">
+        <img class="crew-pfp"
+             src="assets/bellabennyPFP.png"
+             alt="Bella & Benny"
+             onerror="this.style.background='#5a3f00';this.removeAttribute('src')">
+        <span class="crew-name" style="color:var(--yellow)">Bella & Benny</span>
+      </div>
+
+      <div class="crew-bubble mimi" data-char="mimi">
+        <img class="crew-pfp"
+             src="assets/MimiPFP.png"
+             alt="Mimi"
+             onerror="this.style.background='#3a1f60';this.removeAttribute('src')">
+        <span class="crew-name" style="color:var(--lilac)">Mimi</span>
+      </div>
+
+      <div class="crew-bubble gregy" data-char="gregy">
+        <img class="crew-pfp"
+             src="assets/greggyPfp.png"
+             alt="Greggy"
+             onerror="this.style.background='#1a4020';this.removeAttribute('src')">
+        <span class="crew-name" style="color:var(--green)">Greggy</span>
+      </div>
+
     </div>
-    <div class="char-card bella reveal">
-      <img class="char-pfp" src="assets/bellabennyPFP.png" alt="Bella the Bear"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div style="display:none;width:80px;height:80px;border-radius:50%;background:#5a3f00;font-size:2.2rem;align-items:center;justify-content:center;margin:0 auto 0.85rem;border:3px solid rgba(255,255,255,0.2)">🐻</div>
-      <p class="char-name">Bella</p>
-      <p class="char-desc">The bear — warm and gentle, the heart that holds everyone together</p>
-    </div>
-    <div class="char-card mimi reveal">
-      <img class="char-pfp" src="assets/MimiPFP.png" alt="Mimi the Unicorn"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div style="display:none;width:80px;height:80px;border-radius:50%;background:#3a1f60;font-size:2.2rem;align-items:center;justify-content:center;margin:0 auto 0.85rem;border:3px solid rgba(255,255,255,0.2)">🦄</div>
-      <p class="char-name">Mimi</p>
-      <p class="char-desc">The unicorn — dreamy and creative, leaves magic wherever she goes</p>
-    </div>
-    <div class="char-card gregy reveal">
-      <img class="char-pfp" src="assets/greggyPfp.png" alt="Gregy the Frog"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div style="display:none;width:80px;height:80px;border-radius:50%;background:#1a4020;font-size:2.2rem;align-items:center;justify-content:center;margin:0 auto 0.85rem;border:3px solid rgba(255,255,255,0.2)">🐸</div>
-      <p class="char-name">Gregy</p>
-      <p class="char-desc">The frog — curious, a little sleepy, finds wonder in the smallest things</p>
+
+    <!-- Description panel, shown on click -->
+    <div class="crew-desc-panel" id="crewDescPanel">
+      <p class="crew-desc-name" id="crewDescName"></p>
+      <p class="crew-desc-species" id="crewDescSpecies"></p>
+      <p class="crew-desc-text" id="crewDescText"></p>
     </div>
   </div>
 
   <div style="margin-top:2.5rem;position:relative;z-index:2" class="reveal">
-    <a class="btn btn-ghost" href="about/index.html#characters">Learn Their Stories</a>
+    <a class="btn btn-ghost" href="about/index.html#characters">Read Their Full Stories</a>
   </div>
 </section>
 
-<!-- wave -->
+<!-- Wave -->
 <svg class="wave" viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:var(--purple)">
   <path d="M0,34 C180,6 360,54 540,24 C720,0 900,50 1080,22 C1260,4 1380,44 1440,28 L1440,56 L0,56 Z" fill="#3d1f6e"/>
 </svg>
 
 <!-- ════ MAIL CLUB ════ -->
-<section class="section-mailclub">
+<section class="section-mailclub" id="mailclub">
 
   <div class="stars-layer" aria-hidden="true">
-    <span class="star twinkle" style="top:12%;left:5%;width:20px;animation-delay:0.5s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star float"   style="top:25%;right:6%;width:16px;animation-delay:1.2s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star spin"    style="bottom:18%;left:8%;width:18px;animation-delay:0.8s"><img src="assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="bottom:25%;right:10%;width:22px;animation-delay:0s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star twinkle" style="top:10%;left:3%;width:34px;animation-delay:0.5s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:22%;right:4%;width:26px;animation-delay:1.2s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:15%;left:6%;width:28px;animation-delay:0.8s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star pulse"   style="bottom:22%;right:8%;width:30px;animation-delay:0.2s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star float"   style="top:50%;left:1%;width:22px;animation-delay:1.6s"><img src="assets/star_yellow.svg" alt=""></span>
   </div>
 
   <p class="section-eyebrow reveal" style="position:relative;z-index:2">✦ join the adventure ✦</p>
-  <h2 class="section-heading reveal" style="position:relative;z-index:2">
-    Join the <span class="c-yellow">Mail Club</span>
-  </h2>
+  <h2 class="section-heading reveal" style="position:relative;z-index:2">Join the <span class="c-yellow">Mail Club</span></h2>
   <p class="section-body reveal" style="position:relative;z-index:2">
     Support the magic and get exclusive art, prints, and stickers — sent to your door from Sri Lanka with love. 🌿
-    Every tier comes with a piece of the Whimsiverse delivered right to you.
   </p>
 
   <div class="tiers-wrap">
+
     <div class="tier-card reveal">
-      <span class="tier-icon">🌟</span>
-      <p class="tier-name">Digital Friend</p>
-      <p class="tier-price">$3</p>
-      <p class="tier-desc">Exclusive digital art & wallpapers every month</p>
+      <div class="tier-img-wrap">
+        <img src="assets/greggyC.jpg" alt="Greggy's Digital Club"
+             onerror="this.style.display='none';this.parentElement.innerHTML='🌟'">
+      </div>
+      <div class="tier-body">
+        <p class="tier-name">Greggy's Digital Club</p>
+        <p class="tier-price">$3</p>
+        <p class="tier-desc">Exclusive digital art & wallpapers every month</p>
+      </div>
     </div>
+
     <div class="tier-card reveal">
-      <span class="tier-icon">🩹</span>
-      <p class="tier-name">Sticker Club</p>
-      <p class="tier-price">$8</p>
-      <p class="tier-desc">Cute Whimsiverse stickers mailed to you monthly</p>
+      <div class="tier-img-wrap">
+        <img src="assets/mimiC.jpg" alt="Mimi's Sticker Club"
+             onerror="this.style.display='none';this.parentElement.innerHTML='🩹'">
+      </div>
+      <div class="tier-body">
+        <p class="tier-name">Mimi's Sticker Club</p>
+        <p class="tier-price">$8</p>
+        <p class="tier-desc">Cute Whimsiverse stickers mailed to you monthly</p>
+      </div>
     </div>
+
     <div class="tier-card featured reveal">
       <span class="tier-badge">✦ Most loved</span>
-      <span class="tier-icon">🖼️</span>
-      <p class="tier-name">Print Club</p>
-      <p class="tier-price">$15</p>
-      <p class="tier-desc">Beautiful art prints from the Whimsiverse collection</p>
+      <div class="tier-img-wrap">
+        <img src="assets/bellaC.jpg" alt="Bella's Art Print Club"
+             onerror="this.style.display='none';this.parentElement.innerHTML='🖼️'">
+      </div>
+      <div class="tier-body">
+        <p class="tier-name">Bella's Art Print Club</p>
+        <p class="tier-price">$15</p>
+        <p class="tier-desc">Beautiful art prints from the Whimsiverse collection</p>
+      </div>
     </div>
+
     <div class="tier-card reveal">
-      <span class="tier-icon">✨</span>
-      <p class="tier-name">Whimsy Club</p>
-      <p class="tier-price">$25</p>
-      <p class="tier-desc">The full bundle — prints, stickers & exclusive surprises</p>
+      <div class="tier-img-wrap">
+        <img src="assets/fluffyC.jpg" alt="Fluffy's Whimsy Club"
+             onerror="this.style.display='none';this.parentElement.innerHTML='✨'">
+      </div>
+      <div class="tier-body">
+        <p class="tier-name">Fluffy's Whimsy Club</p>
+        <p class="tier-price">$25</p>
+        <p class="tier-desc">The full bundle — prints, stickers & exclusive surprises</p>
+      </div>
     </div>
+
   </div>
 
   <div style="margin-top:2.5rem;position:relative;z-index:2" class="reveal">
@@ -466,7 +559,7 @@
   </div>
 </section>
 
-<!-- wave -->
+<!-- Wave -->
 <svg class="wave" viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="background:#3d1f6e">
   <path d="M0,28 C200,56 400,0 600,28 C800,56 1000,0 1200,28 C1320,42 1390,14 1440,28 L1440,56 L0,56 Z" fill="var(--purple)"/>
 </svg>
@@ -475,76 +568,227 @@
 <section class="section-newsletter bg-purple">
 
   <div class="stars-layer" aria-hidden="true">
-    <span class="star float"   style="top:15%;left:5%;width:20px;animation-delay:0.4s"><img src="assets/star_yellow.svg" alt=""></span>
-    <span class="star twinkle" style="top:30%;right:4%;width:16px;animation-delay:1.1s"><img src="assets/star_pink.svg" alt=""></span>
-    <span class="star spin"    style="bottom:20%;right:8%;width:18px;animation-delay:0.7s"><img src="assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="bottom:30%;left:10%;width:14px;animation-delay:1.6s"><img src="assets/star_white.svg" alt=""></span>
+    <span class="star float"   style="top:12%;left:4%;width:30px;animation-delay:0.4s"><img src="assets/star_yellow.svg" alt=""></span>
+    <span class="star twinkle" style="top:28%;right:3%;width:24px;animation-delay:1.1s"><img src="assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:18%;right:6%;width:26px;animation-delay:0.7s"><img src="assets/star_blue.svg" alt=""></span>
+    <span class="star pulse"   style="bottom:30%;left:8%;width:20px;animation-delay:1.6s"><img src="assets/star_white.svg" alt=""></span>
   </div>
 
   <p class="section-eyebrow reveal" style="position:relative;z-index:2">✦ stay in the loop ✦</p>
-  <h2 class="section-heading reveal" style="position:relative;z-index:2">
-    Letters from the <span class="c-pink">Whimsiverse</span>
-  </h2>
+  <h2 class="section-heading reveal" style="position:relative;z-index:2">Letters from the <span class="c-pink">Whimsiverse</span></h2>
 
   <div class="newsletter-box reveal">
     <img class="newsletter-mascot" src="assets/fluffyPFP.png" alt="Fluffy"
          onerror="this.style.display='none'">
     <p class="newsletter-title">Join Fluffy's Mailing List!</p>
-    <p class="newsletter-sub">
-      Get new art drops, behind-the-scenes peeks, and little magical notes — straight to your inbox. No spam, just whimsy. 🌸
-    </p>
-
+    <p class="newsletter-sub">Get new art drops, behind-the-scenes peeks, and little magical notes — straight to your inbox. No spam, just whimsy. 🌸</p>
     <!--
-      ══ MAILERLITE EMBED ══
-      1. Go to your Mailerlite dashboard
-      2. Go to Forms → Embedded Forms
-      3. Create or select your signup form
-      4. Copy the embed HTML and paste it below, replacing the placeholder
+      MAILERLITE EMBED:
+      1. Mailerlite dashboard → Forms → Embedded Forms
+      2. Copy embed HTML → paste below replacing the placeholder div
     -->
-    <div class="mailerlite-embed">
-      <span>📬</span>
-      <strong style="color:rgba(255,255,255,0.6);font-family:'Fredoka One',cursive;font-size:0.95rem">Mailerlite Form Goes Here</strong>
-      <span>Replace this block with your Mailerlite embed code</span>
+    <div class="mailerlite-placeholder">
+      <span style="font-size:2rem">📬</span>
+      <strong style="color:rgba(255,255,255,0.6);font-family:'Fredoka One',cursive">Mailerlite Form Goes Here</strong>
+      <span>Replace this with your Mailerlite embed code</span>
     </div>
   </div>
 </section>
 
 <!-- ════ FOOTER ════ -->
 <footer>
-  <a href="index.html" class="footer-logo">
-    <img src="assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-    <span style="display:none">Woobly & Friends</span>
+  <a href="index.html">
+    <img class="footer-logo-img" src="assets/logo.png" alt="Woobly & Friends"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="footer-logo-text" style="display:none">Woobly & Friends</span>
   </a>
-  <div class="footer-links">
+
+  <!-- Page links -->
+  <div class="footer-links" style="margin-bottom:0.85rem">
     <a href="https://shop.wooblynfrens.com" target="_blank">Shop</a>
     <a href="https://www.patreon.com/c/wooblynfrens" target="_blank">Patreon</a>
-    <a href="https://instagram.com/wooblynfrens" target="_blank">Instagram</a>
-    <a href="https://pinterest.com/wooblynfrens" target="_blank">Pinterest</a>
-    <a href="https://x.com/wooblynfrens" target="_blank">X</a>
     <a href="story/index.html">Stories</a>
     <a href="about/index.html">About</a>
   </div>
-  <p class="footer-copy">Made with ✦ imagination by Sachi · Whimsiverse © 2025</p>
+
+  <!-- Social icon links -->
+  <!-- Upload your icon images to assets/icons/ folder -->
+  <!-- e.g. assets/icons/instagram.svg, assets/icons/x.svg etc. -->
+  <div class="footer-socials" id="footerSocials">
+    <!-- Rendered by JS from stored social links data -->
+    <!-- Fallback shown if icons not uploaded yet -->
+    <a href="https://instagram.com/wooblynfrens" target="_blank" class="social-icon-link" title="Instagram"
+       data-platform="instagram">
+      <img src="assets/icons/instagram.svg" alt="Instagram"
+           onerror="this.parentElement.innerHTML='<span>IG</span>'">
+    </a>
+    <a href="https://pinterest.com/wooblynfrens" target="_blank" class="social-icon-link" title="Pinterest"
+       data-platform="pinterest">
+      <img src="assets/icons/pinterest.svg" alt="Pinterest"
+           onerror="this.parentElement.innerHTML='<span>PT</span>'">
+    </a>
+    <a href="https://x.com/wooblynfrens" target="_blank" class="social-icon-link" title="X / Twitter"
+       data-platform="x">
+      <img src="assets/icons/x.svg" alt="X"
+           onerror="this.parentElement.innerHTML='<span>𝕏</span>'">
+    </a>
+  </div>
+
+  <div class="footer-bottom">
+    <a href="privacy/index.html" class="footer-policy">Privacy Policy</a>
+    <span class="footer-dot">·</span>
+    <p class="footer-copy">Made with ✦ imagination by Sachi · Whimsiverse © 2025</p>
+  </div>
 </footer>
 
 <script>
-  // Nav scroll effect
-  const nav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 40);
+/* ════ NAV HAMBURGER ════ */
+const ham = document.getElementById('navHamburger');
+const navLinks = document.getElementById('navLinks');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    ham.classList.remove('open');
+    navLinks.classList.remove('open');
   });
+});
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-  // Scroll reveal
-  const els = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach((e,i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('on'), i * 90);
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  els.forEach(el => obs.observe(el));
+/* ════ SCROLL REVEAL ════ */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('on'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold:0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ════ CREW INTERACTIVE ════ */
+const charData = {
+  fluffy: {
+    name: 'Fluffy the Woobly',
+    species: 'The Woobly · Whimsiverse Explorer',
+    text: 'The most playful, energetic Woobly ever — he just can\'t stay in one place. One day, he looked at the endless Whimsiverse and thought… "Why not explore all of it?" And just like that, he jumped onto his spray-paint rocket — and the adventure began. ✨'
+  },
+  bella: {
+    name: 'Bella & Benny',
+    species: 'The Teddy Bears · Greenwillow Isle',
+    text: 'In a soft corner of the Whimsiverse called Greenwillow Isle, you\'ll find Bella and Benny — a gentle teddy bear couple who believe one simple thing: kindness can change everything. So they travel, help, and quietly make the world a little warmer. 🌿'
+  },
+  mimi: {
+    name: 'Mimi the Unicorn',
+    species: 'Unicorn Princess · Luminella Isle',
+    text: 'If you ever reach the glowing lands of Luminella Isle, you might meet Mimi — a unicorn princess with a magical heart companion. Together, they don\'t just spread love… they remind others what it feels like. 💜'
+  },
+  gregy: {
+    name: 'Greggy the Frog',
+    species: 'The Frog · Puddlehop Isle',
+    text: 'From Puddlehop Isle, where things are always a little splashy and unpredictable. He\'s clumsy, a little chaotic… but honestly? The group wouldn\'t be the same without him. Because wherever Greggy goes — laughs follow. 🐸'
+  }
+};
+const nameColors = { fluffy:'var(--pink)', bella:'var(--yellow)', mimi:'var(--lilac)', gregy:'var(--green)' };
+
+document.querySelectorAll('.crew-bubble').forEach(bubble => {
+  bubble.addEventListener('click', () => {
+    const id = bubble.dataset.char;
+    const isAlreadyActive = bubble.classList.contains('active');
+    document.querySelectorAll('.crew-bubble').forEach(b => b.classList.remove('active','inactive'));
+    const panel = document.getElementById('crewDescPanel');
+    if (isAlreadyActive) { panel.classList.remove('visible'); return; }
+    document.querySelectorAll('.crew-bubble').forEach(b => b.classList.add(b === bubble ? 'active' : 'inactive'));
+    const d = charData[id];
+    const nameEl = document.getElementById('crewDescName');
+    nameEl.textContent = d.name; nameEl.style.color = nameColors[id];
+    document.getElementById('crewDescSpecies').textContent = d.species;
+    document.getElementById('crewDescText').textContent = d.text;
+    panel.classList.add('visible');
+  });
+});
+
+/* ════ SHOP — 6 items, show 4 with rotation ════ */
+const SHOP_KEY = 'wnf_shop_items_v2';
+let shopRotateIdx = 0;
+let shopRotateTimer = null;
+
+function getShopItems() {
+  try { const d = localStorage.getItem(SHOP_KEY); return d ? JSON.parse(d) : []; }
+  catch { return []; }
+}
+
+function renderShopGrid() {
+  const allItems = getShopItems();
+  const grid = document.getElementById('shopGrid');
+
+  if (!allItems.length) {
+    // Show placeholder cards
+    grid.innerHTML = Array(4).fill(0).map(() => `
+      <div class="shop-card" style="pointer-events:none">
+        <div class="shop-card-img"><span>🌟</span></div>
+        <div class="shop-card-body">
+          <p class="shop-card-name">Coming Soon</p>
+        </div>
+      </div>`).join('');
+    return;
+  }
+
+  // Show 4 at a time, rotate if > 4
+  const show = allItems.length <= 4 ? allItems : allItems.slice(shopRotateIdx, shopRotateIdx + 4);
+  // Wrap around
+  const wrapped = show.length < 4 && allItems.length > 4
+    ? [...show, ...allItems.slice(0, 4 - show.length)]
+    : show;
+
+  grid.innerHTML = wrapped.map(item => `
+    <a href="${item.url || 'https://shop.wooblynfrens.com'}" target="_blank" class="shop-card">
+      <div class="shop-card-img">
+        ${item.img ? `<img src="${item.img}" alt="${item.name}">` : '<span>🌟</span>'}
+      </div>
+      <div class="shop-card-body">
+        <p class="shop-card-name">${item.name || 'Coming Soon'}</p>
+        ${item.price ? `<p class="shop-card-price">$${item.price}</p>` : ''}
+      </div>
+    </a>`).join('');
+}
+
+function startShopRotation() {
+  const items = getShopItems();
+  if (items.length <= 4) return; // no need to rotate
+  if (shopRotateTimer) clearInterval(shopRotateTimer);
+  shopRotateTimer = setInterval(() => {
+    shopRotateIdx = (shopRotateIdx + 1) % items.length;
+    renderShopGrid();
+  }, 3500);
+}
+
+renderShopGrid();
+startShopRotation();
+
+/* ════ SOCIAL LINKS — update footer from admin data ════ */
+function updateFooterSocials() {
+  try {
+    const saved = localStorage.getItem('wnf_social');
+    if (!saved) return;
+    const data = JSON.parse(saved);
+    const socials = document.getElementById('footerSocials');
+    if (!socials) return;
+    const platforms = [
+      { key:'instagram', label:'Instagram', icon:'assets/icons/instagram.svg' },
+      { key:'pinterest', label:'Pinterest',  icon:'assets/icons/pinterest.svg' },
+      { key:'x',         label:'X',          icon:'assets/icons/x.svg' },
+      { key:'tiktok',    label:'TikTok',     icon:'assets/icons/tiktok.svg' },
+      { key:'youtube',   label:'YouTube',    icon:'assets/icons/youtube.svg' },
+    ];
+    const links = platforms.filter(p => data[p.key]).map(p => `
+      <a href="${data[p.key]}" target="_blank" class="social-icon-link" title="${p.label}">
+        <img src="${p.icon}" alt="${p.label}" onerror="this.parentElement.innerHTML='<span>${p.label.slice(0,2)}</span>'">
+      </a>`).join('');
+    if (links) socials.innerHTML = links;
+  } catch(e) {}
+}
+updateFooterSocials();
 </script>
 </body>
 </html>
