@@ -7,457 +7,359 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
-<!-- Quill rich text editor -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --bg:      #1a0a38;
-  --panel:   #241050;
-  --card:    #3a1d6a;
-  --card2:   #46278a;
-  --border:  rgba(157,102,242,0.3);
-  --lilac:   #9d66f2;
-  --yellow:  #FFD54F;
-  --orange:  #E8820A;
-  --pink:    #fe5d9f;
-  --green:   #5BBF6A;
-  --cream:   #FFF8F0;
-  --white:   #ffffff;
-  --muted:   rgba(255,255,255,0.45);
-  --sw:      200px;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#1a0a38;--panel:#241050;--card:#3a1d6a;--card2:#46278a;
+  --border:rgba(157,102,242,0.3);--lilac:#9d66f2;--yellow:#FFD54F;
+  --orange:#E8820A;--pink:#fe5d9f;--green:#5BBF6A;--cream:#FFF8F0;
+  --white:#fff;--muted:rgba(255,255,255,0.45);--sw:200px;
 }
 
-body {
-  font-family:'Fredoka',sans-serif; background:var(--bg);
-  color:var(--white); min-height:100vh; display:flex;
-  overflow-x:hidden;
+/* ── LOGIN SCREEN ── */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,#1a0a38 0%,#3a1d6a 60%,#1a0a38 100%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0;
 }
-body::before {
-  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+#loginScreen::before{
+  content:'';position:absolute;inset:0;
   background:url('../assets/purplebg.jpg') center/cover;
-  opacity:0.18;
+  opacity:0.2;pointer-events:none;
 }
+.login-box{
+  background:rgba(36,16,80,0.9);backdrop-filter:blur(16px);
+  border:2px solid var(--border);border-radius:2rem;
+  padding:2.5rem 2.25rem;width:min(380px,90vw);
+  position:relative;z-index:1;
+  box-shadow:10px 10px 0 rgba(0,0,0,0.4);
+}
+.login-logo{
+  font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--yellow);
+  text-align:center;margin-bottom:0.25rem;
+  -webkit-text-stroke:1px var(--orange);
+}
+.login-sub{
+  font-size:0.7rem;color:var(--pink);letter-spacing:2px;text-transform:uppercase;
+  text-align:center;margin-bottom:1.75rem;
+}
+.login-label{display:block;font-size:0.72rem;font-weight:600;color:var(--muted);margin-bottom:0.3rem;letter-spacing:0.8px;text-transform:uppercase;}
+.login-input{
+  width:100%;background:rgba(255,255,255,0.07);
+  border:2px solid var(--border);border-radius:0.75rem;
+  color:var(--white);font-family:'Fredoka',sans-serif;font-size:0.95rem;
+  padding:0.65rem 1rem;outline:none;transition:border-color 0.15s;
+  margin-bottom:1rem;
+}
+.login-input:focus{border-color:var(--lilac);}
+.login-btn{
+  width:100%;background:var(--orange);color:var(--white);
+  border:none;border-radius:50px;padding:0.75rem;
+  font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;
+  box-shadow:0 4px 0 #7a4400;transition:transform 0.15s,box-shadow 0.15s;
+  margin-top:0.25rem;
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 #7a4400;}
+.login-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.login-error{
+  font-size:0.82rem;color:var(--pink);text-align:center;
+  margin-top:0.75rem;display:none;
+}
+.login-error.show{display:block;}
+.login-stars{
+  position:absolute;pointer-events:none;
+}
+.login-star{
+  position:absolute;animation:loginStarFloat 3s ease-in-out infinite;
+}
+@keyframes loginStarFloat{0%,100%{transform:translateY(0) rotate(0deg);opacity:0.8;}50%{transform:translateY(-10px) rotate(15deg);opacity:1;}}
 
-/* ── SETUP BANNER ── */
-.setup-banner {
-  position:fixed; top:0; left:0; right:0; z-index:9999;
-  background:linear-gradient(90deg,#E8820A,#fe5d9f);
-  color:white; font-family:'Fredoka One',cursive;
-  padding:0.65rem 1.5rem; text-align:center; font-size:0.9rem;
-  display:none;
-}
-.setup-banner a { color:white; font-weight:700; }
-.setup-banner.show { display:block; }
+/* ── MAIN APP (hidden until logged in) ── */
+#appRoot{display:none;}
+
+body{font-family:'Fredoka',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;display:flex;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:url('../assets/purplebg.jpg') center/cover;opacity:0.15;}
 
 /* ── SIDEBAR ── */
-.sidebar {
-  width:var(--sw); flex-shrink:0; position:fixed; top:0; left:0; bottom:0;
-  background:rgba(20,8,50,0.95); backdrop-filter:blur(16px);
+.sidebar{
+  width:var(--sw);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
+  background:rgba(20,8,50,0.96);backdrop-filter:blur(16px);
   border-right:2px solid var(--border);
-  display:flex; flex-direction:column; padding:1.5rem 0;
-  z-index:100;
-  transition:transform 0.3s;
+  display:flex;flex-direction:column;padding:1.5rem 0;z-index:100;
 }
-.sidebar-logo {
-  padding:0 1.25rem 1.25rem;
-  border-bottom:1px solid var(--border);
+.sidebar-logo{padding:0 1.25rem 1.25rem;border-bottom:1px solid var(--border);}
+.sidebar-logo-title{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--yellow);line-height:1.2;margin-bottom:0.1rem;}
+.sidebar-logo-sub{font-size:0.6rem;color:var(--pink);letter-spacing:2px;text-transform:uppercase;}
+.sidebar-nav{flex:1;padding:0.75rem 0;overflow-y:auto;}
+.sidebar-nav a{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.72rem 1.25rem;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:0.86rem;
+  color:var(--muted);text-decoration:none;
+  border-left:3px solid transparent;transition:all 0.15s;
 }
-.sidebar-logo-title {
-  font-family:'Fredoka One',cursive; font-size:1.1rem; color:var(--yellow);
-  line-height:1.2; margin-bottom:0.1rem;
-}
-.sidebar-logo-sub {
-  font-size:0.62rem; color:var(--pink); letter-spacing:2px; text-transform:uppercase;
-}
-.sidebar-nav { flex:1; padding:1rem 0; overflow-y:auto; }
-.sidebar-nav a {
-  display:flex; align-items:center; gap:0.6rem;
-  padding:0.75rem 1.25rem; cursor:pointer;
-  font-family:'Fredoka One',cursive; font-size:0.88rem;
-  color:var(--muted); text-decoration:none;
-  border-left:3px solid transparent;
-  transition:all 0.15s;
-}
-.sidebar-nav a:hover { color:var(--cream); background:rgba(157,102,242,0.1); }
-.sidebar-nav a.active { color:var(--yellow); border-left-color:var(--yellow); background:rgba(255,213,79,0.07); }
-.sidebar-nav a .nav-icon { font-size:1rem; width:20px; text-align:center; }
-.sidebar-divider { height:1px; background:var(--border); margin:0.5rem 1.25rem; }
-.sidebar-footer { padding:1rem 1.25rem 0; }
-.sidebar-view-link {
-  display:block; text-align:center; text-decoration:none;
-  color:var(--muted); font-size:0.78rem; padding:0.5rem;
-  border:1px solid var(--border); border-radius:0.5rem;
-  transition:all 0.15s; margin-bottom:0.4rem;
-}
-.sidebar-view-link:hover { color:var(--cream); border-color:var(--lilac); }
-.sidebar-status {
-  font-size:0.7rem; color:var(--muted); text-align:center;
-  display:flex; align-items:center; justify-content:center; gap:0.4rem;
-  margin-top:0.5rem;
-}
-.status-dot { width:7px; height:7px; border-radius:50%; background:#555; flex-shrink:0; }
-.status-dot.connected { background:var(--green); box-shadow:0 0 6px var(--green); }
+.sidebar-nav a:hover{color:var(--cream);background:rgba(157,102,242,0.1);}
+.sidebar-nav a.active{color:var(--yellow);border-left-color:var(--yellow);background:rgba(255,213,79,0.07);}
+.sidebar-nav a .ni{font-size:0.95rem;width:18px;text-align:center;}
+.sidebar-div{height:1px;background:var(--border);margin:0.4rem 1.25rem;}
+.sidebar-footer{padding:0.75rem 1.25rem 0;}
+.view-link{display:block;text-align:center;text-decoration:none;color:var(--muted);font-size:0.76rem;padding:0.45rem;border:1px solid var(--border);border-radius:0.5rem;transition:all 0.15s;margin-bottom:0.4rem;}
+.view-link:hover{color:var(--cream);border-color:var(--lilac);}
+.sidebar-status{font-size:0.68rem;color:var(--muted);text-align:center;display:flex;align-items:center;justify-content:center;gap:0.35rem;margin-top:0.4rem;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0;}
+.status-dot.ok{background:var(--green);box-shadow:0 0 5px var(--green);}
+.logout-btn{display:block;width:100%;margin-top:0.5rem;background:rgba(255,80,80,0.12);color:rgba(255,150,150,0.8);border:1px solid rgba(255,80,80,0.25);border-radius:0.5rem;padding:0.4rem;font-family:'Fredoka One',cursive;font-size:0.75rem;cursor:pointer;transition:all 0.15s;}
+.logout-btn:hover{background:rgba(255,80,80,0.25);color:#ff9090;}
 
 /* ── MAIN ── */
-.main {
-  margin-left:var(--sw); flex:1;
-  padding:2rem 2.5rem 4rem;
-  position:relative; z-index:1;
-  min-height:100vh;
-}
+.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;position:relative;z-index:1;min-height:100vh;}
+.page-header{margin-bottom:2rem;}
+.page-greeting{font-family:'Fredoka One',cursive;font-size:1.65rem;color:var(--white);}
+.page-subtitle{font-size:0.73rem;color:var(--yellow);letter-spacing:2.5px;text-transform:uppercase;margin-top:0.1rem;}
 
-/* ── PAGE HEADER ── */
-.page-header { margin-bottom:2rem; }
-.page-greeting {
-  font-family:'Fredoka One',cursive; font-size:1.7rem; color:var(--white);
-}
-.page-subtitle {
-  font-size:0.75rem; color:var(--yellow);
-  letter-spacing:2.5px; text-transform:uppercase; margin-top:0.1rem;
-}
-
-/* ── TAB PANELS ── */
-.panel { display:none; }
-.panel.active { display:block; }
+/* ── PANELS ── */
+.panel{display:none;}.panel.active{display:block;}
 
 /* ── CARDS ── */
-.card {
-  background:rgba(36,16,80,0.75); backdrop-filter:blur(10px);
-  border:2px solid var(--border); border-radius:1.25rem;
-  padding:1.5rem; margin-bottom:1.5rem;
-}
-.card-head {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:1.25rem;
-}
-.card-title {
-  font-family:'Fredoka One',cursive; font-size:1rem; color:var(--cream);
-}
-.card-meta { font-size:0.82rem; color:var(--muted); }
+.card{background:rgba(36,16,80,0.75);backdrop-filter:blur(10px);border:2px solid var(--border);border-radius:1.25rem;padding:1.5rem;margin-bottom:1.5rem;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.card-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--cream);}
+.card-meta{font-size:0.8rem;color:var(--muted);}
 
-/* ── FORM ELEMENTS ── */
-.f-label {
-  display:block; font-size:0.72rem; font-weight:600;
-  color:var(--muted); margin-bottom:0.3rem;
-  letter-spacing:0.8px; text-transform:uppercase;
-}
-.f-input, .f-textarea, .f-select {
-  width:100%; background:rgba(255,255,255,0.07);
-  border:2px solid var(--border); border-radius:0.75rem;
-  color:var(--white); font-family:'Fredoka',sans-serif; font-size:0.95rem;
-  padding:0.6rem 1rem; outline:none; transition:border-color 0.15s;
-}
-.f-input:focus, .f-textarea:focus, .f-select:focus { border-color:var(--lilac); }
-.f-textarea { resize:vertical; min-height:100px; line-height:1.65; }
-.f-select option { background:#1a0a38; color:var(--white); }
-.f-group { margin-bottom:1rem; }
-.f-row2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.f-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+/* ── FORMS ── */
+.f-label{display:block;font-size:0.7rem;font-weight:600;color:var(--muted);margin-bottom:0.28rem;letter-spacing:0.8px;text-transform:uppercase;}
+.f-input,.f-textarea,.f-select{width:100%;background:rgba(255,255,255,0.07);border:2px solid var(--border);border-radius:0.75rem;color:var(--white);font-family:'Fredoka',sans-serif;font-size:0.93rem;padding:0.58rem 1rem;outline:none;transition:border-color 0.15s;}
+.f-input:focus,.f-textarea:focus,.f-select:focus{border-color:var(--lilac);}
+.f-textarea{resize:vertical;min-height:90px;line-height:1.65;}
+.f-select option{background:#1a0a38;color:var(--white);}
+.f-group{margin-bottom:0.9rem;}
+.f-row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;}
 
-/* Image upload zone */
-.img-zone {
-  border:2px dashed var(--border); border-radius:0.75rem;
-  padding:1.25rem; text-align:center; cursor:pointer; position:relative;
-  transition:border-color 0.2s, background 0.2s; min-height:100px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.4rem;
-}
-.img-zone:hover { border-color:var(--lilac); background:rgba(157,102,242,0.06); }
-.img-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2; }
-.img-zone-label { font-size:0.82rem; color:var(--muted); pointer-events:none; }
-.img-zone-icon { font-size:1.75rem; pointer-events:none; }
-.img-preview-thumb {
-  width:100%; max-height:140px; object-fit:cover;
-  border-radius:0.5rem; display:none; margin-top:0.5rem;
-}
-.img-preview-thumb.show { display:block; }
+/* Image upload */
+.img-zone{border:2px dashed var(--border);border-radius:0.75rem;padding:1rem;text-align:center;cursor:pointer;position:relative;transition:border-color 0.2s,background 0.2s;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;}
+.img-zone:hover{border-color:var(--lilac);background:rgba(157,102,242,0.06);}
+.img-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.img-zone-lbl{font-size:0.78rem;color:var(--muted);pointer-events:none;}
+.img-zone-ico{font-size:1.6rem;pointer-events:none;}
+.img-thumb{width:100%;max-height:130px;object-fit:cover;border-radius:0.5rem;display:none;margin-top:0.4rem;}
+.img-thumb.show{display:block;}
 
-/* Quill custom theme */
-.quill-wrap .ql-toolbar {
-  background:rgba(255,255,255,0.06); border:2px solid var(--border) !important;
-  border-bottom:1px solid var(--border) !important; border-radius:0.75rem 0.75rem 0 0;
-}
-.quill-wrap .ql-container {
-  border:2px solid var(--border) !important; border-top:none !important;
-  border-radius:0 0 0.75rem 0.75rem;
-  background:rgba(255,255,255,0.05); min-height:260px;
-  font-family:'Fredoka',sans-serif; font-size:1rem; color:var(--cream);
-}
-.quill-wrap .ql-editor { min-height:260px; line-height:1.85; padding:1rem; }
-.quill-wrap .ql-editor p { text-indent:1.8em; text-align:justify; margin-bottom:0.4rem; }
-.quill-wrap .ql-editor p:first-of-type::first-letter {
-  font-size:2.8em; font-family:'Fredoka One',cursive; float:left;
-  line-height:0.7; margin:0 6px 0 0; color:var(--yellow);
-}
-.quill-wrap .ql-editor img { max-width:100%; border-radius:0.75rem; display:block; margin:1rem auto; }
-.ql-snow .ql-stroke { stroke:var(--muted) !important; }
-.ql-snow .ql-fill  { fill:var(--muted) !important; }
-.ql-snow .ql-picker-label { color:var(--muted) !important; }
-.ql-snow .ql-picker-options { background:#241050 !important; border-color:var(--border) !important; }
+/* Quill */
+.ql-wrap .ql-toolbar{background:rgba(255,255,255,0.06);border:2px solid var(--border)!important;border-bottom:1px solid var(--border)!important;border-radius:0.75rem 0.75rem 0 0;}
+.ql-wrap .ql-container{border:2px solid var(--border)!important;border-top:none!important;border-radius:0 0 0.75rem 0.75rem;background:rgba(255,255,255,0.04);min-height:240px;font-family:'Fredoka',sans-serif;font-size:0.97rem;color:var(--cream);}
+.ql-wrap .ql-editor{min-height:240px;line-height:1.85;padding:1rem;}
+.ql-wrap .ql-editor p{text-indent:1.8em;text-align:justify;margin-bottom:0.4rem;}
+.ql-wrap .ql-editor p:first-of-type::first-letter{font-size:2.8em;font-family:'Fredoka One',cursive;float:left;line-height:0.72;margin:0 5px 0 0;color:var(--yellow);}
+.ql-wrap .ql-editor img{max-width:100%;border-radius:0.75rem;display:block;margin:0.75rem auto;}
+.ql-snow .ql-stroke{stroke:rgba(255,255,255,0.55)!important;}
+.ql-snow .ql-fill{fill:rgba(255,255,255,0.55)!important;}
+.ql-snow .ql-picker-label{color:rgba(255,255,255,0.55)!important;}
+.ql-snow .ql-picker-options{background:#241050!important;border-color:var(--border)!important;}
 
 /* ── BUTTONS ── */
-.btn-save {
-  background:var(--orange); color:var(--white);
-  border:none; border-radius:50px; padding:0.65rem 2rem;
-  font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer;
-  box-shadow:0 4px 0 #7a4400; transition:transform 0.15s, box-shadow 0.15s;
-}
-.btn-save:hover { transform:translateY(-2px); box-shadow:0 6px 0 #7a4400; }
-.btn-save:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-.btn-secondary {
-  background:rgba(157,102,242,0.2); color:var(--cream);
-  border:2px solid var(--border); border-radius:50px;
-  padding:0.5rem 1.4rem; font-family:'Fredoka One',cursive;
-  font-size:0.85rem; cursor:pointer; transition:all 0.15s;
-}
-.btn-secondary:hover { background:rgba(157,102,242,0.35); border-color:var(--lilac); }
-.btn-danger {
-  background:rgba(255,70,70,0.15); color:#ff9090;
-  border:2px solid rgba(255,70,70,0.3); border-radius:50px;
-  padding:0.42rem 1rem; font-family:'Fredoka One',cursive;
-  font-size:0.78rem; cursor:pointer; transition:all 0.15s;
-}
-.btn-danger:hover { background:rgba(255,70,70,0.35); }
-.btn-pink {
-  background:var(--pink); color:var(--white);
-  border:none; border-radius:50px; padding:0.5rem 1.4rem;
-  font-family:'Fredoka One',cursive; font-size:0.85rem; cursor:pointer;
-  box-shadow:0 3px 0 #9a2050; transition:transform 0.15s;
-}
-.btn-pink:hover { transform:translateY(-2px); }
+.btn-save{background:var(--orange);color:var(--white);border:none;border-radius:50px;padding:0.62rem 2rem;font-family:'Fredoka One',cursive;font-size:0.93rem;cursor:pointer;box-shadow:0 4px 0 #7a4400;transition:transform 0.15s,box-shadow 0.15s;}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 0 #7a4400;}
+.btn-save:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-2{background:rgba(157,102,242,0.2);color:var(--cream);border:2px solid var(--border);border-radius:50px;padding:0.48rem 1.35rem;font-family:'Fredoka One',cursive;font-size:0.83rem;cursor:pointer;transition:all 0.15s;}
+.btn-2:hover{background:rgba(157,102,242,0.35);border-color:var(--lilac);}
+.btn-del{background:rgba(255,70,70,0.13);color:#ff9090;border:2px solid rgba(255,70,70,0.28);border-radius:50px;padding:0.4rem 0.95rem;font-family:'Fredoka One',cursive;font-size:0.76rem;cursor:pointer;transition:all 0.15s;}
+.btn-del:hover{background:rgba(255,70,70,0.32);}
+.btn-pink{background:var(--pink);color:var(--white);border:none;border-radius:50px;padding:0.48rem 1.35rem;font-family:'Fredoka One',cursive;font-size:0.83rem;cursor:pointer;box-shadow:0 3px 0 #9a2050;transition:transform 0.15s;}
+.btn-pink:hover{transform:translateY(-2px);}
 
 /* ── SUB-TABS ── */
-.sub-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
-.sub-tab {
-  background:rgba(255,255,255,0.06); border:2px solid var(--border);
-  color:var(--muted); border-radius:50px; padding:0.42rem 1.2rem;
-  font-family:'Fredoka One',cursive; font-size:0.82rem; cursor:pointer;
-  transition:all 0.15s;
-}
-.sub-tab.active { background:var(--lilac); border-color:var(--lilac); color:var(--white); }
-.sub-panel { display:none; }
-.sub-panel.active { display:block; }
+.sub-tabs{display:flex;gap:0.45rem;margin-bottom:1.4rem;}
+.sub-tab{background:rgba(255,255,255,0.06);border:2px solid var(--border);color:var(--muted);border-radius:50px;padding:0.4rem 1.15rem;font-family:'Fredoka One',cursive;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.sub-tab.active{background:var(--lilac);border-color:var(--lilac);color:var(--white);}
+.sub-panel{display:none;}.sub-panel.active{display:block;}
 
 /* ── LIST ROWS ── */
-.list-row {
-  display:flex; align-items:center; gap:0.85rem;
-  background:rgba(157,102,242,0.08); border:2px solid var(--border);
-  border-radius:0.85rem; padding:0.75rem 1rem; margin-bottom:0.6rem;
-  transition:border-color 0.15s;
-}
-.list-row:hover { border-color:rgba(157,102,242,0.5); }
-.list-row-thumb {
-  width:48px; height:48px; border-radius:0.5rem; overflow:hidden;
-  background:rgba(157,102,242,0.2); flex-shrink:0;
-  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
-}
-.list-row-thumb img { width:100%; height:100%; object-fit:cover; }
-.list-row-pfp {
-  width:46px; height:46px; border-radius:50%; overflow:hidden;
-  background:rgba(157,102,242,0.2); flex-shrink:0;
-  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
-}
-.list-row-pfp img { width:100%; height:100%; object-fit:cover; }
-.list-row-info { flex:1; min-width:0; }
-.list-row-name {
-  font-family:'Fredoka One',cursive; font-size:0.88rem; color:var(--cream);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.list-row-meta { font-size:0.75rem; color:var(--muted); margin-top:0.1rem; }
-.list-row-price { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--yellow); flex-shrink:0; }
-.list-row-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+.list-row{display:flex;align-items:center;gap:0.8rem;background:rgba(157,102,242,0.07);border:2px solid var(--border);border-radius:0.85rem;padding:0.7rem 0.9rem;margin-bottom:0.55rem;transition:border-color 0.15s;}
+.list-row:hover{border-color:rgba(157,102,242,0.45);}
+.list-thumb{width:44px;height:44px;border-radius:0.45rem;overflow:hidden;background:rgba(157,102,242,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.list-thumb img{width:100%;height:100%;object-fit:cover;}
+.list-pfp{width:44px;height:44px;border-radius:50%;overflow:hidden;background:rgba(157,102,242,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.list-pfp img{width:100%;height:100%;object-fit:cover;}
+.list-info{flex:1;min-width:0;}
+.list-name{font-family:'Fredoka One',cursive;font-size:0.86rem;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-meta{font-size:0.72rem;color:var(--muted);margin-top:0.1rem;}
+.list-price{font-family:'Fredoka One',cursive;font-size:0.88rem;color:var(--yellow);flex-shrink:0;}
+.list-actions{display:flex;gap:0.35rem;flex-shrink:0;}
 
 /* Story grid */
-.story-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.story-card {
-  background:rgba(157,102,242,0.08); border:2px solid var(--border);
-  border-radius:1rem; overflow:hidden; transition:border-color 0.15s;
-}
-.story-card:hover { border-color:rgba(157,102,242,0.5); }
-.story-card-cover {
-  width:100%; aspect-ratio:16/9; overflow:hidden;
-  background:rgba(157,102,242,0.15); display:flex; align-items:center; justify-content:center;
-  font-size:2.5rem;
-}
-.story-card-cover img { width:100%; height:100%; object-fit:cover; }
-.story-card-body { padding:0.9rem; }
-.story-card-title { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); margin-bottom:0.2rem; }
-.story-card-meta { font-size:0.72rem; color:var(--muted); margin-bottom:0.5rem; display:flex; justify-content:space-between; }
-.story-card-excerpt { font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5; margin-bottom:0.6rem; }
-.story-card-actions { display:flex; gap:0.4rem; }
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.scard{background:rgba(157,102,242,0.07);border:2px solid var(--border);border-radius:1rem;overflow:hidden;transition:border-color 0.15s;}
+.scard:hover{border-color:rgba(157,102,242,0.45);}
+.scard-cover{width:100%;aspect-ratio:16/9;overflow:hidden;background:rgba(157,102,242,0.15);display:flex;align-items:center;justify-content:center;font-size:2.2rem;}
+.scard-cover img{width:100%;height:100%;object-fit:cover;}
+.scard-body{padding:0.85rem;}
+.scard-title{font-family:'Fredoka One',cursive;font-size:0.88rem;color:var(--cream);margin-bottom:0.2rem;}
+.scard-meta{font-size:0.7rem;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:0.45rem;}
+.scard-excerpt{font-size:0.76rem;color:rgba(255,255,255,0.58);line-height:1.5;margin-bottom:0.55rem;}
+.scard-actions{display:flex;gap:0.35rem;}
 
-/* Empty state */
-.empty-state {
-  text-align:center; padding:2.5rem; color:var(--muted);
-}
-.empty-icon { font-size:2.8rem; display:block; margin-bottom:0.75rem; }
+.empty-state{text-align:center;padding:2.25rem;color:var(--muted);}
+.empty-ico{font-size:2.6rem;display:block;margin-bottom:0.65rem;}
+.info-box{background:rgba(255,213,79,0.06);border:2px solid rgba(255,213,79,0.18);border-radius:1rem;padding:0.9rem 1.1rem;font-size:0.8rem;color:rgba(255,213,79,0.78);line-height:1.6;margin-bottom:1.4rem;}
+.info-box strong{color:var(--yellow);}
 
-/* Info banner */
-.info-banner {
-  background:rgba(255,213,79,0.07); border:2px solid rgba(255,213,79,0.2);
-  border-radius:1rem; padding:1rem 1.25rem;
-  font-size:0.82rem; color:rgba(255,213,79,0.8); line-height:1.6;
-  margin-bottom:1.5rem;
-}
-.info-banner strong { color:var(--yellow); }
+/* Color picker */
+.color-row{display:flex;gap:0.45rem;flex-wrap:wrap;}
+.c-opt{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.c-opt.sel{border-color:var(--white);transform:scale(1.2);}
 
 /* ── TOAST ── */
-.toast {
-  position:fixed; bottom:2rem; right:2rem; z-index:9999;
-  background:var(--card2); border:2px solid var(--lilac);
-  color:var(--white); border-radius:1rem; padding:0.85rem 1.5rem;
-  font-family:'Fredoka One',cursive; font-size:0.88rem;
-  box-shadow:0 8px 24px rgba(0,0,0,0.5);
-  transform:translateY(120px); opacity:0;
-  transition:transform 0.3s ease, opacity 0.3s ease;
-  pointer-events:none;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-.toast.error { border-color:var(--pink); background:#3d0820; }
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--card2);border:2px solid var(--lilac);color:var(--white);border-radius:1rem;padding:0.82rem 1.4rem;font-family:'Fredoka One',cursive;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.5);transform:translateY(120px);opacity:0;transition:transform 0.3s,opacity 0.3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.err{border-color:var(--pink);background:#3d0820;}
 
-/* Color picker row */
-.color-options { display:flex; gap:0.5rem; flex-wrap:wrap; }
-.color-opt {
-  width:28px; height:28px; border-radius:50%; cursor:pointer;
-  border:2px solid transparent; transition:all 0.15s;
-}
-.color-opt.selected { border-color:var(--white); transform:scale(1.2); }
+/* Loading */
+.loading{display:flex;align-items:center;gap:0.65rem;padding:0.9rem;color:var(--muted);font-size:0.85rem;}
+.spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--lilac);border-radius:50%;animation:spn 0.8s linear infinite;flex-shrink:0;}
+@keyframes spn{to{transform:rotate(360deg);}}
 
-/* ── LOADING OVERLAY ── */
-.loading-wrap {
-  display:flex; align-items:center; gap:0.75rem;
-  padding:1rem; color:var(--muted); font-size:0.88rem;
-}
-.spinner {
-  width:18px; height:18px; border:2px solid var(--border);
-  border-top-color:var(--lilac); border-radius:50%;
-  animation:spin 0.8s linear infinite; flex-shrink:0;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-
-/* ── MOBILE ── */
-.mob-toggle {
-  display:none; position:fixed; top:1rem; left:1rem; z-index:200;
-  background:rgba(36,16,80,0.9); border:2px solid var(--border);
-  border-radius:0.5rem; padding:0.45rem; cursor:pointer;
-  flex-direction:column; gap:4px;
-}
-.mob-toggle span { display:block; width:20px; height:2.5px; background:var(--cream); border-radius:2px; }
-@media (max-width:768px) {
-  :root { --sw:0px; }
-  .sidebar { transform:translateX(-100%); width:220px !important; }
-  .sidebar.mob-open { transform:translateX(0); }
-  .main { margin-left:0; padding:1.25rem; padding-top:4rem; }
-  .mob-toggle { display:flex; }
-  .story-grid { grid-template-columns:1fr; }
-  .f-row2, .f-row3 { grid-template-columns:1fr; }
+/* Mobile */
+.mob-btn{display:none;position:fixed;top:1rem;left:1rem;z-index:200;background:rgba(36,16,80,0.9);border:2px solid var(--border);border-radius:0.5rem;padding:0.4rem;cursor:pointer;flex-direction:column;gap:4px;}
+.mob-btn span{display:block;width:19px;height:2.5px;background:var(--cream);border-radius:2px;}
+@media(max-width:768px){
+  :root{--sw:0px;}
+  .sidebar{transform:translateX(-100%);width:220px!important;transition:transform 0.3s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:1.25rem;padding-top:4rem;}
+  .mob-btn{display:flex;}
+  .story-grid,.f-row2,.f-row3{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- Setup banner (shown when Supabase keys missing) -->
-<div class="setup-banner" id="setupBanner">
-  ⚠️ Supabase not configured yet — <a href="#" onclick="document.getElementById('panel-settings').scrollIntoView()">open Settings to add your keys</a>. Data won't save until then.
+<!-- ════════════════════ LOGIN SCREEN ════════════════════ -->
+<div id="loginScreen">
+  <!-- Decorative stars -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0">
+    <span style="position:absolute;top:10%;left:8%;font-size:2rem;animation:loginStarFloat 3.2s ease-in-out infinite">⭐</span>
+    <span style="position:absolute;top:15%;right:10%;font-size:1.4rem;animation:loginStarFloat 2.8s ease-in-out infinite 0.5s">✦</span>
+    <span style="position:absolute;top:70%;left:5%;font-size:1.8rem;animation:loginStarFloat 3.5s ease-in-out infinite 1s">🌟</span>
+    <span style="position:absolute;top:75%;right:8%;font-size:1.3rem;animation:loginStarFloat 2.5s ease-in-out infinite 0.8s">✦</span>
+    <span style="position:absolute;top:45%;left:3%;font-size:1.1rem;animation:loginStarFloat 4s ease-in-out infinite 1.5s">⭐</span>
+    <span style="position:absolute;top:30%;right:5%;font-size:1.5rem;animation:loginStarFloat 3s ease-in-out infinite 0.3s">🌟</span>
+  </div>
+
+  <div class="login-box">
+    <p class="login-logo">Whimsiverse ✦</p>
+    <p class="login-sub">Admin Panel</p>
+
+    <div id="loginSetup" style="display:none">
+      <!-- First-time setup: enter Supabase keys -->
+      <p style="font-size:0.82rem;color:var(--cream);margin-bottom:1.25rem;line-height:1.6;text-align:center">
+        First time? Paste your Supabase keys below to get started.
+      </p>
+      <label class="login-label">Supabase Project URL</label>
+      <input type="text" class="login-input" id="setupUrl" placeholder="https://xxx.supabase.co">
+      <label class="login-label">Supabase Anon Key</label>
+      <input type="text" class="login-input" id="setupKey" placeholder="eyJhbGci…">
+      <label class="login-label">Admin Email</label>
+      <input type="email" class="login-input" id="setupEmail" placeholder="your@email.com">
+      <label class="login-label">Admin Password</label>
+      <input type="password" class="login-input" id="setupPwd" placeholder="Choose a strong password">
+      <button class="login-btn" onclick="doFirstTimeSetup()">Create Admin Account ✦</button>
+      <p class="login-error" id="setupError"></p>
+    </div>
+
+    <div id="loginForm">
+      <!-- Normal login -->
+      <label class="login-label">Email</label>
+      <input type="email" class="login-input" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      <label class="login-label">Password</label>
+      <input type="password" class="login-input" id="loginPwd" placeholder="••••••••" autocomplete="current-password">
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">Enter the Whimsiverse ✦</button>
+      <p class="login-error" id="loginError"></p>
+      <p style="text-align:center;margin-top:1rem;font-size:0.75rem;color:var(--muted)">
+        First time? <a href="#" onclick="showSetup()" style="color:var(--lilac)">Set up your account</a>
+      </p>
+    </div>
+  </div>
 </div>
 
-<button class="mob-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mob-open')">
+<!-- ════════════════════ APP ════════════════════ -->
+<div id="appRoot">
+
+<button class="mob-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">
   <span></span><span></span><span></span>
 </button>
 
-<!-- ════ SIDEBAR ════ -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-title">Whimsiverse ✦</div>
     <div class="sidebar-logo-sub">Admin Panel</div>
   </div>
   <nav class="sidebar-nav">
-    <a href="#" class="active" data-panel="stories">
-      <span class="nav-icon">📖</span>Stories
-    </a>
-    <a href="#" data-panel="shop">
-      <span class="nav-icon">🛍️</span>Shop
-    </a>
-    <div class="sidebar-divider"></div>
-    <a href="#" data-panel="friends">
-      <span class="nav-icon">🌸</span>Friends
-    </a>
-    <a href="#" data-panel="faq">
-      <span class="nav-icon">❓</span>FAQ
-    </a>
-    <a href="#" data-panel="social">
-      <span class="nav-icon">🔗</span>Social Links
-    </a>
-    <div class="sidebar-divider"></div>
-    <a href="#" data-panel="settings">
-      <span class="nav-icon">⚙️</span>Settings
-    </a>
+    <a href="#" class="active" data-p="stories"><span class="ni">📖</span>Stories</a>
+    <a href="#" data-p="shop"><span class="ni">🛍️</span>Shop</a>
+    <div class="sidebar-div"></div>
+    <a href="#" data-p="friends"><span class="ni">🌸</span>Friends</a>
+    <a href="#" data-p="faq"><span class="ni">❓</span>FAQ</a>
+    <a href="#" data-p="social"><span class="ni">🔗</span>Social Links</a>
+    <div class="sidebar-div"></div>
+    <a href="#" data-p="settings"><span class="ni">⚙️</span>Settings</a>
   </nav>
   <div class="sidebar-footer">
-    <a class="sidebar-view-link" href="../index.html" target="_blank">← View Live Site</a>
+    <a class="view-link" href="../index.html" target="_blank">← View Live Site</a>
     <div class="sidebar-status">
-      <span class="status-dot" id="statusDot"></span>
-      <span id="statusText">Not connected</span>
+      <span class="status-dot ok" id="statusDot"></span>
+      <span id="statusText">Connected</span>
     </div>
+    <button class="logout-btn" onclick="doLogout()">Log Out</button>
   </div>
 </aside>
 
-<!-- ════ MAIN ════ -->
+<!-- MAIN -->
 <main class="main">
-
   <div class="page-header">
-    <p class="page-greeting">Good Morning, Sachi ✦</p>
+    <p class="page-greeting" id="greeting">Good Morning, Sachi ✦</p>
     <p class="page-subtitle">Welcome to the Admin Panel</p>
   </div>
 
-  <!-- ══════════ STORIES ══════════ -->
+  <!-- ══ STORIES ══ -->
   <div class="panel active" id="panel-stories">
     <div class="sub-tabs">
-      <button class="sub-tab active" data-subtab="stories-list">Current Stories</button>
-      <button class="sub-tab" data-subtab="stories-write">Write New Story</button>
+      <button class="sub-tab active" data-st="stories-list">Current Stories</button>
+      <button class="sub-tab" data-st="stories-write">Write New Story</button>
     </div>
-
-    <!-- LIST -->
     <div class="sub-panel active" id="stories-list">
       <div class="card">
         <div class="card-head">
           <span class="card-title">Let's add some Whimsies</span>
-          <button class="btn-pink" onclick="switchSubtab('stories-write')">+ New Story</button>
+          <button class="btn-pink" onclick="goWriteStory()">+ New Story</button>
         </div>
-        <p class="card-meta" style="margin-bottom:1rem">Current Stories</p>
-        <div class="story-grid" id="storyGrid">
-          <div class="loading-wrap"><span class="spinner"></span> Loading stories…</div>
-        </div>
+        <p class="card-meta" style="margin-bottom:0.9rem">Current Stories</p>
+        <div class="story-grid" id="storyGrid"><div class="loading"><span class="spin"></span>Loading…</div></div>
       </div>
     </div>
-
-    <!-- WRITE / EDIT -->
     <div class="sub-panel" id="stories-write">
       <div class="card">
-        <div class="card-head">
-          <span class="card-title" id="storyFormTitle">Time to write the reality ✨</span>
-        </div>
+        <div class="card-head"><span class="card-title" id="storyFormTitle">Time to write the reality ✨</span></div>
         <input type="hidden" id="storyEditId">
-
         <div class="f-group">
           <label class="f-label">Story Title</label>
           <input type="text" class="f-input" id="storyTitle" placeholder="e.g. Fluffy and the Cosmic Break">
         </div>
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Book No.</label>
             <input type="text" class="f-input" id="storyBookNo" placeholder="01">
           </div>
           <div class="f-group">
-            <label class="f-label">Book Title <span style="font-size:0.68rem;opacity:0.6">(if new)</span></label>
+            <label class="f-label">Book Title <span style="opacity:0.55;font-size:0.65rem">(if new)</span></label>
             <input type="text" class="f-input" id="storyBookTitle" placeholder="Woobly & Friends Vol.1">
           </div>
         </div>
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Category Tag</label>
@@ -467,72 +369,54 @@ body::before {
             <label class="f-label">Cover Image</label>
             <div class="img-zone" id="storyCoverZone">
               <input type="file" accept="image/*" id="storyCoverFile">
-              <span class="img-zone-icon">🖼️</span>
-              <span class="img-zone-label">Click to upload</span>
-              <img class="img-preview-thumb" id="storyCoverPreview" alt="">
+              <span class="img-zone-ico">🖼️</span>
+              <span class="img-zone-lbl">Click to upload</span>
+              <img class="img-thumb" id="storyCoverThumb" alt="">
             </div>
           </div>
         </div>
-
         <div class="f-group">
-          <label class="f-label">Excerpt <span style="font-size:0.68rem;opacity:0.6">(shown on story card)</span></label>
-          <input type="text" class="f-input" id="storyExcerpt" placeholder="A short teaser — 1 or 2 sentences">
+          <label class="f-label">Excerpt <span style="opacity:0.55;font-size:0.65rem">(shown on card)</span></label>
+          <input type="text" class="f-input" id="storyExcerpt" placeholder="A short teaser — 1–2 sentences">
         </div>
-
         <div class="f-group">
           <label class="f-label">Story Body</label>
-          <div class="quill-wrap">
-            <div id="storyEditor"></div>
-          </div>
+          <div class="ql-wrap"><div id="storyEditor"></div></div>
         </div>
-
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem">
+        <div style="display:flex;gap:0.7rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn-save" id="storySaveBtn" onclick="saveStory()">Save Story ✦</button>
-          <button class="btn-secondary" onclick="switchSubtab('stories-list');clearStoryForm()">Cancel</button>
-          <button class="btn-danger" id="storyDeleteBtn" style="display:none" onclick="deleteStory()">Delete Story</button>
+          <button class="btn-2" onclick="goStoryList()">Cancel</button>
+          <button class="btn-del" id="storyDelBtn" style="display:none" onclick="deleteStory()">Delete Story</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ SHOP ══════════ -->
+  <!-- ══ SHOP ══ -->
   <div class="panel" id="panel-shop">
     <div class="sub-tabs">
-      <button class="sub-tab active" data-subtab="shop-list">Current Items</button>
-      <button class="sub-tab" data-subtab="shop-add">Add Item</button>
+      <button class="sub-tab active" data-st="shop-list">Current Items</button>
+      <button class="sub-tab" data-st="shop-add">Add Item</button>
     </div>
-
-    <!-- LIST -->
     <div class="sub-panel active" id="shop-list">
       <div class="card">
         <div class="card-head">
           <span class="card-title">Let's add some Whimsies</span>
-          <button class="btn-pink" onclick="switchSubtab('shop-add');clearShopForm()">+ Add Item</button>
+          <button class="btn-pink" onclick="goAddShop()">+ Add Item</button>
         </div>
-        <p class="card-meta" id="shopCountLabel" style="margin-bottom:1rem">Available Items: 0 / 6</p>
-        <div id="shopList">
-          <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
-        </div>
+        <p class="card-meta" id="shopCount" style="margin-bottom:0.9rem">Available Items: 0 / 6</p>
+        <div id="shopList"><div class="loading"><span class="spin"></span>Loading…</div></div>
       </div>
-      <div class="info-banner">
-        <strong>✦ How the rotation works:</strong><br>
-        Homepage shows 4 items at a time. If you have 5–6 items, they rotate automatically every few seconds so visitors see everything.
-      </div>
+      <div class="info-box"><strong>✦ Rotation:</strong> Homepage shows 4 at a time. With 5–6 items, they rotate every few seconds.</div>
     </div>
-
-    <!-- ADD / EDIT -->
     <div class="sub-panel" id="shop-add">
       <div class="card">
-        <div class="card-head">
-          <span class="card-title" id="shopFormTitle">Let's add some Whimsies</span>
-        </div>
+        <div class="card-head"><span class="card-title" id="shopFormTitle">Let's add some Whimsies</span></div>
         <input type="hidden" id="shopEditId">
-
         <div class="f-group">
           <label class="f-label">Item Name</label>
           <input type="text" class="f-input" id="shopName" placeholder="e.g. Fluffy Sticker Sheet">
         </div>
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Price ($)</label>
@@ -543,58 +427,49 @@ body::before {
             <input type="url" class="f-input" id="shopUrl" placeholder="https://payhip.com/b/…">
           </div>
         </div>
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Description</label>
-            <textarea class="f-textarea" id="shopDesc" placeholder="Short description…" style="min-height:80px"></textarea>
+            <textarea class="f-textarea" id="shopDesc" style="min-height:80px" placeholder="Short description…"></textarea>
           </div>
           <div class="f-group">
             <label class="f-label">Image</label>
-            <div class="img-zone" id="shopImgZone" style="min-height:80px">
+            <div class="img-zone" style="min-height:80px">
               <input type="file" accept="image/*" id="shopImgFile">
-              <span class="img-zone-icon">🖼️</span>
-              <span class="img-zone-label">Upload image</span>
-              <img class="img-preview-thumb" id="shopImgPreview" alt="">
+              <span class="img-zone-ico">🖼️</span>
+              <span class="img-zone-lbl">Upload image</span>
+              <img class="img-thumb" id="shopImgThumb" alt="">
             </div>
           </div>
         </div>
-
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
-          <button class="btn-save" id="shopSaveBtn" onclick="saveShopItem()">Save Item ✦</button>
-          <button class="btn-secondary" onclick="switchSubtab('shop-list');clearShopForm()">Cancel</button>
-          <button class="btn-danger" id="shopDeleteBtn" style="display:none" onclick="deleteShopItem()">Delete Item</button>
+        <div style="display:flex;gap:0.7rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" id="shopSaveBtn" onclick="saveShop()">Save Item ✦</button>
+          <button class="btn-2" onclick="goShopList()">Cancel</button>
+          <button class="btn-del" id="shopDelBtn" style="display:none" onclick="deleteShop()">Delete Item</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ FRIENDS ══════════ -->
+  <!-- ══ FRIENDS ══ -->
   <div class="panel" id="panel-friends">
     <div class="sub-tabs">
-      <button class="sub-tab active" data-subtab="friends-list">Current Friends</button>
-      <button class="sub-tab" data-subtab="friends-add">Add Friend</button>
+      <button class="sub-tab active" data-st="friends-list">Current Friends</button>
+      <button class="sub-tab" data-st="friends-add">Add Friend</button>
     </div>
-
     <div class="sub-panel active" id="friends-list">
       <div class="card">
         <div class="card-head">
           <span class="card-title">The Crew</span>
-          <button class="btn-pink" onclick="switchSubtab('friends-add');clearFriendForm()">+ New Friend</button>
+          <button class="btn-pink" onclick="goAddFriend()">+ New Friend</button>
         </div>
-        <div id="friendsList">
-          <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
-        </div>
+        <div id="friendsList"><div class="loading"><span class="spin"></span>Loading…</div></div>
       </div>
     </div>
-
     <div class="sub-panel" id="friends-add">
       <div class="card">
-        <div class="card-head">
-          <span class="card-title" id="friendFormTitle">Add New Friend</span>
-        </div>
+        <div class="card-head"><span class="card-title" id="friendFormTitle">Add New Friend</span></div>
         <input type="hidden" id="friendEditId">
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Name</label>
@@ -605,7 +480,6 @@ body::before {
             <input type="text" class="f-input" id="friendSpecies" placeholder="e.g. The Woobly">
           </div>
         </div>
-
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Isle / Location</label>
@@ -613,59 +487,51 @@ body::before {
           </div>
           <div class="f-group">
             <label class="f-label">Name Colour</label>
-            <div class="color-options" id="colorOptions">
-              <div class="color-opt selected" style="background:#fe5d9f" data-color="#fe5d9f"></div>
-              <div class="color-opt" style="background:#FFD54F" data-color="#FFD54F"></div>
-              <div class="color-opt" style="background:#9d66f2" data-color="#9d66f2"></div>
-              <div class="color-opt" style="background:#5BBF6A" data-color="#5BBF6A"></div>
-              <div class="color-opt" style="background:#6180f2" data-color="#6180f2"></div>
-              <div class="color-opt" style="background:#FFF8F0" data-color="#FFF8F0"></div>
+            <div class="color-row" id="colorRow">
+              <div class="c-opt sel" style="background:#fe5d9f" data-c="#fe5d9f"></div>
+              <div class="c-opt" style="background:#FFD54F" data-c="#FFD54F"></div>
+              <div class="c-opt" style="background:#9d66f2" data-c="#9d66f2"></div>
+              <div class="c-opt" style="background:#5BBF6A" data-c="#5BBF6A"></div>
+              <div class="c-opt" style="background:#6180f2" data-c="#6180f2"></div>
+              <div class="c-opt" style="background:#FFF8F0" data-c="#FFF8F0"></div>
             </div>
             <input type="hidden" id="friendColor" value="#fe5d9f">
           </div>
         </div>
-
         <div class="f-group">
-          <label class="f-label">Short Description (homepage card)</label>
+          <label class="f-label">Short Description (homepage)</label>
           <input type="text" class="f-input" id="friendShort" placeholder="1-line teaser">
         </div>
         <div class="f-group">
           <label class="f-label">Full Description (About page)</label>
-          <textarea class="f-textarea" id="friendFull" placeholder="Their full story paragraph…"></textarea>
+          <textarea class="f-textarea" id="friendFull" placeholder="Their full story…"></textarea>
         </div>
         <div class="f-group">
           <label class="f-label">Profile Picture</label>
-          <div class="img-zone" id="friendPfpZone">
+          <div class="img-zone">
             <input type="file" accept="image/*" id="friendPfpFile">
-            <span class="img-zone-icon">🖼️</span>
-            <span class="img-zone-label">Upload PFP</span>
-            <img class="img-preview-thumb" id="friendPfpPreview" alt="">
+            <span class="img-zone-ico">🖼️</span>
+            <span class="img-zone-lbl">Upload PFP</span>
+            <img class="img-thumb" id="friendPfpThumb" alt="">
           </div>
         </div>
-
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
+        <div style="display:flex;gap:0.7rem;flex-wrap:wrap;margin-top:0.5rem">
           <button class="btn-save" id="friendSaveBtn" onclick="saveFriend()">Save Friend ✦</button>
-          <button class="btn-secondary" onclick="switchSubtab('friends-list');clearFriendForm()">Cancel</button>
-          <button class="btn-danger" id="friendDeleteBtn" style="display:none" onclick="deleteFriend()">Remove</button>
+          <button class="btn-2" onclick="goFriendList()">Cancel</button>
+          <button class="btn-del" id="friendDelBtn" style="display:none" onclick="deleteFriend()">Remove</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ FAQ ══════════ -->
+  <!-- ══ FAQ ══ -->
   <div class="panel" id="panel-faq">
     <div class="card">
-      <div class="card-head">
-        <span class="card-title">FAQ Items</span>
-      </div>
-      <div id="faqList">
-        <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
-      </div>
+      <div class="card-head"><span class="card-title">FAQ Items</span></div>
+      <div id="faqList"><div class="loading"><span class="spin"></span>Loading…</div></div>
     </div>
     <div class="card">
-      <div class="card-head">
-        <span class="card-title" id="faqFormTitle">Add New FAQ</span>
-      </div>
+      <div class="card-head"><span class="card-title" id="faqFormTitle">Add New FAQ</span></div>
       <input type="hidden" id="faqEditId">
       <div class="f-group">
         <label class="f-label">Question</label>
@@ -673,154 +539,86 @@ body::before {
       </div>
       <div class="f-group">
         <label class="f-label">Answer</label>
-        <textarea class="f-textarea" id="faqA" placeholder="Write the answer…" style="min-height:80px"></textarea>
+        <textarea class="f-textarea" id="faqA" style="min-height:80px" placeholder="Write the answer…"></textarea>
       </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+      <div style="display:flex;gap:0.7rem;flex-wrap:wrap">
         <button class="btn-save" onclick="saveFaq()">Save FAQ ✦</button>
-        <button class="btn-secondary" id="faqCancelBtn" style="display:none" onclick="clearFaqForm()">Cancel Edit</button>
+        <button class="btn-2" id="faqCancelBtn" style="display:none" onclick="clearFaqForm()">Cancel Edit</button>
       </div>
     </div>
   </div>
 
-  <!-- ══════════ SOCIAL LINKS ══════════ -->
+  <!-- ══ SOCIAL ══ -->
   <div class="panel" id="panel-social">
     <div class="card">
-      <div class="card-head">
-        <span class="card-title">Social Media Links</span>
-      </div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1.25rem">
-        These update the footer icons across the site. Leave blank to hide. Place icon images in <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:4px">assets/icons/</code>
-      </p>
+      <div class="card-head"><span class="card-title">Social Media Links</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.1rem">Leave blank to hide. Icon files go in <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px">assets/icons/</code></p>
       <div id="socialFields"></div>
       <button class="btn-save" onclick="saveSocial()" style="margin-top:0.5rem">Save Links ✦</button>
     </div>
-    <div class="info-banner">
-      <strong>✦ Icon files to upload:</strong><br>
-      Put these in your <code>assets/icons/</code> folder: instagram.svg, pinterest.svg, x.svg, tiktok.svg, youtube.svg, patreon.svg
-    </div>
+    <div class="info-box"><strong>✦ Icon files needed:</strong><br>instagram.svg · pinterest.svg · x.svg · tiktok.svg · youtube.svg · patreon.svg</div>
   </div>
 
-  <!-- ══════════ SETTINGS ══════════ -->
+  <!-- ══ SETTINGS ══ -->
   <div class="panel" id="panel-settings">
-    <div class="card" style="border-color:rgba(255,213,79,0.3)">
-      <div class="card-head">
-        <span class="card-title">🔑 Supabase Connection</span>
-      </div>
-      <div class="info-banner" style="margin-bottom:1rem">
-        <strong>How to get your keys:</strong><br>
-        1. Go to <strong>supabase.com</strong> → Create free account → New project<br>
-        2. In your project: <strong>Settings → API</strong><br>
-        3. Copy "Project URL" and "anon public" key → paste below<br>
-        4. Then run the SQL from the Setup tab to create your tables
+    <div class="card" style="border-color:rgba(255,213,79,0.28)">
+      <div class="card-head"><span class="card-title">🔑 Supabase Connection</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem">Your keys are saved in this browser. To use on another device, paste them again.</p>
+      <div class="f-group">
+        <label class="f-label">Project URL</label>
+        <input type="text" class="f-input" id="sbUrl" placeholder="https://xxx.supabase.co">
       </div>
       <div class="f-group">
-        <label class="f-label">Supabase Project URL</label>
-        <input type="text" class="f-input" id="sbUrl" placeholder="https://xxxxxxxxxxxx.supabase.co">
+        <label class="f-label">Anon Key</label>
+        <input type="text" class="f-input" id="sbKey" placeholder="eyJhbGci…">
       </div>
-      <div class="f-group">
-        <label class="f-label">Supabase Anon Key</label>
-        <input type="text" class="f-input" id="sbKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…">
-      </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
-        <button class="btn-save" onclick="saveSupabaseKeys()">Save & Connect ✦</button>
-        <button class="btn-secondary" onclick="testConnection()">Test Connection</button>
+      <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
+        <button class="btn-save" onclick="updateKeys()">Update Keys ✦</button>
+        <button class="btn-2" onclick="testConn()">Test Connection</button>
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><span class="card-title">📋 Database Setup SQL</span></div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">
-        Copy this SQL, go to <strong>Supabase → SQL Editor → New query</strong>, paste and run it once.
-      </p>
-      <pre id="setupSql" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:0.75rem;padding:1rem;font-size:0.72rem;color:var(--cream);overflow-x:auto;line-height:1.6;white-space:pre-wrap"></pre>
-      <button class="btn-secondary" onclick="copySql()" style="margin-top:0.75rem">Copy SQL</button>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.9rem">Run this once in <strong>Supabase → SQL Editor</strong>. Skip if already done.</p>
+      <pre id="sqlBox" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem;font-size:0.68rem;color:var(--cream);overflow-x:auto;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto"></pre>
+      <button class="btn-2" onclick="copySql()" style="margin-top:0.65rem">Copy SQL</button>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">🔐 Change Admin Password</span></div>
+      <div class="f-group">
+        <label class="f-label">New Password</label>
+        <input type="password" class="f-input" id="newPwd" placeholder="Enter new password">
+      </div>
+      <button class="btn-save" onclick="changePwd()">Update Password ✦</button>
     </div>
   </div>
 
 </main>
+</div><!-- end #appRoot -->
 
-<!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
 <script>
 /* ══════════════════════════════════════════════════════
-   CONFIG & SUPABASE INIT
+   CONSTANTS
 ══════════════════════════════════════════════════════ */
-const STORAGE_URL_KEY = 'wnf_sb_url';
-const STORAGE_KEY_KEY = 'wnf_sb_key';
-
-let sb = null; // supabase client
-
-function initSupabase() {
-  const url = localStorage.getItem(STORAGE_URL_KEY);
-  const key = localStorage.getItem(STORAGE_KEY_KEY);
-  if (!url || !key) {
-    setStatus(false, 'Not connected');
-    document.getElementById('setupBanner').classList.add('show');
-    return false;
-  }
-  try {
-    sb = window.supabase.createClient(url, key);
-    setStatus(true, 'Connected');
-    document.getElementById('setupBanner').classList.remove('show');
-    // Pre-fill settings fields
-    document.getElementById('sbUrl').value = url;
-    document.getElementById('sbKey').value = key;
-    return true;
-  } catch(e) {
-    setStatus(false, 'Error');
-    return false;
-  }
-}
-
-function setStatus(ok, text) {
-  document.getElementById('statusDot').className = 'status-dot' + (ok ? ' connected' : '');
-  document.getElementById('statusText').textContent = text;
-}
-
-async function saveSupabaseKeys() {
-  const url = document.getElementById('sbUrl').value.trim();
-  const key = document.getElementById('sbKey').value.trim();
-  if (!url || !key) { toast('Fill in both fields!', true); return; }
-  localStorage.setItem(STORAGE_URL_KEY, url);
-  localStorage.setItem(STORAGE_KEY_KEY, key);
-  if (initSupabase()) {
-    toast('Connected to Supabase! ✦');
-    loadAllData();
-  }
-}
-
-async function testConnection() {
-  if (!sb) { toast('Configure keys first!', true); return; }
-  const { error } = await sb.from('stories').select('id').limit(1);
-  if (error) toast('Error: ' + error.message, true);
-  else toast('Connection working! ✦');
-}
-
-/* ══════════════════════════════════════════════════════
-   SETUP SQL
-══════════════════════════════════════════════════════ */
-const SQL = `-- Run this ONCE in Supabase SQL Editor
+const K_URL  = 'wnf_sb_url';
+const K_KEY  = 'wnf_sb_key';
+const SQL_DDL = `-- Run ONCE in Supabase → SQL Editor → New query
 
 create table if not exists stories (
   id uuid default gen_random_uuid() primary key,
   title text not null,
-  book_no text,
-  book_title text,
+  book_no text, book_title text,
   tag text default 'Story',
-  excerpt text,
-  cover_url text,
-  body text,
+  excerpt text, cover_url text, body text,
   created_at timestamptz default now()
 );
 
 create table if not exists shop_items (
   id uuid default gen_random_uuid() primary key,
   name text not null,
-  price text,
-  url text,
-  description text,
-  img_url text,
+  price text, url text, description text, img_url text,
   sort_order int default 0,
   created_at timestamptz default now()
 );
@@ -828,54 +626,196 @@ create table if not exists shop_items (
 create table if not exists friends (
   id uuid default gen_random_uuid() primary key,
   name text not null,
-  species text,
-  isle text,
+  species text, isle text,
   color text default '#fe5d9f',
-  short_desc text,
-  full_desc text,
-  pfp_url text,
+  short_desc text, full_desc text, pfp_url text,
   sort_order int default 0,
   created_at timestamptz default now()
 );
 
 create table if not exists faq_items (
   id uuid default gen_random_uuid() primary key,
-  question text not null,
-  answer text not null,
+  question text not null, answer text not null,
   sort_order int default 0,
   created_at timestamptz default now()
 );
 
 create table if not exists site_settings (
-  key text primary key,
-  value text
+  key text primary key, value text
 );
 
--- Allow public read for all tables
+-- Enable RLS
 alter table stories enable row level security;
 alter table shop_items enable row level security;
 alter table friends enable row level security;
 alter table faq_items enable row level security;
 alter table site_settings enable row level security;
 
-create policy "Public read stories" on stories for select using (true);
-create policy "Public read shop" on shop_items for select using (true);
-create policy "Public read friends" on friends for select using (true);
-create policy "Public read faq" on faq_items for select using (true);
-create policy "Public read settings" on site_settings for select using (true);
+-- Public can read everything
+create policy if not exists "pub_read_stories" on stories for select using (true);
+create policy if not exists "pub_read_shop" on shop_items for select using (true);
+create policy if not exists "pub_read_friends" on friends for select using (true);
+create policy if not exists "pub_read_faq" on faq_items for select using (true);
+create policy if not exists "pub_read_settings" on site_settings for select using (true);
 
--- Full access (your admin uses anon key — keep key secret)
-create policy "All access stories" on stories for all using (true);
-create policy "All access shop" on shop_items for all using (true);
-create policy "All access friends" on friends for all using (true);
-create policy "All access faq" on faq_items for all using (true);
-create policy "All access settings" on site_settings for all using (true);`;
+-- Authenticated users can do everything
+create policy if not exists "auth_all_stories" on stories for all using (auth.role() = 'authenticated');
+create policy if not exists "auth_all_shop" on shop_items for all using (auth.role() = 'authenticated');
+create policy if not exists "auth_all_friends" on friends for all using (auth.role() = 'authenticated');
+create policy if not exists "auth_all_faq" on faq_items for all using (auth.role() = 'authenticated');
+create policy if not exists "auth_all_settings" on site_settings for all using (auth.role() = 'authenticated');`;
 
-document.getElementById('setupSql').textContent = SQL;
+document.getElementById('sqlBox').textContent = SQL_DDL;
+function copySql() { navigator.clipboard.writeText(SQL_DDL); toast('SQL copied! ✦'); }
 
-function copySql() {
-  navigator.clipboard.writeText(SQL);
-  toast('SQL copied! Paste it in Supabase ✦');
+/* ══════════════════════════════════════════════════════
+   SUPABASE CLIENT
+══════════════════════════════════════════════════════ */
+let sb = null;
+
+function buildClient(url, key) {
+  sb = window.supabase.createClient(url, key);
+}
+
+/* ══════════════════════════════════════════════════════
+   LOGIN / AUTH
+══════════════════════════════════════════════════════ */
+function showSetup() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('loginSetup').style.display = 'block';
+}
+
+async function doFirstTimeSetup() {
+  const url   = document.getElementById('setupUrl').value.trim();
+  const key   = document.getElementById('setupKey').value.trim();
+  const email = document.getElementById('setupEmail').value.trim();
+  const pwd   = document.getElementById('setupPwd').value.trim();
+  const errEl = document.getElementById('setupError');
+
+  if (!url || !key || !email || !pwd) { errEl.textContent='Fill in all fields!'; errEl.classList.add('show'); return; }
+  if (pwd.length < 8) { errEl.textContent='Password must be 8+ characters.'; errEl.classList.add('show'); return; }
+
+  // Save keys
+  localStorage.setItem(K_URL, url);
+  localStorage.setItem(K_KEY, key);
+  buildClient(url, key);
+
+  // Create Supabase Auth user
+  const { error } = await sb.auth.signUp({ email, password: pwd });
+  if (error) { errEl.textContent = error.message; errEl.classList.add('show'); return; }
+
+  errEl.textContent = '✓ Account created! Check your email to confirm, then log in.';
+  errEl.style.color = 'var(--green)';
+  errEl.classList.add('show');
+  setTimeout(() => {
+    document.getElementById('loginSetup').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('loginEmail').value = email;
+  }, 2500);
+}
+
+async function doLogin() {
+  const email  = document.getElementById('loginEmail').value.trim();
+  const pwd    = document.getElementById('loginPwd').value;
+  const btn    = document.getElementById('loginBtn');
+  const errEl  = document.getElementById('loginError');
+  errEl.classList.remove('show');
+
+  const url = localStorage.getItem(K_URL);
+  const key = localStorage.getItem(K_KEY);
+
+  if (!url || !key) {
+    errEl.textContent = 'Supabase not configured yet. Click "Set up your account" first.';
+    errEl.classList.add('show'); return;
+  }
+
+  buildClient(url, key);
+  btn.disabled = true; btn.textContent = 'Entering…';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+  btn.disabled = false; btn.textContent = 'Enter the Whimsiverse ✦';
+
+  if (error) {
+    errEl.textContent = error.message === 'Invalid login credentials'
+      ? 'Wrong email or password.'
+      : error.message;
+    errEl.classList.add('show'); return;
+  }
+
+  enterApp();
+}
+
+function enterApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appRoot').style.display = 'flex';
+  // Pre-fill settings
+  const url = localStorage.getItem(K_URL) || '';
+  const key = localStorage.getItem(K_KEY) || '';
+  document.getElementById('sbUrl').value = url;
+  document.getElementById('sbKey').value = key;
+  // Set greeting
+  setGreeting();
+  // Load all data
+  loadAllData();
+}
+
+async function doLogout() {
+  await sb?.auth.signOut();
+  document.getElementById('appRoot').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPwd').value = '';
+}
+
+/* Check if already logged in on page load */
+window.addEventListener('load', async () => {
+  const url = localStorage.getItem(K_URL);
+  const key = localStorage.getItem(K_KEY);
+  if (url && key) {
+    buildClient(url, key);
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) { enterApp(); return; }
+  }
+  // Show login
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+async function updateKeys() {
+  const url = document.getElementById('sbUrl').value.trim();
+  const key = document.getElementById('sbKey').value.trim();
+  if (!url || !key) { toast('Fill in both fields!', true); return; }
+  localStorage.setItem(K_URL, url);
+  localStorage.setItem(K_KEY, key);
+  buildClient(url, key);
+  toast('Keys updated! ✦');
+}
+
+async function testConn() {
+  if (!sb) { toast('No client!', true); return; }
+  const { error } = await sb.from('stories').select('id').limit(1);
+  if (error) toast(error.message, true);
+  else toast('Connection working! ✦');
+}
+
+async function changePwd() {
+  const pwd = document.getElementById('newPwd').value;
+  if (!pwd || pwd.length < 8) { toast('Password must be 8+ chars!', true); return; }
+  const { error } = await sb.auth.updateUser({ password: pwd });
+  if (error) { toast(error.message, true); return; }
+  toast('Password updated! ✦');
+  document.getElementById('newPwd').value = '';
+}
+
+/* ══════════════════════════════════════════════════════
+   GREETING (IST)
+══════════════════════════════════════════════════════ */
+function setGreeting() {
+  const now = new Date();
+  // IST = UTC+5:30
+  const istMs = now.getTime() + (now.getTimezoneOffset() * 60000) + (5.5 * 3600000);
+  const ist = new Date(istMs);
+  const h = ist.getHours();
+  let g = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : h < 21 ? 'Good Evening' : 'Good Night';
+  document.getElementById('greeting').textContent = g + ', Sachi ✦';
 }
 
 /* ══════════════════════════════════════════════════════
@@ -884,143 +824,125 @@ function copySql() {
 function toast(msg, isErr=false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast' + (isErr ? ' error' : '');
+  t.className = 'toast' + (isErr ? ' err' : '');
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-function needsDb() {
-  if (!sb) { toast('Connect Supabase first in Settings ⚙️', true); return true; }
-  return false;
-}
-
-/* Upload a base64 image to Supabase Storage and return public URL */
-async function uploadImage(b64, bucket, prefix) {
-  if (!b64 || !sb) return null;
-  try {
-    const res = await fetch(b64);
-    const blob = await res.blob();
-    const ext  = blob.type.split('/')[1] || 'jpg';
-    const path = `${prefix}-${Date.now()}.${ext}`;
-    const { error } = await sb.storage.from(bucket).upload(path, blob, { upsert: true });
-    if (error) { console.error(error); return null; }
-    const { data } = sb.storage.from(bucket).getPublicUrl(path);
-    return data.publicUrl;
-  } catch(e) { console.error(e); return null; }
-}
-
-/* Read file input → base64 */
 function readFile(input) {
   return new Promise(res => {
     const file = input.files[0];
     if (!file) { res(null); return; }
-    const reader = new FileReader();
-    reader.onload = e => res(e.target.result);
-    reader.readAsDataURL(file);
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.readAsDataURL(file);
   });
 }
 
-function previewFile(inputEl, previewEl) {
-  inputEl.addEventListener('change', async () => {
-    const b64 = await readFile(inputEl);
+function setupPreview(fileId, thumbId) {
+  document.getElementById(fileId).addEventListener('change', async function() {
+    const b64 = await readFile(this);
     if (!b64) return;
-    previewEl.src = b64;
-    previewEl.classList.add('show');
-    previewEl.parentElement.querySelector('.img-zone-icon').style.display = 'none';
-    previewEl.parentElement.querySelector('.img-zone-label').style.display = 'none';
+    const th = document.getElementById(thumbId);
+    th.src = b64; th.classList.add('show');
+    const zone = this.closest('.img-zone');
+    zone.querySelector('.img-zone-ico').style.display = 'none';
+    zone.querySelector('.img-zone-lbl').style.display = 'none';
   });
 }
 
-/* ── SIDEBAR NAV ── */
+async function uploadImg(b64, bucket, prefix) {
+  if (!b64 || !sb) return null;
+  if (b64.startsWith('http')) return b64; // already a URL
+  try {
+    const res  = await fetch(b64);
+    const blob = await res.blob();
+    const ext  = blob.type.split('/')[1] || 'jpg';
+    const path = `${prefix}-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from(bucket).upload(path, blob, { upsert:true });
+    if (error) return b64; // fallback: store as base64
+    const { data } = sb.storage.from(bucket).getPublicUrl(path);
+    return data.publicUrl;
+  } catch { return b64; }
+}
+
+/* Sub-tabs */
+function activateSub(id) {
+  const panel = document.getElementById(id).closest('.panel');
+  panel.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  panel.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  panel.querySelectorAll('.sub-tab').forEach(t => {
+    if (t.dataset.st === id) t.classList.add('active');
+  });
+}
+
+document.querySelectorAll('.sub-tab').forEach(btn => {
+  btn.addEventListener('click', () => activateSub(btn.dataset.st));
+});
+
+/* Sidebar nav */
 document.querySelectorAll('.sidebar-nav a').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
     document.querySelectorAll('.sidebar-nav a').forEach(x => x.classList.remove('active'));
     a.classList.add('active');
-    const pid = 'panel-' + a.dataset.panel;
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(pid).classList.add('active');
-    if (a.dataset.panel === 'faq')    loadFaq();
-    if (a.dataset.panel === 'social') loadSocial();
+    document.getElementById('panel-' + a.dataset.p).classList.add('active');
+    if (a.dataset.p === 'faq')    loadFaq();
+    if (a.dataset.p === 'social') loadSocial();
+    if (a.dataset.p === 'friends') loadFriends();
   });
-});
-
-/* ── SUB-TABS ── */
-function switchSubtab(id) {
-  const panel = document.getElementById(id).closest('.panel');
-  panel.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
-  panel.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  // find matching tab button by data-subtab
-  panel.querySelectorAll('.sub-tab').forEach(t => {
-    if (t.dataset.subtab === id) t.classList.add('active');
-  });
-}
-document.querySelectorAll('.sub-tab').forEach(btn => {
-  btn.addEventListener('click', () => switchSubtab(btn.dataset.subtab));
 });
 
 /* ══════════════════════════════════════════════════════
    STORIES
 ══════════════════════════════════════════════════════ */
-let storyQuill = null;
-let _storyCoverB64 = null;
-let _storyEditId = null;
+let quill = null;
 
 function initQuill() {
-  if (storyQuill) return;
-  storyQuill = new Quill('#storyEditor', {
-    theme: 'snow',
-    modules: {
-      toolbar: [
-        ['bold','italic','underline'],
-        [{ header: [2,3,false] }],
-        ['image'],
-        [{ align: [] }],
-        ['clean']
-      ]
+  if (quill) return;
+  quill = new Quill('#storyEditor', {
+    theme:'snow',
+    modules:{
+      toolbar:[['bold','italic','underline'],[{header:[2,3,false]}],['image'],[{align:[]}],['clean']]
     },
-    placeholder: 'Start writing the story…'
+    placeholder:'Start writing the story…'
   });
-  // Handle image insert via base64
-  storyQuill.getModule('toolbar').addHandler('image', () => {
-    const input = document.createElement('input');
-    input.type = 'file'; input.accept = 'image/*';
-    input.onchange = async () => {
-      const b64 = await readFile(input);
+  quill.getModule('toolbar').addHandler('image', () => {
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='image/*';
+    inp.onchange = async () => {
+      const b64 = await readFile(inp);
       if (!b64) return;
-      const range = storyQuill.getSelection(true);
-      storyQuill.insertEmbed(range.index, 'image', b64);
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'image', b64);
     };
-    input.click();
+    inp.click();
   });
 }
 
+function goWriteStory()  { initQuill(); clearStoryForm(); activateSub('stories-write'); }
+function goStoryList()   { activateSub('stories-list'); clearStoryForm(); loadStories(); }
+
 async function loadStories() {
   const grid = document.getElementById('storyGrid');
-  if (!sb) { grid.innerHTML = '<div class="empty-state"><span class="empty-icon">📖</span>Connect Supabase in Settings first.</div>'; return; }
-  grid.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
-  const { data, error } = await sb.from('stories').select('*').order('created_at', { ascending:false });
-  if (error) { grid.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
-  if (!data?.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">📖</span>No stories yet. Write your first one! ✨</div>';
-    return;
-  }
+  if (!sb) { grid.innerHTML='<div class="empty-state">Not connected.</div>'; return; }
+  grid.innerHTML = '<div class="loading"><span class="spin"></span>Loading…</div>';
+  const { data, error } = await sb.from('stories').select('*').order('created_at',{ascending:false});
+  if (error) { grid.innerHTML=`<div class="empty-state">Error: ${error.message}</div>`; return; }
+  if (!data?.length) { grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><span class="empty-ico">📖</span>No stories yet. Write your first one! ✨</div>'; return; }
   grid.innerHTML = data.map(s => `
-    <div class="story-card">
-      <div class="story-card-cover">
-        ${s.cover_url ? `<img src="${s.cover_url}" alt="">` : '📖'}
-      </div>
-      <div class="story-card-body">
-        <div class="story-card-meta">
-          <span>${s.tag || 'Story'}</span>
-          <span>${s.book_no ? 'No.'+s.book_no : ''}</span>
-        </div>
-        <p class="story-card-title">${s.title}</p>
-        <p class="story-card-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
-        <div class="story-card-actions">
-          <button class="btn-secondary" onclick="editStory(${JSON.stringify(s).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.75rem;font-size:0.75rem">✏️ Edit</button>
-          <button class="btn-danger" onclick="deleteStoryById('${s.id}')">Delete</button>
+    <div class="scard">
+      <div class="scard-cover">${s.cover_url?`<img src="${s.cover_url}" alt="">`:'📖'}</div>
+      <div class="scard-body">
+        <div class="scard-meta"><span>${s.tag||'Story'}</span><span>${s.book_no?'No.'+s.book_no:''}</span></div>
+        <p class="scard-title">${s.title}</p>
+        <p class="scard-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
+        <div class="scard-actions">
+          <button class="btn-2" style="padding:0.28rem 0.7rem;font-size:0.73rem" onclick='editStory(${JSON.stringify(s).replace(/'/g,"\\'")} )'>✏️ Edit</button>
+          <button class="btn-del" onclick="deleteStoryById('${s.id}')">Delete</button>
         </div>
       </div>
     </div>`).join('');
@@ -1028,316 +950,285 @@ async function loadStories() {
 
 function editStory(s) {
   initQuill();
-  _storyEditId = s.id;
   document.getElementById('storyEditId').value = s.id;
-  document.getElementById('storyTitle').value = s.title || '';
-  document.getElementById('storyBookNo').value = s.book_no || '';
-  document.getElementById('storyBookTitle').value = s.book_title || '';
-  document.getElementById('storyTag').value = s.tag || '';
-  document.getElementById('storyExcerpt').value = s.excerpt || '';
-  storyQuill.root.innerHTML = s.body || '';
+  document.getElementById('storyTitle').value = s.title||'';
+  document.getElementById('storyBookNo').value = s.book_no||'';
+  document.getElementById('storyBookTitle').value = s.book_title||'';
+  document.getElementById('storyTag').value = s.tag||'';
+  document.getElementById('storyExcerpt').value = s.excerpt||'';
+  quill.root.innerHTML = s.body||'';
   if (s.cover_url) {
-    const prev = document.getElementById('storyCoverPreview');
-    prev.src = s.cover_url; prev.classList.add('show');
+    const th = document.getElementById('storyCoverThumb');
+    th.src = s.cover_url; th.classList.add('show');
   }
-  document.getElementById('storyDeleteBtn').style.display = 'inline-block';
-  document.getElementById('storyFormTitle').textContent = 'Editing: ' + s.title;
-  switchSubtab('stories-write');
+  document.getElementById('storyDelBtn').style.display = 'inline-block';
+  document.getElementById('storyFormTitle').textContent = 'Editing: '+s.title;
+  activateSub('stories-write');
 }
 
 async function saveStory() {
-  if (needsDb()) return;
+  if (!sb) { toast('Not connected!', true); return; }
   initQuill();
   const title = document.getElementById('storyTitle').value.trim();
   if (!title) { toast('Please add a title!', true); return; }
   const btn = document.getElementById('storySaveBtn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled=true; btn.textContent='Saving…';
 
-  let coverUrl = document.getElementById('storyCoverPreview').src || null;
-  // If a new file was picked, upload it
-  const fileInput = document.getElementById('storyCoverFile');
-  if (fileInput.files[0]) {
-    const b64 = await readFile(fileInput);
-    const uploaded = await uploadImage(b64, 'story-covers', 'cover');
-    if (uploaded) coverUrl = uploaded;
-    else {
-      // store base64 inline if storage bucket not set up
-      coverUrl = b64;
-    }
+  let coverUrl = document.getElementById('storyCoverThumb').src || null;
+  if (coverUrl && !coverUrl.startsWith('http') && document.getElementById('storyCoverFile').files[0]) {
+    const b64 = await readFile(document.getElementById('storyCoverFile'));
+    coverUrl = await uploadImg(b64, 'story-covers', 'cover') || b64;
+  } else if (document.getElementById('storyCoverFile').files[0]) {
+    const b64 = await readFile(document.getElementById('storyCoverFile'));
+    coverUrl = await uploadImg(b64, 'story-covers', 'cover') || b64;
   }
-
-  // Upload any inline story images that are still base64
-  let body = storyQuill.root.innerHTML;
 
   const row = {
     title,
-    book_no:    document.getElementById('storyBookNo').value.trim() || null,
-    book_title: document.getElementById('storyBookTitle').value.trim() || null,
-    tag:        document.getElementById('storyTag').value.trim() || 'Story',
-    excerpt:    document.getElementById('storyExcerpt').value.trim() || null,
-    cover_url:  coverUrl || null,
-    body
+    book_no:    document.getElementById('storyBookNo').value.trim()||null,
+    book_title: document.getElementById('storyBookTitle').value.trim()||null,
+    tag:        document.getElementById('storyTag').value.trim()||'Story',
+    excerpt:    document.getElementById('storyExcerpt').value.trim()||null,
+    cover_url:  coverUrl||null,
+    body:       quill.root.innerHTML
   };
 
   const editId = document.getElementById('storyEditId').value;
-  let error;
-  if (editId) {
-    ({ error } = await sb.from('stories').update(row).eq('id', editId));
-  } else {
-    ({ error } = await sb.from('stories').insert(row));
-  }
+  const { error } = editId
+    ? await sb.from('stories').update(row).eq('id', editId)
+    : await sb.from('stories').insert(row);
 
-  btn.disabled = false; btn.textContent = 'Save Story ✦';
+  btn.disabled=false; btn.textContent='Save Story ✦';
   if (error) { toast(error.message, true); return; }
   toast('Story saved! ✦');
-  clearStoryForm();
-  switchSubtab('stories-list');
-  loadStories();
+  goStoryList();
 }
 
 async function deleteStoryById(id) {
   if (!confirm('Delete this story?')) return;
-  const { error } = await sb.from('stories').delete().eq('id', id);
-  if (error) { toast(error.message, true); return; }
-  toast('Story deleted.'); loadStories();
+  await sb.from('stories').delete().eq('id', id);
+  toast('Deleted.'); loadStories();
 }
 function deleteStory() {
   const id = document.getElementById('storyEditId').value;
   if (id) deleteStoryById(id);
-  clearStoryForm(); switchSubtab('stories-list');
+  goStoryList();
 }
-
 function clearStoryForm() {
-  _storyEditId = null;
-  document.getElementById('storyEditId').value = '';
-  document.getElementById('storyTitle').value = '';
-  document.getElementById('storyBookNo').value = '';
-  document.getElementById('storyBookTitle').value = '';
-  document.getElementById('storyTag').value = '';
-  document.getElementById('storyExcerpt').value = '';
-  if (storyQuill) storyQuill.root.innerHTML = '';
-  const prev = document.getElementById('storyCoverPreview');
-  prev.src = ''; prev.classList.remove('show');
-  document.getElementById('storyCoverFile').value = '';
-  document.getElementById('storyDeleteBtn').style.display = 'none';
-  document.getElementById('storyFormTitle').textContent = 'Time to write the reality ✨';
+  document.getElementById('storyEditId').value='';
+  ['storyTitle','storyBookNo','storyBookTitle','storyTag','storyExcerpt'].forEach(id=>document.getElementById(id).value='');
+  if (quill) quill.root.innerHTML='';
+  const th = document.getElementById('storyCoverThumb');
+  th.src=''; th.classList.remove('show');
+  document.getElementById('storyCoverFile').value='';
+  document.getElementById('storyDelBtn').style.display='none';
+  document.getElementById('storyFormTitle').textContent='Time to write the reality ✨';
 }
 
 /* ══════════════════════════════════════════════════════
    SHOP
 ══════════════════════════════════════════════════════ */
+function goAddShop()  { clearShopForm(); activateSub('shop-add'); }
+function goShopList() { activateSub('shop-list'); clearShopForm(); loadShop(); }
+
 async function loadShop() {
   const list = document.getElementById('shopList');
-  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase in Settings first.</div>'; return; }
-  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
+  if (!sb) { list.innerHTML='<div class="empty-state">Not connected.</div>'; return; }
+  list.innerHTML='<div class="loading"><span class="spin"></span>Loading…</div>';
   const { data, error } = await sb.from('shop_items').select('*').order('sort_order');
-  const count = data?.length || 0;
-  document.getElementById('shopCountLabel').innerHTML = `Available Items: <strong style="color:var(--yellow)">${count} / 6</strong>`;
-  if (error) { list.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
-  if (!count) { list.innerHTML = '<div class="empty-state"><span class="empty-icon">🛍️</span>No items yet. Add your first one!</div>'; return; }
-  list.innerHTML = data.map(item => `
+  const n = data?.length||0;
+  document.getElementById('shopCount').innerHTML = `Available Items: <strong style="color:var(--yellow)">${n} / 6</strong>`;
+  if (error||!n) { list.innerHTML='<div class="empty-state"><span class="empty-ico">🛍️</span>No items yet.</div>'; return; }
+  list.innerHTML = data.map(item=>`
     <div class="list-row">
-      <div class="list-row-thumb">${item.img_url ? `<img src="${item.img_url}" alt="">` : '🌟'}</div>
-      <div class="list-row-info">
-        <p class="list-row-name">${item.name}</p>
-        <p class="list-row-meta">${item.description || ''}</p>
+      <div class="list-thumb">${item.img_url?`<img src="${item.img_url}" alt="">`:'🌟'}</div>
+      <div class="list-info">
+        <p class="list-name">${item.name}</p>
+        <p class="list-meta">${item.description||''}</p>
       </div>
-      <span class="list-row-price">${item.price ? '$'+item.price : ''}</span>
-      <div class="list-row-actions">
-        <button class="btn-secondary" onclick="editShop(${JSON.stringify(item).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
-        <button class="btn-danger" onclick="deleteShopById('${item.id}')">✕</button>
+      <span class="list-price">${item.price?'$'+item.price:''}</span>
+      <div class="list-actions">
+        <button class="btn-2" style="padding:0.28rem 0.6rem;font-size:0.73rem" onclick='editShop(${JSON.stringify(item).replace(/'/g,"\\'")} )'>✏️</button>
+        <button class="btn-del" onclick="deleteShopById('${item.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
 function editShop(item) {
   document.getElementById('shopEditId').value = item.id;
-  document.getElementById('shopName').value = item.name || '';
-  document.getElementById('shopPrice').value = item.price || '';
-  document.getElementById('shopUrl').value = item.url || '';
-  document.getElementById('shopDesc').value = item.description || '';
+  document.getElementById('shopName').value = item.name||'';
+  document.getElementById('shopPrice').value = item.price||'';
+  document.getElementById('shopUrl').value = item.url||'';
+  document.getElementById('shopDesc').value = item.description||'';
   if (item.img_url) {
-    const prev = document.getElementById('shopImgPreview');
-    prev.src = item.img_url; prev.classList.add('show');
+    const th = document.getElementById('shopImgThumb');
+    th.src=item.img_url; th.classList.add('show');
   }
-  document.getElementById('shopDeleteBtn').style.display = 'inline-block';
-  document.getElementById('shopFormTitle').textContent = 'Editing: ' + item.name;
-  switchSubtab('shop-add');
+  document.getElementById('shopDelBtn').style.display='inline-block';
+  document.getElementById('shopFormTitle').textContent='Editing: '+item.name;
+  activateSub('shop-add');
 }
 
-async function saveShopItem() {
-  if (needsDb()) return;
+async function saveShop() {
+  if (!sb) { toast('Not connected!', true); return; }
   const name = document.getElementById('shopName').value.trim();
-  if (!name) { toast('Add an item name!', true); return; }
-  const { data: existing } = await sb.from('shop_items').select('id');
+  if (!name) { toast('Add a name!', true); return; }
   const editId = document.getElementById('shopEditId').value;
-  if (!editId && (existing?.length || 0) >= 6) { toast('Max 6 items. Delete one first.', true); return; }
-
+  if (!editId) {
+    const { data: ex } = await sb.from('shop_items').select('id');
+    if ((ex?.length||0) >= 6) { toast('Max 6 items. Delete one first.', true); return; }
+  }
   const btn = document.getElementById('shopSaveBtn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled=true; btn.textContent='Saving…';
 
-  let imgUrl = document.getElementById('shopImgPreview').src || null;
-  const fileInput = document.getElementById('shopImgFile');
-  if (fileInput.files[0]) {
-    const b64 = await readFile(fileInput);
-    const up = await uploadImage(b64, 'shop-images', 'item');
-    imgUrl = up || b64;
+  let imgUrl = document.getElementById('shopImgThumb').src||null;
+  const fi = document.getElementById('shopImgFile');
+  if (fi.files[0]) {
+    const b64 = await readFile(fi);
+    imgUrl = await uploadImg(b64, 'shop-images', 'item') || b64;
   }
 
   const row = {
     name,
-    price:       document.getElementById('shopPrice').value.trim() || null,
-    url:         document.getElementById('shopUrl').value.trim() || null,
-    description: document.getElementById('shopDesc').value.trim() || null,
-    img_url:     imgUrl || null,
-    sort_order:  editId ? undefined : (existing?.length || 0)
+    price:       document.getElementById('shopPrice').value.trim()||null,
+    url:         document.getElementById('shopUrl').value.trim()||null,
+    description: document.getElementById('shopDesc').value.trim()||null,
+    img_url:     imgUrl||null
   };
+  const { error } = editId
+    ? await sb.from('shop_items').update(row).eq('id', editId)
+    : await sb.from('shop_items').insert({...row, sort_order:Date.now()});
 
-  let error;
-  if (editId) ({ error } = await sb.from('shop_items').update(row).eq('id', editId));
-  else        ({ error } = await sb.from('shop_items').insert(row));
-
-  btn.disabled = false; btn.textContent = 'Save Item ✦';
+  btn.disabled=false; btn.textContent='Save Item ✦';
   if (error) { toast(error.message, true); return; }
   toast('Shop item saved! ✦');
-  clearShopForm(); switchSubtab('shop-list'); loadShop();
+  goShopList();
 }
 
 async function deleteShopById(id) {
   if (!confirm('Remove this item?')) return;
-  const { error } = await sb.from('shop_items').delete().eq('id', id);
-  if (error) { toast(error.message, true); return; }
-  toast('Item removed.'); loadShop();
+  await sb.from('shop_items').delete().eq('id', id);
+  toast('Removed.'); loadShop();
 }
-function deleteShopItem() {
+function deleteShop() {
   const id = document.getElementById('shopEditId').value;
   if (id) deleteShopById(id);
-  clearShopForm(); switchSubtab('shop-list');
+  goShopList();
 }
-
 function clearShopForm() {
-  document.getElementById('shopEditId').value = '';
-  document.getElementById('shopName').value = '';
-  document.getElementById('shopPrice').value = '';
-  document.getElementById('shopUrl').value = '';
-  document.getElementById('shopDesc').value = '';
-  const prev = document.getElementById('shopImgPreview');
-  prev.src = ''; prev.classList.remove('show');
-  document.getElementById('shopImgFile').value = '';
-  document.getElementById('shopDeleteBtn').style.display = 'none';
-  document.getElementById('shopFormTitle').textContent = "Let's add some Whimsies";
+  document.getElementById('shopEditId').value='';
+  ['shopName','shopPrice','shopUrl','shopDesc'].forEach(id=>document.getElementById(id).value='');
+  const th = document.getElementById('shopImgThumb');
+  th.src=''; th.classList.remove('show');
+  document.getElementById('shopImgFile').value='';
+  document.getElementById('shopDelBtn').style.display='none';
+  document.getElementById('shopFormTitle').textContent="Let's add some Whimsies";
 }
 
 /* ══════════════════════════════════════════════════════
    FRIENDS
 ══════════════════════════════════════════════════════ */
+function goAddFriend()  { clearFriendForm(); activateSub('friends-add'); }
+function goFriendList() { activateSub('friends-list'); clearFriendForm(); loadFriends(); }
+
 async function loadFriends() {
   const list = document.getElementById('friendsList');
-  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase in Settings first.</div>'; return; }
-  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
+  if (!sb) { list.innerHTML='<div class="empty-state">Not connected.</div>'; return; }
+  list.innerHTML='<div class="loading"><span class="spin"></span>Loading…</div>';
   const { data, error } = await sb.from('friends').select('*').order('sort_order');
-  if (error) { list.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
-  if (!data?.length) { list.innerHTML = '<div class="empty-state"><span class="empty-icon">🌸</span>No friends yet. Add the crew!</div>'; return; }
-  list.innerHTML = data.map(f => `
+  if (error||!data?.length) { list.innerHTML='<div class="empty-state"><span class="empty-ico">🌸</span>No friends yet!</div>'; return; }
+  list.innerHTML = data.map(f=>`
     <div class="list-row">
-      <div class="list-row-pfp">${f.pfp_url ? `<img src="${f.pfp_url}" alt="">` : '🌸'}</div>
-      <div class="list-row-info">
-        <p class="list-row-name" style="color:${f.color||'#fe5d9f'}">${f.name}</p>
-        <p class="list-row-meta">${f.species || ''} · ${f.isle || ''}</p>
+      <div class="list-pfp">${f.pfp_url?`<img src="${f.pfp_url}" alt="">`:'🌸'}</div>
+      <div class="list-info">
+        <p class="list-name" style="color:${f.color||'#fe5d9f'}">${f.name}</p>
+        <p class="list-meta">${f.species||''} · ${f.isle||''}</p>
       </div>
-      <div class="list-row-actions">
-        <button class="btn-secondary" onclick="editFriend(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
-        <button class="btn-danger" onclick="deleteFriendById('${f.id}')">✕</button>
+      <div class="list-actions">
+        <button class="btn-2" style="padding:0.28rem 0.6rem;font-size:0.73rem" onclick='editFriend(${JSON.stringify(f).replace(/'/g,"\\'")} )'>✏️</button>
+        <button class="btn-del" onclick="deleteFriendById('${f.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
 function editFriend(f) {
   document.getElementById('friendEditId').value = f.id;
-  document.getElementById('friendName').value = f.name || '';
-  document.getElementById('friendSpecies').value = f.species || '';
-  document.getElementById('friendIsle').value = f.isle || '';
-  document.getElementById('friendShort').value = f.short_desc || '';
-  document.getElementById('friendFull').value = f.full_desc || '';
-  document.getElementById('friendColor').value = f.color || '#fe5d9f';
-  document.querySelectorAll('.color-opt').forEach(c => {
-    c.classList.toggle('selected', c.dataset.color === f.color);
-  });
+  document.getElementById('friendName').value = f.name||'';
+  document.getElementById('friendSpecies').value = f.species||'';
+  document.getElementById('friendIsle').value = f.isle||'';
+  document.getElementById('friendShort').value = f.short_desc||'';
+  document.getElementById('friendFull').value = f.full_desc||'';
+  document.getElementById('friendColor').value = f.color||'#fe5d9f';
+  document.querySelectorAll('.c-opt').forEach(c => c.classList.toggle('sel', c.dataset.c===f.color));
   if (f.pfp_url) {
-    const prev = document.getElementById('friendPfpPreview');
-    prev.src = f.pfp_url; prev.classList.add('show');
+    const th = document.getElementById('friendPfpThumb');
+    th.src=f.pfp_url; th.classList.add('show');
   }
-  document.getElementById('friendDeleteBtn').style.display = 'inline-block';
-  document.getElementById('friendFormTitle').textContent = 'Editing: ' + f.name;
-  switchSubtab('friends-add');
+  document.getElementById('friendDelBtn').style.display='inline-block';
+  document.getElementById('friendFormTitle').textContent='Editing: '+f.name;
+  activateSub('friends-add');
 }
 
 async function saveFriend() {
-  if (needsDb()) return;
+  if (!sb) { toast('Not connected!', true); return; }
   const name = document.getElementById('friendName').value.trim();
   if (!name) { toast('Add a name!', true); return; }
   const btn = document.getElementById('friendSaveBtn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  btn.disabled=true; btn.textContent='Saving…';
 
-  let pfpUrl = document.getElementById('friendPfpPreview').src || null;
-  const fileInput = document.getElementById('friendPfpFile');
-  if (fileInput.files[0]) {
-    const b64 = await readFile(fileInput);
-    const up = await uploadImage(b64, 'friend-pfps', 'pfp');
-    pfpUrl = up || b64;
+  let pfpUrl = document.getElementById('friendPfpThumb').src||null;
+  const fi = document.getElementById('friendPfpFile');
+  if (fi.files[0]) {
+    const b64 = await readFile(fi);
+    pfpUrl = await uploadImg(b64, 'friend-pfps', 'pfp') || b64;
   }
 
   const row = {
     name,
-    species:    document.getElementById('friendSpecies').value.trim() || null,
-    isle:       document.getElementById('friendIsle').value.trim() || null,
+    species:    document.getElementById('friendSpecies').value.trim()||null,
+    isle:       document.getElementById('friendIsle').value.trim()||null,
     color:      document.getElementById('friendColor').value,
-    short_desc: document.getElementById('friendShort').value.trim() || null,
-    full_desc:  document.getElementById('friendFull').value.trim() || null,
-    pfp_url:    pfpUrl || null,
+    short_desc: document.getElementById('friendShort').value.trim()||null,
+    full_desc:  document.getElementById('friendFull').value.trim()||null,
+    pfp_url:    pfpUrl||null
   };
-
   const editId = document.getElementById('friendEditId').value;
-  let error;
-  if (editId) ({ error } = await sb.from('friends').update(row).eq('id', editId));
-  else        ({ error } = await sb.from('friends').insert(row));
+  const { error } = editId
+    ? await sb.from('friends').update(row).eq('id', editId)
+    : await sb.from('friends').insert({...row, sort_order:Date.now()});
 
-  btn.disabled = false; btn.textContent = 'Save Friend ✦';
+  btn.disabled=false; btn.textContent='Save Friend ✦';
   if (error) { toast(error.message, true); return; }
   toast('Friend saved! ✦');
-  clearFriendForm(); switchSubtab('friends-list'); loadFriends();
+  goFriendList();
 }
 
 async function deleteFriendById(id) {
-  if (!confirm('Remove this friend?')) return;
-  const { error } = await sb.from('friends').delete().eq('id', id);
-  if (error) { toast(error.message, true); return; }
-  toast('Friend removed.'); loadFriends();
+  if (!confirm('Remove friend?')) return;
+  await sb.from('friends').delete().eq('id', id);
+  toast('Removed.'); loadFriends();
 }
 function deleteFriend() {
   const id = document.getElementById('friendEditId').value;
   if (id) deleteFriendById(id);
-  clearFriendForm(); switchSubtab('friends-list');
+  goFriendList();
 }
-
 function clearFriendForm() {
-  document.getElementById('friendEditId').value = '';
-  ['friendName','friendSpecies','friendIsle','friendShort','friendFull'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('friendColor').value = '#fe5d9f';
-  document.querySelectorAll('.color-opt').forEach((c,i) => c.classList.toggle('selected', i===0));
-  const prev = document.getElementById('friendPfpPreview');
-  prev.src = ''; prev.classList.remove('show');
-  document.getElementById('friendPfpFile').value = '';
-  document.getElementById('friendDeleteBtn').style.display = 'none';
-  document.getElementById('friendFormTitle').textContent = 'Add New Friend';
+  document.getElementById('friendEditId').value='';
+  ['friendName','friendSpecies','friendIsle','friendShort','friendFull'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('friendColor').value='#fe5d9f';
+  document.querySelectorAll('.c-opt').forEach((c,i)=>c.classList.toggle('sel',i===0));
+  const th = document.getElementById('friendPfpThumb');
+  th.src=''; th.classList.remove('show');
+  document.getElementById('friendPfpFile').value='';
+  document.getElementById('friendDelBtn').style.display='none';
+  document.getElementById('friendFormTitle').textContent='Add New Friend';
 }
-
-// Color picker
-document.querySelectorAll('.color-opt').forEach(c => {
+document.querySelectorAll('.c-opt').forEach(c => {
   c.addEventListener('click', () => {
-    document.querySelectorAll('.color-opt').forEach(x => x.classList.remove('selected'));
-    c.classList.add('selected');
-    document.getElementById('friendColor').value = c.dataset.color;
+    document.querySelectorAll('.c-opt').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');
+    document.getElementById('friendColor').value = c.dataset.c;
   });
 });
 
@@ -1346,121 +1237,106 @@ document.querySelectorAll('.color-opt').forEach(c => {
 ══════════════════════════════════════════════════════ */
 async function loadFaq() {
   const list = document.getElementById('faqList');
-  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase first.</div>'; return; }
-  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span></div>';
-  const { data, error } = await sb.from('faq_items').select('*').order('sort_order');
-  if (error || !data?.length) {
-    list.innerHTML = '<div class="empty-state"><span class="empty-icon">❓</span>No FAQ items yet.</div>';
-    return;
-  }
-  list.innerHTML = data.map(f => `
+  if (!sb) { list.innerHTML='<div class="empty-state">Not connected.</div>'; return; }
+  list.innerHTML='<div class="loading"><span class="spin"></span></div>';
+  const { data } = await sb.from('faq_items').select('*').order('sort_order');
+  if (!data?.length) { list.innerHTML='<div class="empty-state"><span class="empty-ico">❓</span>No FAQ items yet.</div>'; return; }
+  list.innerHTML = data.map(f=>`
     <div class="list-row">
-      <div class="list-row-info">
-        <p class="list-row-name">${f.question}</p>
-        <p class="list-row-meta">${f.answer.slice(0,80)}${f.answer.length>80?'…':''}</p>
+      <div class="list-info">
+        <p class="list-name">${f.question}</p>
+        <p class="list-meta">${f.answer.slice(0,80)}${f.answer.length>80?'…':''}</p>
       </div>
-      <div class="list-row-actions">
-        <button class="btn-secondary" onclick="editFaq(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
-        <button class="btn-danger" onclick="deleteFaqById('${f.id}')">✕</button>
+      <div class="list-actions">
+        <button class="btn-2" style="padding:0.28rem 0.6rem;font-size:0.73rem" onclick='editFaq(${JSON.stringify(f).replace(/'/g,"\\'")} )'>✏️</button>
+        <button class="btn-del" onclick="deleteFaqById('${f.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
 function editFaq(f) {
-  document.getElementById('faqEditId').value = f.id;
-  document.getElementById('faqQ').value = f.question;
-  document.getElementById('faqA').value = f.answer;
-  document.getElementById('faqCancelBtn').style.display = 'inline-block';
-  document.getElementById('faqFormTitle').textContent = 'Editing FAQ';
-  document.getElementById('faqQ').scrollIntoView({ behavior:'smooth', block:'center' });
+  document.getElementById('faqEditId').value=f.id;
+  document.getElementById('faqQ').value=f.question;
+  document.getElementById('faqA').value=f.answer;
+  document.getElementById('faqCancelBtn').style.display='inline-block';
+  document.getElementById('faqFormTitle').textContent='Editing FAQ';
+  document.getElementById('faqQ').scrollIntoView({behavior:'smooth',block:'center'});
 }
-
 async function saveFaq() {
-  if (needsDb()) return;
+  if (!sb) { toast('Not connected!', true); return; }
   const q = document.getElementById('faqQ').value.trim();
   const a = document.getElementById('faqA').value.trim();
-  if (!q || !a) { toast('Fill in both fields!', true); return; }
+  if (!q||!a) { toast('Fill in both fields!', true); return; }
   const editId = document.getElementById('faqEditId').value;
-  let error;
-  if (editId) ({ error } = await sb.from('faq_items').update({ question:q, answer:a }).eq('id', editId));
-  else        ({ error } = await sb.from('faq_items').insert({ question:q, answer:a, sort_order:Date.now() }));
+  const { error } = editId
+    ? await sb.from('faq_items').update({question:q,answer:a}).eq('id',editId)
+    : await sb.from('faq_items').insert({question:q,answer:a,sort_order:Date.now()});
   if (error) { toast(error.message, true); return; }
   toast('FAQ saved! ✦'); clearFaqForm(); loadFaq();
 }
-
 async function deleteFaqById(id) {
   if (!confirm('Delete FAQ?')) return;
-  await sb.from('faq_items').delete().eq('id', id);
+  await sb.from('faq_items').delete().eq('id',id);
   toast('Deleted.'); loadFaq();
 }
-
 function clearFaqForm() {
-  document.getElementById('faqEditId').value = '';
-  document.getElementById('faqQ').value = '';
-  document.getElementById('faqA').value = '';
-  document.getElementById('faqCancelBtn').style.display = 'none';
-  document.getElementById('faqFormTitle').textContent = 'Add New FAQ';
+  document.getElementById('faqEditId').value='';
+  document.getElementById('faqQ').value='';
+  document.getElementById('faqA').value='';
+  document.getElementById('faqCancelBtn').style.display='none';
+  document.getElementById('faqFormTitle').textContent='Add New FAQ';
 }
 
 /* ══════════════════════════════════════════════════════
-   SOCIAL LINKS
+   SOCIAL
 ══════════════════════════════════════════════════════ */
-const SOCIAL_PLATFORMS = [
-  { key:'instagram', label:'Instagram' },
-  { key:'pinterest', label:'Pinterest' },
-  { key:'x',         label:'X / Twitter' },
-  { key:'tiktok',    label:'TikTok' },
-  { key:'youtube',   label:'YouTube' },
-  { key:'patreon',   label:'Patreon' },
-  { key:'shop',      label:'Shop URL' },
+const SOCIALS = [
+  {key:'instagram',label:'Instagram'},
+  {key:'pinterest',label:'Pinterest'},
+  {key:'x',label:'X / Twitter'},
+  {key:'tiktok',label:'TikTok'},
+  {key:'youtube',label:'YouTube'},
+  {key:'patreon',label:'Patreon'},
+  {key:'shop',label:'Shop URL'},
 ];
 
 async function loadSocial() {
-  if (!sb) { renderSocialFields({}); return; }
-  const { data } = await sb.from('site_settings').select('*');
+  if (!sb) { renderSocial({}); return; }
+  const { data } = await sb.from('site_settings').select('*').like('key','social_%');
   const vals = {};
-  (data||[]).forEach(r => { vals[r.key] = r.value; });
-  renderSocialFields(vals);
+  (data||[]).forEach(r => vals[r.key.replace('social_','')] = r.value);
+  renderSocial(vals);
 }
-
-function renderSocialFields(vals) {
-  document.getElementById('socialFields').innerHTML = SOCIAL_PLATFORMS.map(p => `
-    <div class="f-group" style="display:flex;align-items:center;gap:0.75rem">
-      <label class="f-label" style="width:90px;margin:0;flex-shrink:0">${p.label}</label>
-      <input type="url" class="f-input" id="social_${p.key}" value="${vals['social_'+p.key]||''}" placeholder="https://…" style="margin:0">
+function renderSocial(vals) {
+  document.getElementById('socialFields').innerHTML = SOCIALS.map(p=>`
+    <div class="f-group" style="display:flex;align-items:center;gap:0.7rem">
+      <label class="f-label" style="width:85px;margin:0;flex-shrink:0">${p.label}</label>
+      <input type="url" class="f-input" id="soc_${p.key}" value="${vals[p.key]||''}" placeholder="https://…" style="margin:0">
     </div>`).join('');
 }
-
 async function saveSocial() {
-  if (needsDb()) return;
-  const rows = SOCIAL_PLATFORMS.map(p => ({
-    key:   'social_' + p.key,
-    value: document.getElementById('social_' + p.key).value.trim()
-  }));
-  const { error } = await sb.from('site_settings').upsert(rows, { onConflict: 'key' });
+  if (!sb) { toast('Not connected!', true); return; }
+  const rows = SOCIALS.map(p=>({key:'social_'+p.key, value:document.getElementById('soc_'+p.key).value.trim()}));
+  const { error } = await sb.from('site_settings').upsert(rows, {onConflict:'key'});
   if (error) { toast(error.message, true); return; }
   toast('Social links saved! ✦');
 }
 
 /* ══════════════════════════════════════════════════════
-   IMAGE PREVIEWS SETUP
-══════════════════════════════════════════════════════ */
-previewFile(document.getElementById('storyCoverFile'), document.getElementById('storyCoverPreview'));
-previewFile(document.getElementById('shopImgFile'),    document.getElementById('shopImgPreview'));
-previewFile(document.getElementById('friendPfpFile'),  document.getElementById('friendPfpPreview'));
-
-/* ══════════════════════════════════════════════════════
-   INIT
+   LOAD ALL DATA ON ENTRY
 ══════════════════════════════════════════════════════ */
 function loadAllData() {
   loadStories();
   loadShop();
   loadFriends();
+  loadFaq();
+  loadSocial();
 }
 
-initSupabase();
-initQuill();
-if (sb) loadAllData();
+/* Image preview setup */
+setupPreview('storyCoverFile', 'storyCoverThumb');
+setupPreview('shopImgFile',    'shopImgThumb');
+setupPreview('friendPfpFile',  'friendPfpThumb');
 </script>
 </body>
 </html>
