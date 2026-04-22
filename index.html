@@ -14,6 +14,11 @@
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 
+.netlify-identity-widget,
+.netlify-identity-widget iframe {
+  z-index: 999999 !important;
+}
+
 /* ══ HERO — FULL BLEED IMAGE ══ */
 .hero {
   position:relative;
@@ -793,21 +798,21 @@ updateFooterSocials();
 
 /* ════ NETLIFY IDENTITY ════ */
 if (window.netlifyIdentity) {
+  const tokenHints = ['invite_token', 'recovery_token', 'confirmation_token', 'token='];
+  const currentUrl = `${window.location.hash} ${window.location.search}`;
+  const hasIdentityToken = tokenHints.some(token => currentUrl.includes(token));
+
   window.netlifyIdentity.on('init', user => {
     if (!user) {
       window.netlifyIdentity.on('login', () => {
         document.location.href = '/admin/';
       });
     }
-  });
 
-  // Accept-invite / recovery links often land on the site root with a token in the URL.
-  // Open the widget automatically so the password/signup flow appears instead of the plain homepage.
-  const tokenHints = ['invite_token', 'recovery_token', 'confirmation_token', 'token='];
-  const currentUrl = `${window.location.hash} ${window.location.search}`;
-  if (tokenHints.some(token => currentUrl.includes(token))) {
-    window.netlifyIdentity.open();
-  }
+    if (hasIdentityToken) {
+      setTimeout(() => window.netlifyIdentity.open('signup'), 150);
+    }
+  });
 }
 </script>
 </body>
