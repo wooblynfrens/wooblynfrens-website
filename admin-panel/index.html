@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Whimsiverse</title>
+<!-- Block search engines from indexing admin -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #1e0c40;
+  --panel:     #2a1250;
+  --card:      #3d1f6e;
+  --card2:     #4a2882;
+  --border:    rgba(157,102,242,0.35);
+  --purple:    #5a2d8f;
+  --lilac:     #9d66f2;
+  --yellow:    #FFD54F;
+  --orange:    #E8820A;
+  --pink:      #fe5d9f;
+  --green:     #5BBF6A;
+  --cream:     #FFF8F0;
+  --white:     #ffffff;
+  --muted:     rgba(255,255,255,0.45);
+  --sidebar-w: 160px;
+}
+
+body {
+  font-family:'Fredoka', sans-serif; font-weight:400;
+  background:var(--bg); color:var(--white);
+  min-height:100vh; display:flex; overflow-x:hidden;
+}
+
+/* ── BACKGROUND BLOBS ── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:url('../assets/purplebg.jpg');
+  background-size:cover; opacity:0.25;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar-w); flex-shrink:0; position:fixed; top:0; left:0; bottom:0;
+  background:rgba(30,12,64,0.92); backdrop-filter:blur(12px);
+  border-right:2px solid var(--border);
+  display:flex; flex-direction:column; padding:2rem 0 1.5rem;
+  z-index:100;
+}
+.sidebar-logo {
+  font-family:'Fredoka One',cursive; font-size:1rem;
+  color:var(--yellow); padding:0 1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  line-height:1.3;
+}
+.sidebar-logo span { display:block; font-size:0.65rem; color:var(--pink); letter-spacing:1.5px; text-transform:uppercase; margin-top:0.2rem; }
+.sidebar-nav { flex:1; padding:1rem 0; overflow-y:auto; }
+.sidebar-btn {
+  display:block; width:100%; text-align:left;
+  background:none; border:none; cursor:pointer;
+  padding:0.8rem 1.25rem; font-family:'Fredoka One',cursive; font-size:0.9rem;
+  color:var(--muted); border-radius:0; transition:all 0.15s;
+  border-left:3px solid transparent;
+}
+.sidebar-btn:hover { color:var(--cream); background:rgba(157,102,242,0.12); }
+.sidebar-btn.active { color:var(--yellow); border-left-color:var(--yellow); background:rgba(255,213,79,0.08); }
+.sidebar-btn .dot {
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:var(--lilac); margin-right:0.5rem;
+  vertical-align:middle;
+}
+.sidebar-btn.active .dot { background:var(--yellow); }
+.sidebar-footer { padding:0 1.25rem; }
+.sidebar-home-link {
+  display:block; text-align:center; text-decoration:none;
+  color:var(--muted); font-size:0.82rem; padding:0.5rem;
+  border:1px solid var(--border); border-radius:0.5rem;
+  transition:all 0.15s; margin-bottom:0.5rem;
+}
+.sidebar-home-link:hover { color:var(--cream); border-color:var(--lilac); }
+
+/* ── MAIN ── */
+.main {
+  margin-left:var(--sidebar-w); flex:1;
+  padding:2rem 2.5rem;
+  position:relative; z-index:1;
+  min-height:100vh;
+}
+
+/* ── HEADER ── */
+.admin-header { margin-bottom:2rem; }
+.admin-greeting {
+  font-family:'Fredoka One',cursive; font-size:1.6rem;
+  color:var(--white); margin-bottom:0.15rem;
+}
+.admin-subtitle { font-size:0.8rem; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; }
+
+/* ── TABS ── */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ── CARDS ── */
+.admin-card {
+  background:rgba(42,18,80,0.7); backdrop-filter:blur(8px);
+  border:2px solid var(--border); border-radius:1.25rem;
+  padding:1.5rem; margin-bottom:1.5rem;
+}
+.card-title {
+  font-family:'Fredoka One',cursive; font-size:1.05rem;
+  color:var(--cream); margin-bottom:1rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-title .badge {
+  background:var(--lilac); color:var(--white);
+  font-size:0.7rem; padding:2px 10px; border-radius:50px;
+  font-family:'Fredoka',sans-serif; font-weight:600;
+}
+
+/* ── FORM FIELDS ── */
+.f-group { margin-bottom:1rem; }
+.f-label {
+  display:block; font-size:0.78rem; font-weight:600;
+  color:var(--muted); margin-bottom:0.35rem; letter-spacing:0.8px; text-transform:uppercase;
+}
+.f-input, .f-textarea, .f-select {
+  width:100%; background:rgba(255,255,255,0.07);
+  border:2px solid var(--border); border-radius:0.75rem;
+  color:var(--white); font-family:'Fredoka',sans-serif; font-size:0.95rem;
+  padding:0.6rem 1rem; outline:none; transition:border-color 0.15s;
+}
+.f-input:focus, .f-textarea:focus, .f-select:focus { border-color:var(--lilac); }
+.f-textarea { resize:vertical; min-height:120px; line-height:1.65; }
+.f-select option { background:var(--panel); color:var(--white); }
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.f-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+
+/* Image upload */
+.img-upload-wrap {
+  border:2px dashed var(--border); border-radius:0.75rem;
+  padding:1rem; text-align:center; cursor:pointer;
+  transition:border-color 0.15s, background 0.15s;
+  position:relative; overflow:hidden;
+}
+.img-upload-wrap:hover { border-color:var(--lilac); background:rgba(157,102,242,0.06); }
+.img-upload-wrap input[type=file] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2;
+}
+.img-upload-label { font-size:0.85rem; color:var(--muted); pointer-events:none; }
+.img-upload-label span { display:block; font-size:1.8rem; margin-bottom:0.35rem; }
+.img-preview {
+  width:100%; max-height:160px; object-fit:cover;
+  border-radius:0.5rem; display:none; margin-top:0.5rem;
+}
+
+/* Rich text toolbar */
+.rich-toolbar {
+  display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.5rem;
+}
+.rich-btn {
+  background:rgba(157,102,242,0.2); border:1px solid var(--border);
+  color:var(--cream); border-radius:0.4rem; padding:0.3rem 0.65rem;
+  font-size:0.82rem; cursor:pointer; font-family:'Fredoka',sans-serif;
+  transition:background 0.15s;
+}
+.rich-btn:hover { background:var(--lilac); }
+.story-editor {
+  width:100%; min-height:280px; background:rgba(255,255,255,0.06);
+  border:2px solid var(--border); border-radius:0.75rem;
+  color:var(--white); font-family:'Fredoka',sans-serif; font-size:0.97rem;
+  padding:1rem; outline:none; transition:border-color 0.15s;
+  line-height:1.85;
+}
+.story-editor:focus { border-color:var(--lilac); }
+/* Book-like paragraph style */
+.story-editor p { text-indent:2em; margin-bottom:0.6rem; text-align:justify; }
+.story-editor p:first-child::first-letter { font-size:2.5em; float:left; line-height:0.75; margin:0 6px 0 0; color:var(--yellow); font-family:'Fredoka One',cursive; }
+.story-editor img { max-width:100%; border-radius:0.5rem; display:block; margin:0.75rem auto; }
+
+/* ── BUTTONS ── */
+.btn-save {
+  background:var(--orange); color:var(--white);
+  border:none; border-radius:50px; padding:0.65rem 2rem;
+  font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer;
+  box-shadow:0 4px 0 #954200; transition:transform 0.15s, box-shadow 0.15s;
+}
+.btn-save:hover { transform:translateY(-2px); box-shadow:0 6px 0 #954200; }
+.btn-secondary {
+  background:rgba(157,102,242,0.25); color:var(--cream);
+  border:2px solid var(--border); border-radius:50px; padding:0.55rem 1.5rem;
+  font-family:'Fredoka One',cursive; font-size:0.88rem; cursor:pointer;
+  transition:background 0.15s, border-color 0.15s;
+}
+.btn-secondary:hover { background:rgba(157,102,242,0.4); border-color:var(--lilac); }
+.btn-danger {
+  background:rgba(255,80,80,0.2); color:#ff8888;
+  border:2px solid rgba(255,80,80,0.3); border-radius:50px; padding:0.45rem 1rem;
+  font-family:'Fredoka One',cursive; font-size:0.8rem; cursor:pointer;
+  transition:background 0.15s;
+}
+.btn-danger:hover { background:rgba(255,80,80,0.4); }
+.btn-pink {
+  background:var(--pink); color:var(--white);
+  border:none; border-radius:50px; padding:0.55rem 1.5rem;
+  font-family:'Fredoka One',cursive; font-size:0.88rem; cursor:pointer;
+  box-shadow:0 3px 0 #a03060; transition:transform 0.15s;
+}
+.btn-pink:hover { transform:translateY(-2px); }
+
+/* ── STORIES LIST ── */
+.story-list { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.story-item {
+  background:rgba(157,102,242,0.1); border:2px solid var(--border);
+  border-radius:1rem; padding:1rem; display:flex; flex-direction:column; gap:0.5rem;
+  transition:border-color 0.15s;
+}
+.story-item:hover { border-color:var(--lilac); }
+.story-cover-thumb {
+  width:100%; aspect-ratio:16/9; border-radius:0.5rem; overflow:hidden;
+  background:rgba(157,102,242,0.15); display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+}
+.story-cover-thumb img { width:100%; height:100%; object-fit:cover; }
+.story-item-title { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); }
+.story-item-meta { display:flex; justify-content:space-between; align-items:center; }
+.story-item-date { font-size:0.75rem; color:var(--muted); }
+.story-item-book { font-size:0.75rem; color:var(--lilac); }
+.story-item-excerpt { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+.story-item-actions { display:flex; gap:0.5rem; margin-top:0.25rem; }
+
+/* ── SHOP ITEMS LIST ── */
+.shop-item-row {
+  display:flex; align-items:center; gap:1rem;
+  background:rgba(157,102,242,0.1); border:2px solid var(--border);
+  border-radius:0.75rem; padding:0.75rem 1rem; margin-bottom:0.65rem;
+  transition:border-color 0.15s;
+}
+.shop-item-row:hover { border-color:var(--lilac); }
+.shop-thumb {
+  width:44px; height:44px; border-radius:0.5rem; overflow:hidden; flex-shrink:0;
+  background:rgba(157,102,242,0.2); display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem;
+}
+.shop-thumb img { width:100%; height:100%; object-fit:cover; }
+.shop-row-info { flex:1; }
+.shop-row-name { font-family:'Fredoka One',cursive; font-size:0.88rem; color:var(--cream); }
+.shop-row-price { font-size:0.78rem; color:var(--yellow); }
+.shop-item-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+.shop-count { font-size:0.85rem; color:var(--muted); margin-bottom:1rem; }
+.shop-count strong { color:var(--yellow); }
+
+/* ── FAQ LIST ── */
+.faq-row {
+  background:rgba(157,102,242,0.1); border:2px solid var(--border);
+  border-radius:0.75rem; padding:0.9rem 1rem; margin-bottom:0.65rem;
+  display:flex; align-items:flex-start; gap:1rem; transition:border-color 0.15s;
+}
+.faq-row:hover { border-color:var(--lilac); }
+.faq-row-q { flex:1; font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); margin-bottom:0.2rem; }
+.faq-row-a { font-size:0.8rem; color:var(--muted); line-height:1.55; }
+.faq-row-actions { flex-shrink:0; }
+
+/* ── FRIENDS LIST ── */
+.friend-row {
+  display:flex; align-items:center; gap:1rem;
+  background:rgba(157,102,242,0.1); border:2px solid var(--border);
+  border-radius:0.75rem; padding:0.75rem 1rem; margin-bottom:0.65rem;
+}
+.friend-pfp {
+  width:48px; height:48px; border-radius:50%; overflow:hidden; flex-shrink:0;
+  background:rgba(157,102,242,0.25); display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem;
+}
+.friend-pfp img { width:100%; height:100%; object-fit:cover; }
+.friend-row-name { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); }
+.friend-row-species { font-size:0.78rem; color:var(--muted); }
+.friend-row-info { flex:1; }
+
+/* ── SOCIAL LINKS ── */
+.social-row {
+  display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;
+}
+.social-icon-label { width:80px; font-size:0.85rem; color:var(--muted); flex-shrink:0; text-transform:capitalize; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:2rem; right:2rem; z-index:9999;
+  background:var(--card2); border:2px solid var(--lilac);
+  color:var(--white); border-radius:1rem; padding:0.85rem 1.5rem;
+  font-family:'Fredoka One',cursive; font-size:0.9rem;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  transform:translateY(100px); opacity:0;
+  transition:transform 0.3s ease, opacity 0.3s ease;
+  pointer-events:none;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.error { border-color:var(--pink); }
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  border:none; border-top:1px solid var(--border);
+  margin:1.5rem 0;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align:center; padding:2.5rem 1rem;
+  color:var(--muted); font-size:0.9rem;
+}
+.empty-state .icon { font-size:2.5rem; display:block; margin-bottom:0.75rem; }
+
+/* ── TABS ROW (write/edit) ── */
+.sub-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+.sub-tab {
+  background:rgba(255,255,255,0.06); border:2px solid var(--border);
+  color:var(--muted); border-radius:50px; padding:0.45rem 1.25rem;
+  font-family:'Fredoka One',cursive; font-size:0.85rem; cursor:pointer;
+  transition:all 0.15s;
+}
+.sub-tab.active { background:var(--lilac); border-color:var(--lilac); color:var(--white); }
+.sub-tab-panel { display:none; }
+.sub-tab-panel.active { display:block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:720px) {
+  :root { --sidebar-w:0px; }
+  .sidebar { transform:translateX(-100%); transition:transform 0.3s; }
+  .sidebar.open { transform:translateX(0); width:220px; }
+  .main { margin-left:0; padding:1.25rem; }
+  .story-list { grid-template-columns:1fr; }
+  .f-row { grid-template-columns:1fr; }
+  .f-row-3 { grid-template-columns:1fr 1fr; }
+  .mobile-menu-btn { display:flex !important; }
+}
+.mobile-menu-btn {
+  display:none; position:fixed; top:1rem; left:1rem; z-index:200;
+  background:var(--panel); border:2px solid var(--border);
+  border-radius:0.5rem; padding:0.5rem; cursor:pointer; flex-direction:column;
+  gap:4px;
+}
+.mobile-menu-btn span { display:block; width:22px; height:2.5px; background:var(--cream); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    Whimsiverse<br>
+    <span>Admin Panel</span>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="sidebar-btn active" onclick="switchTab('stories',this)">
+      <span class="dot"></span>Stories
+    </button>
+    <button class="sidebar-btn" onclick="switchTab('shop',this)">
+      <span class="dot"></span>Shop
+    </button>
+    <button class="sidebar-btn" onclick="switchTab('faq',this)">
+      <span class="dot"></span>FAQ
+    </button>
+    <button class="sidebar-btn" onclick="switchTab('friends',this)">
+      <span class="dot"></span>Friends
+    </button>
+    <button class="sidebar-btn" onclick="switchTab('social',this)">
+      <span class="dot"></span>Social Links
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="sidebar-home-link" href="../index.html" target="_blank">← View Site</a>
+  </div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main class="main">
+  <div class="admin-header">
+    <p class="admin-greeting">Good Morning, Sachi ✦</p>
+    <p class="admin-subtitle">Welcome to the Admin Panel</p>
+  </div>
+
+  <!-- ════════ STORIES TAB ════════ -->
+  <div class="tab-panel active" id="tab-stories">
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSubTab('stories','list',this)">Current Stories</button>
+      <button class="sub-tab" onclick="switchSubTab('stories','write',this)" id="writeTabBtn">Write New Story</button>
+    </div>
+
+    <!-- LIST -->
+    <div class="sub-tab-panel active" id="stories-list">
+      <div class="admin-card">
+        <div class="card-title">
+          Let's add some Whimsies
+          <button class="btn-pink" onclick="switchSubTabById('stories','write')">+ New Story</button>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Current Stories</p>
+        <div class="story-list" id="storyList">
+          <div class="empty-state" style="grid-column:1/-1">
+            <span class="icon">📖</span>
+            No stories yet. Write your first one! ✨
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WRITE / EDIT -->
+    <div class="sub-tab-panel" id="stories-write">
+      <div class="admin-card">
+        <div class="card-title">Time to write the reality ✨</div>
+
+        <input type="hidden" id="editStoryId" value="">
+
+        <div class="f-group">
+          <label class="f-label">Story Title</label>
+          <input type="text" class="f-input" id="storyTitle" placeholder="e.g. Fluffy and the Cosmic Break">
+        </div>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Book No.</label>
+            <input type="text" class="f-input" id="storyBookNo" placeholder="e.g. 01">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Book Title <span style="font-size:0.7rem;color:var(--muted)">(if not registered before)</span></label>
+            <input type="text" class="f-input" id="storyBookTitle" placeholder="e.g. Woobly & Friends Vol.1">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Tag / Category</label>
+            <input type="text" class="f-input" id="storyTag" placeholder="e.g. Story, Lore, Behind the Scenes">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Cover Image</label>
+            <div class="img-upload-wrap" id="storyCoverWrap">
+              <input type="file" accept="image/*" id="storyCoverFile" onchange="handleStoryImg(this)">
+              <div class="img-upload-label">
+                <span>🖼️</span>
+                Click to upload cover image
+              </div>
+              <img class="img-preview" id="storyCoverPreview" alt="">
+            </div>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Excerpt <span style="font-size:0.7rem;color:var(--muted)">(shown on story card)</span></label>
+          <input type="text" class="f-input" id="storyExcerpt" placeholder="A short teaser — 1 or 2 sentences">
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Story Body</label>
+          <!-- Toolbar -->
+          <div class="rich-toolbar">
+            <button class="rich-btn" onclick="richCmd('bold')"><b>B</b></button>
+            <button class="rich-btn" onclick="richCmd('italic')"><i>I</i></button>
+            <button class="rich-btn" onclick="richCmd('underline')"><u>U</u></button>
+            <button class="rich-btn" onclick="insertParagraph()">¶ Para</button>
+            <button class="rich-btn" onclick="insertStoryImage()">📷 Image</button>
+            <button class="rich-btn" onclick="richCmd('removeFormat')">✕ Clear</button>
+          </div>
+          <div class="story-editor" id="storyBody" contenteditable="true"
+               placeholder="Start writing the story…">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" onclick="saveStory()">Save Story ✦</button>
+          <button class="btn-secondary" onclick="switchSubTabById('stories','list')">Cancel</button>
+          <button class="btn-danger" id="deleteStoryBtn" style="display:none" onclick="deleteCurrentStory()">Delete Story</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ SHOP TAB ════════ -->
+  <div class="tab-panel" id="tab-shop">
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSubTab('shop','list',this)">Current Items</button>
+      <button class="sub-tab" onclick="switchSubTab('shop','add',this)">Add Item</button>
+    </div>
+
+    <!-- LIST -->
+    <div class="sub-tab-panel active" id="shop-list">
+      <div class="admin-card">
+        <div class="card-title">
+          Let's add some Whimsies
+          <button class="btn-pink" onclick="switchSubTabById('shop','add')">+ Add Item</button>
+        </div>
+        <p class="shop-count" id="shopCount">Available Items: <strong>0 / 6</strong></p>
+        <div id="shopItemList">
+          <div class="empty-state">
+            <span class="icon">🛍️</span>
+            No shop items yet. Add your first one!
+          </div>
+        </div>
+      </div>
+      <div class="admin-card" style="background:rgba(255,213,79,0.06);border-color:rgba(255,213,79,0.25)">
+        <p style="font-size:0.82rem;color:rgba(255,213,79,0.8);line-height:1.65">
+          <strong style="color:var(--yellow)">✦ How the rotation works:</strong><br>
+          The homepage shows 4 items at a time. If you have 5 or 6 items saved, they rotate automatically every few seconds so visitors see all your items.
+        </p>
+      </div>
+    </div>
+
+    <!-- ADD / EDIT -->
+    <div class="sub-tab-panel" id="shop-add">
+      <div class="admin-card">
+        <div class="card-title">
+          Let's add some Whimsies
+        </div>
+
+        <input type="hidden" id="editShopId" value="">
+
+        <div class="f-group">
+          <label class="f-label">Item Name</label>
+          <input type="text" class="f-input" id="shopName" placeholder="e.g. Fluffy Sticker Sheet">
+        </div>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Price ($)</label>
+            <input type="text" class="f-input" id="shopPrice" placeholder="3.00">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Item Link (Payhip URL)</label>
+            <input type="url" class="f-input" id="shopUrl" placeholder="https://payhip.com/b/...">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Description</label>
+            <textarea class="f-textarea" id="shopDesc" placeholder="Short description of the item…" style="min-height:80px"></textarea>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Image</label>
+            <div class="img-upload-wrap" style="height:100%;min-height:80px">
+              <input type="file" accept="image/*" id="shopImgFile" onchange="handleShopImg(this)">
+              <div class="img-upload-label">
+                <span>🖼️</span>Upload image
+              </div>
+              <img class="img-preview" id="shopImgPreview" alt="">
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" onclick="saveShopItem()">Save Item ✦</button>
+          <button class="btn-secondary" onclick="switchSubTabById('shop','list')">Cancel</button>
+          <button class="btn-danger" id="deleteShopBtn" style="display:none" onclick="deleteCurrentShopItem()">Delete Item</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ FAQ TAB ════════ -->
+  <div class="tab-panel" id="tab-faq">
+
+    <div class="admin-card">
+      <div class="card-title">FAQ Items</div>
+      <div id="faqList"></div>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-title">Add New FAQ</div>
+      <input type="hidden" id="editFaqId" value="">
+      <div class="f-group">
+        <label class="f-label">Question</label>
+        <input type="text" class="f-input" id="faqQ" placeholder="e.g. Where is everything shipped from?">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Answer</label>
+        <textarea class="f-textarea" id="faqA" placeholder="Write the answer here…" style="min-height:80px"></textarea>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <button class="btn-save" onclick="saveFaqItem()">Save FAQ ✦</button>
+        <button class="btn-secondary" id="faqCancelEdit" style="display:none" onclick="cancelFaqEdit()">Cancel Edit</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ FRIENDS TAB ════════ -->
+  <div class="tab-panel" id="tab-friends">
+
+    <div class="admin-card">
+      <div class="card-title">Current Friends</div>
+      <div id="friendsList"></div>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-title">Add New Friend</div>
+      <input type="hidden" id="editFriendId" value="">
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label">Name</label>
+          <input type="text" class="f-input" id="friendName" placeholder="e.g. Fluffy">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Species / Title</label>
+          <input type="text" class="f-input" id="friendSpecies" placeholder="e.g. The Woobly">
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label">Isle / Location</label>
+          <input type="text" class="f-input" id="friendIsle" placeholder="e.g. Greenwillow Isle">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Name Color</label>
+          <select class="f-select" id="friendColor">
+            <option value="var(--pink)">Pink</option>
+            <option value="var(--yellow)">Yellow</option>
+            <option value="var(--lilac)">Lilac / Purple</option>
+            <option value="var(--green)">Green</option>
+            <option value="var(--blue,#6180f2)">Blue</option>
+            <option value="var(--cream)">Cream / White</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Short Description (homepage)</label>
+        <input type="text" class="f-input" id="friendShortDesc" placeholder="1-line teaser shown on crew card">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Full Description (about page)</label>
+        <textarea class="f-textarea" id="friendFullDesc" placeholder="Full story paragraph…" style="min-height:80px"></textarea>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Profile Picture</label>
+        <div class="img-upload-wrap">
+          <input type="file" accept="image/*" id="friendPfpFile" onchange="handleFriendImg(this)">
+          <div class="img-upload-label"><span>🖼️</span>Upload PFP</div>
+          <img class="img-preview" id="friendPfpPreview" alt="">
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <button class="btn-save" onclick="saveFriend()">Save Friend ✦</button>
+        <button class="btn-secondary" id="friendCancelEdit" style="display:none" onclick="cancelFriendEdit()">Cancel Edit</button>
+        <button class="btn-danger" id="deleteFriendBtn" style="display:none" onclick="deleteCurrentFriend()">Delete</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ SOCIAL LINKS TAB ════════ -->
+  <div class="tab-panel" id="tab-social">
+    <div class="admin-card">
+      <div class="card-title">Social Media Links</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1.25rem">
+        These links update the footer and any social icons across the site. Leave blank to hide.
+      </p>
+
+      <div id="socialFields">
+        <!-- rendered by JS -->
+      </div>
+
+      <button class="btn-save" onclick="saveSocialLinks()" style="margin-top:0.5rem">Save Links ✦</button>
+    </div>
+    <div class="admin-card" style="background:rgba(255,213,79,0.05);border-color:rgba(255,213,79,0.2)">
+      <p style="font-size:0.82rem;color:rgba(255,213,79,0.75);line-height:1.65">
+        <strong style="color:var(--yellow)">✦ Note:</strong> After saving here, the footer on your website will update when visitors reload the page. Social icon images should be placed in <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px">assets/icons/</code> folder.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATA KEYS (all stored in localStorage)
+══════════════════════════════════════════════════════ */
+const KEYS = {
+  stories: 'wnf_stories',
+  shop:    'wnf_shop_items_v2',
+  faq:     'wnf_faq',
+  friends: 'wnf_friends',
+  social:  'wnf_social'
+};
+
+/* ══ HELPERS ══ */
+function getData(key, fallback=[]) {
+  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : fallback; }
+  catch { return fallback; }
+}
+function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ══ TAB SWITCHING ══ */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  renderTabContent(name);
+}
+function switchSubTab(panelPrefix, sub, btn) {
+  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab`).forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab-panel`).forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`${panelPrefix}-${sub}`).classList.add('active');
+}
+function switchSubTabById(panelPrefix, sub) {
+  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab`).forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(sub === 'list' ? 'current' : sub === 'add' ? 'add' : 'write'));
+  });
+  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab-panel`).forEach(p => p.classList.remove('active'));
+  document.getElementById(`${panelPrefix}-${sub}`).classList.add('active');
+}
+
+function renderTabContent(name) {
+  if (name === 'stories') renderStoryList();
+  if (name === 'shop')    renderShopList();
+  if (name === 'faq')     renderFaqList();
+  if (name === 'friends') renderFriendsList();
+  if (name === 'social')  renderSocialFields();
+}
+
+/* ══════════════════════════════════════════════════════
+   STORIES
+══════════════════════════════════════════════════════ */
+let _storyCoverB64 = '';
+
+function handleStoryImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _storyCoverB64 = e.target.result;
+    const prev = document.getElementById('storyCoverPreview');
+    prev.src = e.target.result; prev.style.display = 'block';
+    document.querySelector('#storyCoverWrap .img-upload-label').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderStoryList() {
+  const stories = getData(KEYS.stories);
+  const container = document.getElementById('storyList');
+  if (!stories.length) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span class="icon">📖</span>No stories yet. Write your first one! ✨</div>`;
+    return;
+  }
+  container.innerHTML = stories.map(s => `
+    <div class="story-item">
+      <div class="story-cover-thumb">
+        ${s.cover ? `<img src="${s.cover}" alt="">` : '📖'}
+      </div>
+      <div class="story-item-meta">
+        <span class="story-item-title">${s.title}</span>
+        <span class="story-item-book">${s.bookNo ? 'No.' + s.bookNo : ''}</span>
+      </div>
+      <span class="story-item-date">${s.date}</span>
+      <p class="story-item-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
+      <div class="story-item-actions">
+        <button class="btn-secondary" onclick="editStory('${s.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem">✏️ Edit</button>
+        <button class="btn-danger" onclick="deleteStory('${s.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function editStory(id) {
+  const stories = getData(KEYS.stories);
+  const s = stories.find(x => x.id === id); if (!s) return;
+  document.getElementById('editStoryId').value = id;
+  document.getElementById('storyTitle').value = s.title || '';
+  document.getElementById('storyBookNo').value = s.bookNo || '';
+  document.getElementById('storyBookTitle').value = s.bookTitle || '';
+  document.getElementById('storyTag').value = s.tag || '';
+  document.getElementById('storyExcerpt').value = s.excerpt || '';
+  document.getElementById('storyBody').innerHTML = s.body || '';
+  if (s.cover) {
+    _storyCoverB64 = s.cover;
+    const prev = document.getElementById('storyCoverPreview');
+    prev.src = s.cover; prev.style.display = 'block';
+    document.querySelector('#storyCoverWrap .img-upload-label').style.display = 'none';
+  }
+  document.getElementById('deleteStoryBtn').style.display = 'inline-block';
+  switchSubTabById('stories', 'write');
+}
+
+function saveStory() {
+  const title = document.getElementById('storyTitle').value.trim();
+  if (!title) { showToast('Please add a title! ✦', true); return; }
+  const stories = getData(KEYS.stories);
+  const editId = document.getElementById('editStoryId').value;
+  const story = {
+    id:        editId || uid(),
+    title,
+    bookNo:    document.getElementById('storyBookNo').value.trim(),
+    bookTitle: document.getElementById('storyBookTitle').value.trim(),
+    tag:       document.getElementById('storyTag').value.trim() || 'Story',
+    excerpt:   document.getElementById('storyExcerpt').value.trim(),
+    body:      document.getElementById('storyBody').innerHTML,
+    cover:     _storyCoverB64,
+    date:      editId ? (stories.find(x=>x.id===editId)?.date || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})) : new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+  };
+  if (editId) {
+    const idx = stories.findIndex(x => x.id === editId);
+    if (idx > -1) stories[idx] = story; else stories.unshift(story);
+  } else { stories.unshift(story); }
+  setData(KEYS.stories, stories);
+  clearStoryForm();
+  switchSubTabById('stories','list');
+  renderStoryList();
+  showToast('Story saved! ✦');
+}
+
+function deleteStory(id) {
+  if (!confirm('Delete this story? This cannot be undone.')) return;
+  const stories = getData(KEYS.stories).filter(x => x.id !== id);
+  setData(KEYS.stories, stories);
+  renderStoryList();
+  showToast('Story deleted.');
+}
+function deleteCurrentStory() {
+  const id = document.getElementById('editStoryId').value;
+  if (id) deleteStory(id);
+  clearStoryForm(); switchSubTabById('stories','list');
+}
+function clearStoryForm() {
+  document.getElementById('editStoryId').value='';
+  document.getElementById('storyTitle').value='';
+  document.getElementById('storyBookNo').value='';
+  document.getElementById('storyBookTitle').value='';
+  document.getElementById('storyTag').value='';
+  document.getElementById('storyExcerpt').value='';
+  document.getElementById('storyBody').innerHTML='';
+  _storyCoverB64='';
+  const prev = document.getElementById('storyCoverPreview');
+  prev.src=''; prev.style.display='none';
+  document.querySelector('#storyCoverWrap .img-upload-label').style.display='block';
+  document.getElementById('deleteStoryBtn').style.display='none';
+}
+
+/* Rich text editor commands */
+function richCmd(cmd) { document.execCommand(cmd, false, null); document.getElementById('storyBody').focus(); }
+function insertParagraph() {
+  document.execCommand('insertHTML', false, '<p>&nbsp;</p>');
+  document.getElementById('storyBody').focus();
+}
+function insertStoryImage() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('storyBody').focus();
+      document.execCommand('insertHTML', false, `<img src="${ev.target.result}" style="max-width:100%;border-radius:0.5rem;margin:0.5rem auto;display:block" alt="">`);
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+/* ══════════════════════════════════════════════════════
+   SHOP
+══════════════════════════════════════════════════════ */
+let _shopImgB64 = '';
+
+function handleShopImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _shopImgB64 = e.target.result;
+    const prev = document.getElementById('shopImgPreview');
+    prev.src = e.target.result; prev.style.display = 'block';
+    document.querySelector('#shop-add .img-upload-label').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderShopList() {
+  const items = getData(KEYS.shop);
+  const container = document.getElementById('shopItemList');
+  const countEl = document.getElementById('shopCount');
+  countEl.innerHTML = `Available Items: <strong>${items.length} / 6</strong>`;
+  if (!items.length) {
+    container.innerHTML = `<div class="empty-state"><span class="icon">🛍️</span>No shop items yet.</div>`;
+    return;
+  }
+  container.innerHTML = items.map(item => `
+    <div class="shop-item-row">
+      <div class="shop-thumb">${item.img ? `<img src="${item.img}" alt="">` : '🌟'}</div>
+      <div class="shop-row-info">
+        <p class="shop-row-name">${item.name}</p>
+        <p class="shop-row-price">${item.price ? '$'+item.price : ''}</p>
+      </div>
+      <div class="shop-item-actions">
+        <button class="btn-secondary" onclick="editShopItem('${item.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
+        <button class="btn-danger" onclick="deleteShopItem('${item.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function editShopItem(id) {
+  const items = getData(KEYS.shop);
+  const item = items.find(x => x.id === id); if (!item) return;
+  document.getElementById('editShopId').value = id;
+  document.getElementById('shopName').value = item.name || '';
+  document.getElementById('shopPrice').value = item.price || '';
+  document.getElementById('shopUrl').value = item.url || '';
+  document.getElementById('shopDesc').value = item.desc || '';
+  if (item.img) {
+    _shopImgB64 = item.img;
+    const prev = document.getElementById('shopImgPreview');
+    prev.src = item.img; prev.style.display = 'block';
+    document.querySelector('#shop-add .img-upload-label').style.display = 'none';
+  }
+  document.getElementById('deleteShopBtn').style.display = 'inline-block';
+  switchSubTabById('shop','add');
+}
+
+function saveShopItem() {
+  const name = document.getElementById('shopName').value.trim();
+  if (!name) { showToast('Please add an item name!', true); return; }
+  const items = getData(KEYS.shop);
+  const editId = document.getElementById('editShopId').value;
+  if (!editId && items.length >= 6) { showToast('Max 6 items reached. Delete one first.', true); return; }
+  const item = {
+    id:    editId || uid(),
+    name,
+    price: document.getElementById('shopPrice').value.trim(),
+    url:   document.getElementById('shopUrl').value.trim(),
+    desc:  document.getElementById('shopDesc').value.trim(),
+    img:   _shopImgB64
+  };
+  if (editId) {
+    const idx = items.findIndex(x => x.id === editId);
+    if (idx > -1) items[idx] = item; else items.push(item);
+  } else { items.push(item); }
+  setData(KEYS.shop, items);
+  clearShopForm(); switchSubTabById('shop','list'); renderShopList();
+  showToast('Shop item saved! ✦');
+}
+
+function deleteShopItem(id) {
+  if (!confirm('Remove this item?')) return;
+  setData(KEYS.shop, getData(KEYS.shop).filter(x => x.id !== id));
+  renderShopList(); showToast('Item removed.');
+}
+function deleteCurrentShopItem() {
+  const id = document.getElementById('editShopId').value;
+  if (id) deleteShopItem(id);
+  clearShopForm(); switchSubTabById('shop','list');
+}
+function clearShopForm() {
+  document.getElementById('editShopId').value='';
+  document.getElementById('shopName').value='';
+  document.getElementById('shopPrice').value='';
+  document.getElementById('shopUrl').value='';
+  document.getElementById('shopDesc').value='';
+  _shopImgB64='';
+  const prev = document.getElementById('shopImgPreview');
+  prev.src=''; prev.style.display='none';
+  document.querySelector('#shop-add .img-upload-label').style.display='block';
+  document.getElementById('deleteShopBtn').style.display='none';
+}
+
+/* ══════════════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════════════ */
+const defaultFaq = [
+  { id:'f1', q:'What is the Whimsiverse?', a:'The Whimsiverse is an original fictional universe created by Sachi — a world where every imaginary friend ever created now lives. Think of it as the studio, and Woobly & Friends as the first series.' },
+  { id:'f2', q:'Where is everything shipped from?', a:'Everything is made and shipped from Sri Lanka 🌿 with love. International shipping is included in every physical Patreon tier.' },
+  { id:'f3', q:'How does the Mail Club work?', a:'Join any physical tier on Patreon and every month Sachi will hand-pack and ship your reward — stickers, prints, or the full bundle depending on your tier.' },
+  { id:'f4', q:'Can I buy individual prints without a subscription?', a:'Yes! The shop at shop.wooblynfrens.com has one-off digital downloads and prints available anytime.' },
+  { id:'f5', q:'What tools do you use to make the art?', a:'Everything is drawn in Procreate on iPad. Flat colours, painted textures — a style developed entirely by hand. ✦' },
+  { id:'f6', q:'Will there be more characters and stories?', a:'The Whimsiverse is a big place! More friends are always waiting to be discovered. Stay tuned. 🌸' },
+];
+
+function renderFaqList() {
+  let faqs = getData(KEYS.faq, null);
+  if (faqs === null) { faqs = defaultFaq; setData(KEYS.faq, faqs); }
+  const container = document.getElementById('faqList');
+  if (!faqs.length) {
+    container.innerHTML = `<div class="empty-state"><span class="icon">❓</span>No FAQ items yet.</div>`;
+    return;
+  }
+  container.innerHTML = faqs.map(f => `
+    <div class="faq-row">
+      <div style="flex:1">
+        <p class="faq-row-q">${f.q}</p>
+        <p class="faq-row-a">${f.a.slice(0,100)}${f.a.length>100?'…':''}</p>
+      </div>
+      <div class="faq-row-actions" style="display:flex;gap:0.4rem">
+        <button class="btn-secondary" onclick="editFaq('${f.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
+        <button class="btn-danger" onclick="deleteFaq('${f.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function editFaq(id) {
+  const faqs = getData(KEYS.faq, defaultFaq);
+  const f = faqs.find(x => x.id === id); if (!f) return;
+  document.getElementById('editFaqId').value = id;
+  document.getElementById('faqQ').value = f.q;
+  document.getElementById('faqA').value = f.a;
+  document.getElementById('faqCancelEdit').style.display = 'inline-block';
+  document.getElementById('faqQ').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function cancelFaqEdit() {
+  document.getElementById('editFaqId').value='';
+  document.getElementById('faqQ').value='';
+  document.getElementById('faqA').value='';
+  document.getElementById('faqCancelEdit').style.display='none';
+}
+function saveFaqItem() {
+  const q = document.getElementById('faqQ').value.trim();
+  const a = document.getElementById('faqA').value.trim();
+  if (!q || !a) { showToast('Fill in question and answer!', true); return; }
+  let faqs = getData(KEYS.faq, defaultFaq);
+  const editId = document.getElementById('editFaqId').value;
+  if (editId) {
+    const idx = faqs.findIndex(x => x.id === editId);
+    if (idx > -1) faqs[idx] = { id:editId, q, a };
+  } else { faqs.push({ id:uid(), q, a }); }
+  setData(KEYS.faq, faqs);
+  cancelFaqEdit(); renderFaqList(); showToast('FAQ saved! ✦');
+}
+function deleteFaq(id) {
+  if (!confirm('Delete this FAQ?')) return;
+  setData(KEYS.faq, getData(KEYS.faq, defaultFaq).filter(x => x.id !== id));
+  renderFaqList(); showToast('FAQ deleted.');
+}
+
+/* ══════════════════════════════════════════════════════
+   FRIENDS
+══════════════════════════════════════════════════════ */
+let _friendPfpB64 = '';
+const defaultFriends = [
+  { id:'fluffy', name:'Fluffy the Woobly', species:'The Woobly', isle:'Whimsiverse Explorer', color:'var(--pink)', shortDesc:'Brave, joyful, first to leap into any adventure', fullDesc:'The most playful Woobly out there — the one who just couldn\'t sit still. One day, he jumped onto his spray-paint rocket — and the adventure began.', pfp:'' },
+  { id:'bella',  name:'Bella & Benny',      species:'The Bears',    isle:'Greenwillow Isle',     color:'var(--yellow)', shortDesc:'Warm and gentle, the heart that holds everyone together', fullDesc:'A gentle teddy bear couple who believe one simple thing: kindness can change everything.', pfp:'' },
+  { id:'mimi',   name:'Mimi the Unicorn',   species:'Unicorn Princess', isle:'Luminella Isle',  color:'var(--lilac)',  shortDesc:'Dreamy and creative, leaves magic wherever she goes', fullDesc:'A unicorn princess with a magical heart companion. Together, they remind others what love feels like.', pfp:'' },
+  { id:'gregy',  name:'Greggy the Frog',    species:'The Frog',    isle:'Puddlehop Isle',        color:'var(--green)', shortDesc:'Curious, a little sleepy, finds wonder in the smallest things', fullDesc:'Clumsy, a little chaotic — but the group wouldn\'t be the same without him. Because wherever Greggy goes, laughs follow.', pfp:'' },
+];
+
+function handleFriendImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _friendPfpB64 = e.target.result;
+    const prev = document.getElementById('friendPfpPreview');
+    prev.src = e.target.result; prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderFriendsList() {
+  let friends = getData(KEYS.friends, null);
+  if (friends === null) { friends = defaultFriends; setData(KEYS.friends, friends); }
+  const container = document.getElementById('friendsList');
+  if (!friends.length) {
+    container.innerHTML = `<div class="empty-state"><span class="icon">🐸</span>No friends yet!</div>`;
+    return;
+  }
+  container.innerHTML = friends.map(f => `
+    <div class="friend-row">
+      <div class="friend-pfp">${f.pfp ? `<img src="${f.pfp}" alt="">` : '🌸'}</div>
+      <div class="friend-row-info">
+        <p class="friend-row-name">${f.name}</p>
+        <p class="friend-row-species">${f.species} · ${f.isle}</p>
+      </div>
+      <div style="display:flex;gap:0.4rem">
+        <button class="btn-secondary" onclick="editFriend('${f.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
+        <button class="btn-danger" onclick="deleteFriend('${f.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function editFriend(id) {
+  const friends = getData(KEYS.friends, defaultFriends);
+  const f = friends.find(x => x.id === id); if (!f) return;
+  document.getElementById('editFriendId').value = id;
+  document.getElementById('friendName').value = f.name || '';
+  document.getElementById('friendSpecies').value = f.species || '';
+  document.getElementById('friendIsle').value = f.isle || '';
+  document.getElementById('friendColor').value = f.color || 'var(--pink)';
+  document.getElementById('friendShortDesc').value = f.shortDesc || '';
+  document.getElementById('friendFullDesc').value = f.fullDesc || '';
+  if (f.pfp) {
+    _friendPfpB64 = f.pfp;
+    const prev = document.getElementById('friendPfpPreview');
+    prev.src = f.pfp; prev.style.display = 'block';
+  }
+  document.getElementById('friendCancelEdit').style.display = 'inline-block';
+  document.getElementById('deleteFriendBtn').style.display = 'inline-block';
+  document.getElementById('friendName').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function cancelFriendEdit() {
+  document.getElementById('editFriendId').value='';
+  ['friendName','friendSpecies','friendIsle','friendShortDesc','friendFullDesc'].forEach(id => document.getElementById(id).value='');
+  _friendPfpB64='';
+  const prev = document.getElementById('friendPfpPreview');
+  prev.src=''; prev.style.display='none';
+  document.getElementById('friendCancelEdit').style.display='none';
+  document.getElementById('deleteFriendBtn').style.display='none';
+}
+function saveFriend() {
+  const name = document.getElementById('friendName').value.trim();
+  if (!name) { showToast('Please add a name!', true); return; }
+  let friends = getData(KEYS.friends, defaultFriends);
+  const editId = document.getElementById('editFriendId').value;
+  const friend = {
+    id:        editId || uid(),
+    name,
+    species:   document.getElementById('friendSpecies').value.trim(),
+    isle:      document.getElementById('friendIsle').value.trim(),
+    color:     document.getElementById('friendColor').value,
+    shortDesc: document.getElementById('friendShortDesc').value.trim(),
+    fullDesc:  document.getElementById('friendFullDesc').value.trim(),
+    pfp:       _friendPfpB64
+  };
+  if (editId) { const idx = friends.findIndex(x => x.id === editId); if (idx>-1) friends[idx]=friend; else friends.push(friend); }
+  else friends.push(friend);
+  setData(KEYS.friends, friends);
+  cancelFriendEdit(); renderFriendsList(); showToast('Friend saved! ✦');
+}
+function deleteFriend(id) {
+  if (!confirm('Remove this friend from the Whimsiverse?')) return;
+  setData(KEYS.friends, getData(KEYS.friends, defaultFriends).filter(x => x.id !== id));
+  renderFriendsList(); showToast('Friend removed.');
+}
+function deleteCurrentFriend() {
+  const id = document.getElementById('editFriendId').value;
+  if (id) deleteFriend(id);
+  cancelFriendEdit();
+}
+
+/* ══════════════════════════════════════════════════════
+   SOCIAL LINKS
+══════════════════════════════════════════════════════ */
+const SOCIAL_DEFAULTS = {
+  instagram: 'https://instagram.com/wooblynfrens',
+  pinterest: 'https://pinterest.com/wooblynfrens',
+  x:         'https://x.com/wooblynfrens',
+  patreon:   'https://www.patreon.com/c/wooblynfrens',
+  shop:      'https://shop.wooblynfrens.com',
+  tiktok:    '',
+  youtube:   '',
+};
+
+function renderSocialFields() {
+  const saved = getData(KEYS.social, SOCIAL_DEFAULTS);
+  const platforms = ['instagram','pinterest','x','patreon','shop','tiktok','youtube'];
+  document.getElementById('socialFields').innerHTML = platforms.map(p => `
+    <div class="social-row">
+      <span class="social-icon-label">${p.charAt(0).toUpperCase()+p.slice(1)}</span>
+      <input type="url" class="f-input" id="social_${p}" value="${saved[p]||''}" placeholder="https://…" style="margin:0">
+    </div>`).join('');
+}
+
+function saveSocialLinks() {
+  const platforms = ['instagram','pinterest','x','patreon','shop','tiktok','youtube'];
+  const data = {};
+  platforms.forEach(p => { data[p] = document.getElementById('social_' + p).value.trim(); });
+  setData(KEYS.social, data);
+  showToast('Social links saved! ✦');
+}
+
+/* ══ INIT ══ */
+renderStoryList();
+</script>
+</body>
+</html>

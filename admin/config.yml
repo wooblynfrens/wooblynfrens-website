@@ -3,10 +3,10 @@
 # Whimsiverse / Woobly & Friends
 # ══════════════════════════════════════════
 
-# Your Git provider + repo — fill these in
+# Netlify Identity + Git Gateway
+# This matches the setup described in the README.
 backend:
-  name: github
-  repo: wooblynfrens/wooblynfrens-website   # e.g. sachi/wooblynfrens-website
+  name: git-gateway
   branch: main
 
 # Netlify Identity handles login (only you can log in)
