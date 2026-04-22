@@ -4,126 +4,146 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — Whimsiverse</title>
-<!-- Block search engines from indexing admin -->
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Quill rich text editor -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
 :root {
-  --bg:        #1e0c40;
-  --panel:     #2a1250;
-  --card:      #3d1f6e;
-  --card2:     #4a2882;
-  --border:    rgba(157,102,242,0.35);
-  --purple:    #5a2d8f;
-  --lilac:     #9d66f2;
-  --yellow:    #FFD54F;
-  --orange:    #E8820A;
-  --pink:      #fe5d9f;
-  --green:     #5BBF6A;
-  --cream:     #FFF8F0;
-  --white:     #ffffff;
-  --muted:     rgba(255,255,255,0.45);
-  --sidebar-w: 160px;
+  --bg:      #1a0a38;
+  --panel:   #241050;
+  --card:    #3a1d6a;
+  --card2:   #46278a;
+  --border:  rgba(157,102,242,0.3);
+  --lilac:   #9d66f2;
+  --yellow:  #FFD54F;
+  --orange:  #E8820A;
+  --pink:    #fe5d9f;
+  --green:   #5BBF6A;
+  --cream:   #FFF8F0;
+  --white:   #ffffff;
+  --muted:   rgba(255,255,255,0.45);
+  --sw:      200px;
 }
 
 body {
-  font-family:'Fredoka', sans-serif; font-weight:400;
-  background:var(--bg); color:var(--white);
-  min-height:100vh; display:flex; overflow-x:hidden;
+  font-family:'Fredoka',sans-serif; background:var(--bg);
+  color:var(--white); min-height:100vh; display:flex;
+  overflow-x:hidden;
 }
-
-/* ── BACKGROUND BLOBS ── */
 body::before {
   content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
-  background-image:url('../assets/purplebg.jpg');
-  background-size:cover; opacity:0.25;
+  background:url('../assets/purplebg.jpg') center/cover;
+  opacity:0.18;
 }
+
+/* ── SETUP BANNER ── */
+.setup-banner {
+  position:fixed; top:0; left:0; right:0; z-index:9999;
+  background:linear-gradient(90deg,#E8820A,#fe5d9f);
+  color:white; font-family:'Fredoka One',cursive;
+  padding:0.65rem 1.5rem; text-align:center; font-size:0.9rem;
+  display:none;
+}
+.setup-banner a { color:white; font-weight:700; }
+.setup-banner.show { display:block; }
 
 /* ── SIDEBAR ── */
 .sidebar {
-  width:var(--sidebar-w); flex-shrink:0; position:fixed; top:0; left:0; bottom:0;
-  background:rgba(30,12,64,0.92); backdrop-filter:blur(12px);
+  width:var(--sw); flex-shrink:0; position:fixed; top:0; left:0; bottom:0;
+  background:rgba(20,8,50,0.95); backdrop-filter:blur(16px);
   border-right:2px solid var(--border);
-  display:flex; flex-direction:column; padding:2rem 0 1.5rem;
+  display:flex; flex-direction:column; padding:1.5rem 0;
   z-index:100;
+  transition:transform 0.3s;
 }
 .sidebar-logo {
-  font-family:'Fredoka One',cursive; font-size:1rem;
-  color:var(--yellow); padding:0 1.25rem 1.5rem;
+  padding:0 1.25rem 1.25rem;
   border-bottom:1px solid var(--border);
-  line-height:1.3;
 }
-.sidebar-logo span { display:block; font-size:0.65rem; color:var(--pink); letter-spacing:1.5px; text-transform:uppercase; margin-top:0.2rem; }
+.sidebar-logo-title {
+  font-family:'Fredoka One',cursive; font-size:1.1rem; color:var(--yellow);
+  line-height:1.2; margin-bottom:0.1rem;
+}
+.sidebar-logo-sub {
+  font-size:0.62rem; color:var(--pink); letter-spacing:2px; text-transform:uppercase;
+}
 .sidebar-nav { flex:1; padding:1rem 0; overflow-y:auto; }
-.sidebar-btn {
-  display:block; width:100%; text-align:left;
-  background:none; border:none; cursor:pointer;
-  padding:0.8rem 1.25rem; font-family:'Fredoka One',cursive; font-size:0.9rem;
-  color:var(--muted); border-radius:0; transition:all 0.15s;
+.sidebar-nav a {
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.75rem 1.25rem; cursor:pointer;
+  font-family:'Fredoka One',cursive; font-size:0.88rem;
+  color:var(--muted); text-decoration:none;
   border-left:3px solid transparent;
+  transition:all 0.15s;
 }
-.sidebar-btn:hover { color:var(--cream); background:rgba(157,102,242,0.12); }
-.sidebar-btn.active { color:var(--yellow); border-left-color:var(--yellow); background:rgba(255,213,79,0.08); }
-.sidebar-btn .dot {
-  display:inline-block; width:8px; height:8px; border-radius:50%;
-  background:var(--lilac); margin-right:0.5rem;
-  vertical-align:middle;
-}
-.sidebar-btn.active .dot { background:var(--yellow); }
-.sidebar-footer { padding:0 1.25rem; }
-.sidebar-home-link {
+.sidebar-nav a:hover { color:var(--cream); background:rgba(157,102,242,0.1); }
+.sidebar-nav a.active { color:var(--yellow); border-left-color:var(--yellow); background:rgba(255,213,79,0.07); }
+.sidebar-nav a .nav-icon { font-size:1rem; width:20px; text-align:center; }
+.sidebar-divider { height:1px; background:var(--border); margin:0.5rem 1.25rem; }
+.sidebar-footer { padding:1rem 1.25rem 0; }
+.sidebar-view-link {
   display:block; text-align:center; text-decoration:none;
-  color:var(--muted); font-size:0.82rem; padding:0.5rem;
+  color:var(--muted); font-size:0.78rem; padding:0.5rem;
   border:1px solid var(--border); border-radius:0.5rem;
-  transition:all 0.15s; margin-bottom:0.5rem;
+  transition:all 0.15s; margin-bottom:0.4rem;
 }
-.sidebar-home-link:hover { color:var(--cream); border-color:var(--lilac); }
+.sidebar-view-link:hover { color:var(--cream); border-color:var(--lilac); }
+.sidebar-status {
+  font-size:0.7rem; color:var(--muted); text-align:center;
+  display:flex; align-items:center; justify-content:center; gap:0.4rem;
+  margin-top:0.5rem;
+}
+.status-dot { width:7px; height:7px; border-radius:50%; background:#555; flex-shrink:0; }
+.status-dot.connected { background:var(--green); box-shadow:0 0 6px var(--green); }
 
 /* ── MAIN ── */
 .main {
-  margin-left:var(--sidebar-w); flex:1;
-  padding:2rem 2.5rem;
+  margin-left:var(--sw); flex:1;
+  padding:2rem 2.5rem 4rem;
   position:relative; z-index:1;
   min-height:100vh;
 }
 
-/* ── HEADER ── */
-.admin-header { margin-bottom:2rem; }
-.admin-greeting {
-  font-family:'Fredoka One',cursive; font-size:1.6rem;
-  color:var(--white); margin-bottom:0.15rem;
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom:2rem; }
+.page-greeting {
+  font-family:'Fredoka One',cursive; font-size:1.7rem; color:var(--white);
 }
-.admin-subtitle { font-size:0.8rem; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; }
+.page-subtitle {
+  font-size:0.75rem; color:var(--yellow);
+  letter-spacing:2.5px; text-transform:uppercase; margin-top:0.1rem;
+}
 
-/* ── TABS ── */
-.tab-panel { display:none; }
-.tab-panel.active { display:block; }
+/* ── TAB PANELS ── */
+.panel { display:none; }
+.panel.active { display:block; }
 
 /* ── CARDS ── */
-.admin-card {
-  background:rgba(42,18,80,0.7); backdrop-filter:blur(8px);
+.card {
+  background:rgba(36,16,80,0.75); backdrop-filter:blur(10px);
   border:2px solid var(--border); border-radius:1.25rem;
   padding:1.5rem; margin-bottom:1.5rem;
 }
-.card-title {
-  font-family:'Fredoka One',cursive; font-size:1.05rem;
-  color:var(--cream); margin-bottom:1rem;
+.card-head {
   display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1.25rem;
 }
-.card-title .badge {
-  background:var(--lilac); color:var(--white);
-  font-size:0.7rem; padding:2px 10px; border-radius:50px;
-  font-family:'Fredoka',sans-serif; font-weight:600;
+.card-title {
+  font-family:'Fredoka One',cursive; font-size:1rem; color:var(--cream);
 }
+.card-meta { font-size:0.82rem; color:var(--muted); }
 
-/* ── FORM FIELDS ── */
-.f-group { margin-bottom:1rem; }
+/* ── FORM ELEMENTS ── */
 .f-label {
-  display:block; font-size:0.78rem; font-weight:600;
-  color:var(--muted); margin-bottom:0.35rem; letter-spacing:0.8px; text-transform:uppercase;
+  display:block; font-size:0.72rem; font-weight:600;
+  color:var(--muted); margin-bottom:0.3rem;
+  letter-spacing:0.8px; text-transform:uppercase;
 }
 .f-input, .f-textarea, .f-select {
   width:100%; background:rgba(255,255,255,0.07);
@@ -132,546 +152,588 @@ body::before {
   padding:0.6rem 1rem; outline:none; transition:border-color 0.15s;
 }
 .f-input:focus, .f-textarea:focus, .f-select:focus { border-color:var(--lilac); }
-.f-textarea { resize:vertical; min-height:120px; line-height:1.65; }
-.f-select option { background:var(--panel); color:var(--white); }
-.f-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.f-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+.f-textarea { resize:vertical; min-height:100px; line-height:1.65; }
+.f-select option { background:#1a0a38; color:var(--white); }
+.f-group { margin-bottom:1rem; }
+.f-row2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.f-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
 
-/* Image upload */
-.img-upload-wrap {
+/* Image upload zone */
+.img-zone {
   border:2px dashed var(--border); border-radius:0.75rem;
-  padding:1rem; text-align:center; cursor:pointer;
-  transition:border-color 0.15s, background 0.15s;
-  position:relative; overflow:hidden;
+  padding:1.25rem; text-align:center; cursor:pointer; position:relative;
+  transition:border-color 0.2s, background 0.2s; min-height:100px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.4rem;
 }
-.img-upload-wrap:hover { border-color:var(--lilac); background:rgba(157,102,242,0.06); }
-.img-upload-wrap input[type=file] {
-  position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2;
-}
-.img-upload-label { font-size:0.85rem; color:var(--muted); pointer-events:none; }
-.img-upload-label span { display:block; font-size:1.8rem; margin-bottom:0.35rem; }
-.img-preview {
-  width:100%; max-height:160px; object-fit:cover;
+.img-zone:hover { border-color:var(--lilac); background:rgba(157,102,242,0.06); }
+.img-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2; }
+.img-zone-label { font-size:0.82rem; color:var(--muted); pointer-events:none; }
+.img-zone-icon { font-size:1.75rem; pointer-events:none; }
+.img-preview-thumb {
+  width:100%; max-height:140px; object-fit:cover;
   border-radius:0.5rem; display:none; margin-top:0.5rem;
 }
+.img-preview-thumb.show { display:block; }
 
-/* Rich text toolbar */
-.rich-toolbar {
-  display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.5rem;
+/* Quill custom theme */
+.quill-wrap .ql-toolbar {
+  background:rgba(255,255,255,0.06); border:2px solid var(--border) !important;
+  border-bottom:1px solid var(--border) !important; border-radius:0.75rem 0.75rem 0 0;
 }
-.rich-btn {
-  background:rgba(157,102,242,0.2); border:1px solid var(--border);
-  color:var(--cream); border-radius:0.4rem; padding:0.3rem 0.65rem;
-  font-size:0.82rem; cursor:pointer; font-family:'Fredoka',sans-serif;
-  transition:background 0.15s;
+.quill-wrap .ql-container {
+  border:2px solid var(--border) !important; border-top:none !important;
+  border-radius:0 0 0.75rem 0.75rem;
+  background:rgba(255,255,255,0.05); min-height:260px;
+  font-family:'Fredoka',sans-serif; font-size:1rem; color:var(--cream);
 }
-.rich-btn:hover { background:var(--lilac); }
-.story-editor {
-  width:100%; min-height:280px; background:rgba(255,255,255,0.06);
-  border:2px solid var(--border); border-radius:0.75rem;
-  color:var(--white); font-family:'Fredoka',sans-serif; font-size:0.97rem;
-  padding:1rem; outline:none; transition:border-color 0.15s;
-  line-height:1.85;
+.quill-wrap .ql-editor { min-height:260px; line-height:1.85; padding:1rem; }
+.quill-wrap .ql-editor p { text-indent:1.8em; text-align:justify; margin-bottom:0.4rem; }
+.quill-wrap .ql-editor p:first-of-type::first-letter {
+  font-size:2.8em; font-family:'Fredoka One',cursive; float:left;
+  line-height:0.7; margin:0 6px 0 0; color:var(--yellow);
 }
-.story-editor:focus { border-color:var(--lilac); }
-/* Book-like paragraph style */
-.story-editor p { text-indent:2em; margin-bottom:0.6rem; text-align:justify; }
-.story-editor p:first-child::first-letter { font-size:2.5em; float:left; line-height:0.75; margin:0 6px 0 0; color:var(--yellow); font-family:'Fredoka One',cursive; }
-.story-editor img { max-width:100%; border-radius:0.5rem; display:block; margin:0.75rem auto; }
+.quill-wrap .ql-editor img { max-width:100%; border-radius:0.75rem; display:block; margin:1rem auto; }
+.ql-snow .ql-stroke { stroke:var(--muted) !important; }
+.ql-snow .ql-fill  { fill:var(--muted) !important; }
+.ql-snow .ql-picker-label { color:var(--muted) !important; }
+.ql-snow .ql-picker-options { background:#241050 !important; border-color:var(--border) !important; }
 
 /* ── BUTTONS ── */
 .btn-save {
   background:var(--orange); color:var(--white);
   border:none; border-radius:50px; padding:0.65rem 2rem;
   font-family:'Fredoka One',cursive; font-size:0.95rem; cursor:pointer;
-  box-shadow:0 4px 0 #954200; transition:transform 0.15s, box-shadow 0.15s;
+  box-shadow:0 4px 0 #7a4400; transition:transform 0.15s, box-shadow 0.15s;
 }
-.btn-save:hover { transform:translateY(-2px); box-shadow:0 6px 0 #954200; }
+.btn-save:hover { transform:translateY(-2px); box-shadow:0 6px 0 #7a4400; }
+.btn-save:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
 .btn-secondary {
-  background:rgba(157,102,242,0.25); color:var(--cream);
-  border:2px solid var(--border); border-radius:50px; padding:0.55rem 1.5rem;
-  font-family:'Fredoka One',cursive; font-size:0.88rem; cursor:pointer;
-  transition:background 0.15s, border-color 0.15s;
+  background:rgba(157,102,242,0.2); color:var(--cream);
+  border:2px solid var(--border); border-radius:50px;
+  padding:0.5rem 1.4rem; font-family:'Fredoka One',cursive;
+  font-size:0.85rem; cursor:pointer; transition:all 0.15s;
 }
-.btn-secondary:hover { background:rgba(157,102,242,0.4); border-color:var(--lilac); }
+.btn-secondary:hover { background:rgba(157,102,242,0.35); border-color:var(--lilac); }
 .btn-danger {
-  background:rgba(255,80,80,0.2); color:#ff8888;
-  border:2px solid rgba(255,80,80,0.3); border-radius:50px; padding:0.45rem 1rem;
-  font-family:'Fredoka One',cursive; font-size:0.8rem; cursor:pointer;
-  transition:background 0.15s;
+  background:rgba(255,70,70,0.15); color:#ff9090;
+  border:2px solid rgba(255,70,70,0.3); border-radius:50px;
+  padding:0.42rem 1rem; font-family:'Fredoka One',cursive;
+  font-size:0.78rem; cursor:pointer; transition:all 0.15s;
 }
-.btn-danger:hover { background:rgba(255,80,80,0.4); }
+.btn-danger:hover { background:rgba(255,70,70,0.35); }
 .btn-pink {
   background:var(--pink); color:var(--white);
-  border:none; border-radius:50px; padding:0.55rem 1.5rem;
-  font-family:'Fredoka One',cursive; font-size:0.88rem; cursor:pointer;
-  box-shadow:0 3px 0 #a03060; transition:transform 0.15s;
+  border:none; border-radius:50px; padding:0.5rem 1.4rem;
+  font-family:'Fredoka One',cursive; font-size:0.85rem; cursor:pointer;
+  box-shadow:0 3px 0 #9a2050; transition:transform 0.15s;
 }
 .btn-pink:hover { transform:translateY(-2px); }
 
-/* ── STORIES LIST ── */
-.story-list { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
-.story-item {
-  background:rgba(157,102,242,0.1); border:2px solid var(--border);
-  border-radius:1rem; padding:1rem; display:flex; flex-direction:column; gap:0.5rem;
+/* ── SUB-TABS ── */
+.sub-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+.sub-tab {
+  background:rgba(255,255,255,0.06); border:2px solid var(--border);
+  color:var(--muted); border-radius:50px; padding:0.42rem 1.2rem;
+  font-family:'Fredoka One',cursive; font-size:0.82rem; cursor:pointer;
+  transition:all 0.15s;
+}
+.sub-tab.active { background:var(--lilac); border-color:var(--lilac); color:var(--white); }
+.sub-panel { display:none; }
+.sub-panel.active { display:block; }
+
+/* ── LIST ROWS ── */
+.list-row {
+  display:flex; align-items:center; gap:0.85rem;
+  background:rgba(157,102,242,0.08); border:2px solid var(--border);
+  border-radius:0.85rem; padding:0.75rem 1rem; margin-bottom:0.6rem;
   transition:border-color 0.15s;
 }
-.story-item:hover { border-color:var(--lilac); }
-.story-cover-thumb {
-  width:100%; aspect-ratio:16/9; border-radius:0.5rem; overflow:hidden;
+.list-row:hover { border-color:rgba(157,102,242,0.5); }
+.list-row-thumb {
+  width:48px; height:48px; border-radius:0.5rem; overflow:hidden;
+  background:rgba(157,102,242,0.2); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+}
+.list-row-thumb img { width:100%; height:100%; object-fit:cover; }
+.list-row-pfp {
+  width:46px; height:46px; border-radius:50%; overflow:hidden;
+  background:rgba(157,102,242,0.2); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+}
+.list-row-pfp img { width:100%; height:100%; object-fit:cover; }
+.list-row-info { flex:1; min-width:0; }
+.list-row-name {
+  font-family:'Fredoka One',cursive; font-size:0.88rem; color:var(--cream);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.list-row-meta { font-size:0.75rem; color:var(--muted); margin-top:0.1rem; }
+.list-row-price { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--yellow); flex-shrink:0; }
+.list-row-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+
+/* Story grid */
+.story-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.story-card {
+  background:rgba(157,102,242,0.08); border:2px solid var(--border);
+  border-radius:1rem; overflow:hidden; transition:border-color 0.15s;
+}
+.story-card:hover { border-color:rgba(157,102,242,0.5); }
+.story-card-cover {
+  width:100%; aspect-ratio:16/9; overflow:hidden;
   background:rgba(157,102,242,0.15); display:flex; align-items:center; justify-content:center;
-  font-size:2rem;
+  font-size:2.5rem;
 }
-.story-cover-thumb img { width:100%; height:100%; object-fit:cover; }
-.story-item-title { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); }
-.story-item-meta { display:flex; justify-content:space-between; align-items:center; }
-.story-item-date { font-size:0.75rem; color:var(--muted); }
-.story-item-book { font-size:0.75rem; color:var(--lilac); }
-.story-item-excerpt { font-size:0.78rem; color:var(--muted); line-height:1.5; }
-.story-item-actions { display:flex; gap:0.5rem; margin-top:0.25rem; }
+.story-card-cover img { width:100%; height:100%; object-fit:cover; }
+.story-card-body { padding:0.9rem; }
+.story-card-title { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); margin-bottom:0.2rem; }
+.story-card-meta { font-size:0.72rem; color:var(--muted); margin-bottom:0.5rem; display:flex; justify-content:space-between; }
+.story-card-excerpt { font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5; margin-bottom:0.6rem; }
+.story-card-actions { display:flex; gap:0.4rem; }
 
-/* ── SHOP ITEMS LIST ── */
-.shop-item-row {
-  display:flex; align-items:center; gap:1rem;
-  background:rgba(157,102,242,0.1); border:2px solid var(--border);
-  border-radius:0.75rem; padding:0.75rem 1rem; margin-bottom:0.65rem;
-  transition:border-color 0.15s;
+/* Empty state */
+.empty-state {
+  text-align:center; padding:2.5rem; color:var(--muted);
 }
-.shop-item-row:hover { border-color:var(--lilac); }
-.shop-thumb {
-  width:44px; height:44px; border-radius:0.5rem; overflow:hidden; flex-shrink:0;
-  background:rgba(157,102,242,0.2); display:flex; align-items:center; justify-content:center;
-  font-size:1.2rem;
-}
-.shop-thumb img { width:100%; height:100%; object-fit:cover; }
-.shop-row-info { flex:1; }
-.shop-row-name { font-family:'Fredoka One',cursive; font-size:0.88rem; color:var(--cream); }
-.shop-row-price { font-size:0.78rem; color:var(--yellow); }
-.shop-item-actions { display:flex; gap:0.4rem; flex-shrink:0; }
-.shop-count { font-size:0.85rem; color:var(--muted); margin-bottom:1rem; }
-.shop-count strong { color:var(--yellow); }
+.empty-icon { font-size:2.8rem; display:block; margin-bottom:0.75rem; }
 
-/* ── FAQ LIST ── */
-.faq-row {
-  background:rgba(157,102,242,0.1); border:2px solid var(--border);
-  border-radius:0.75rem; padding:0.9rem 1rem; margin-bottom:0.65rem;
-  display:flex; align-items:flex-start; gap:1rem; transition:border-color 0.15s;
+/* Info banner */
+.info-banner {
+  background:rgba(255,213,79,0.07); border:2px solid rgba(255,213,79,0.2);
+  border-radius:1rem; padding:1rem 1.25rem;
+  font-size:0.82rem; color:rgba(255,213,79,0.8); line-height:1.6;
+  margin-bottom:1.5rem;
 }
-.faq-row:hover { border-color:var(--lilac); }
-.faq-row-q { flex:1; font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); margin-bottom:0.2rem; }
-.faq-row-a { font-size:0.8rem; color:var(--muted); line-height:1.55; }
-.faq-row-actions { flex-shrink:0; }
-
-/* ── FRIENDS LIST ── */
-.friend-row {
-  display:flex; align-items:center; gap:1rem;
-  background:rgba(157,102,242,0.1); border:2px solid var(--border);
-  border-radius:0.75rem; padding:0.75rem 1rem; margin-bottom:0.65rem;
-}
-.friend-pfp {
-  width:48px; height:48px; border-radius:50%; overflow:hidden; flex-shrink:0;
-  background:rgba(157,102,242,0.25); display:flex; align-items:center; justify-content:center;
-  font-size:1.4rem;
-}
-.friend-pfp img { width:100%; height:100%; object-fit:cover; }
-.friend-row-name { font-family:'Fredoka One',cursive; font-size:0.9rem; color:var(--cream); }
-.friend-row-species { font-size:0.78rem; color:var(--muted); }
-.friend-row-info { flex:1; }
-
-/* ── SOCIAL LINKS ── */
-.social-row {
-  display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;
-}
-.social-icon-label { width:80px; font-size:0.85rem; color:var(--muted); flex-shrink:0; text-transform:capitalize; }
+.info-banner strong { color:var(--yellow); }
 
 /* ── TOAST ── */
 .toast {
   position:fixed; bottom:2rem; right:2rem; z-index:9999;
   background:var(--card2); border:2px solid var(--lilac);
   color:var(--white); border-radius:1rem; padding:0.85rem 1.5rem;
-  font-family:'Fredoka One',cursive; font-size:0.9rem;
-  box-shadow:0 8px 24px rgba(0,0,0,0.4);
-  transform:translateY(100px); opacity:0;
+  font-family:'Fredoka One',cursive; font-size:0.88rem;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  transform:translateY(120px); opacity:0;
   transition:transform 0.3s ease, opacity 0.3s ease;
   pointer-events:none;
 }
 .toast.show { transform:translateY(0); opacity:1; }
-.toast.error { border-color:var(--pink); }
+.toast.error { border-color:var(--pink); background:#3d0820; }
 
-/* ── SECTION DIVIDER ── */
-.section-divider {
-  border:none; border-top:1px solid var(--border);
-  margin:1.5rem 0;
+/* Color picker row */
+.color-options { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.color-opt {
+  width:28px; height:28px; border-radius:50%; cursor:pointer;
+  border:2px solid transparent; transition:all 0.15s;
 }
+.color-opt.selected { border-color:var(--white); transform:scale(1.2); }
 
-/* ── EMPTY STATE ── */
-.empty-state {
-  text-align:center; padding:2.5rem 1rem;
-  color:var(--muted); font-size:0.9rem;
+/* ── LOADING OVERLAY ── */
+.loading-wrap {
+  display:flex; align-items:center; gap:0.75rem;
+  padding:1rem; color:var(--muted); font-size:0.88rem;
 }
-.empty-state .icon { font-size:2.5rem; display:block; margin-bottom:0.75rem; }
+.spinner {
+  width:18px; height:18px; border:2px solid var(--border);
+  border-top-color:var(--lilac); border-radius:50%;
+  animation:spin 0.8s linear infinite; flex-shrink:0;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── TABS ROW (write/edit) ── */
-.sub-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
-.sub-tab {
-  background:rgba(255,255,255,0.06); border:2px solid var(--border);
-  color:var(--muted); border-radius:50px; padding:0.45rem 1.25rem;
-  font-family:'Fredoka One',cursive; font-size:0.85rem; cursor:pointer;
-  transition:all 0.15s;
-}
-.sub-tab.active { background:var(--lilac); border-color:var(--lilac); color:var(--white); }
-.sub-tab-panel { display:none; }
-.sub-tab-panel.active { display:block; }
-
-/* ── RESPONSIVE ── */
-@media (max-width:720px) {
-  :root { --sidebar-w:0px; }
-  .sidebar { transform:translateX(-100%); transition:transform 0.3s; }
-  .sidebar.open { transform:translateX(0); width:220px; }
-  .main { margin-left:0; padding:1.25rem; }
-  .story-list { grid-template-columns:1fr; }
-  .f-row { grid-template-columns:1fr; }
-  .f-row-3 { grid-template-columns:1fr 1fr; }
-  .mobile-menu-btn { display:flex !important; }
-}
-.mobile-menu-btn {
+/* ── MOBILE ── */
+.mob-toggle {
   display:none; position:fixed; top:1rem; left:1rem; z-index:200;
-  background:var(--panel); border:2px solid var(--border);
-  border-radius:0.5rem; padding:0.5rem; cursor:pointer; flex-direction:column;
-  gap:4px;
+  background:rgba(36,16,80,0.9); border:2px solid var(--border);
+  border-radius:0.5rem; padding:0.45rem; cursor:pointer;
+  flex-direction:column; gap:4px;
 }
-.mobile-menu-btn span { display:block; width:22px; height:2.5px; background:var(--cream); border-radius:2px; }
+.mob-toggle span { display:block; width:20px; height:2.5px; background:var(--cream); border-radius:2px; }
+@media (max-width:768px) {
+  :root { --sw:0px; }
+  .sidebar { transform:translateX(-100%); width:220px !important; }
+  .sidebar.mob-open { transform:translateX(0); }
+  .main { margin-left:0; padding:1.25rem; padding-top:4rem; }
+  .mob-toggle { display:flex; }
+  .story-grid { grid-template-columns:1fr; }
+  .f-row2, .f-row3 { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
 
-<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+<!-- Setup banner (shown when Supabase keys missing) -->
+<div class="setup-banner" id="setupBanner">
+  ⚠️ Supabase not configured yet — <a href="#" onclick="document.getElementById('panel-settings').scrollIntoView()">open Settings to add your keys</a>. Data won't save until then.
+</div>
+
+<button class="mob-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mob-open')">
   <span></span><span></span><span></span>
 </button>
 
 <!-- ════ SIDEBAR ════ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    Whimsiverse<br>
-    <span>Admin Panel</span>
+    <div class="sidebar-logo-title">Whimsiverse ✦</div>
+    <div class="sidebar-logo-sub">Admin Panel</div>
   </div>
   <nav class="sidebar-nav">
-    <button class="sidebar-btn active" onclick="switchTab('stories',this)">
-      <span class="dot"></span>Stories
-    </button>
-    <button class="sidebar-btn" onclick="switchTab('shop',this)">
-      <span class="dot"></span>Shop
-    </button>
-    <button class="sidebar-btn" onclick="switchTab('faq',this)">
-      <span class="dot"></span>FAQ
-    </button>
-    <button class="sidebar-btn" onclick="switchTab('friends',this)">
-      <span class="dot"></span>Friends
-    </button>
-    <button class="sidebar-btn" onclick="switchTab('social',this)">
-      <span class="dot"></span>Social Links
-    </button>
+    <a href="#" class="active" data-panel="stories">
+      <span class="nav-icon">📖</span>Stories
+    </a>
+    <a href="#" data-panel="shop">
+      <span class="nav-icon">🛍️</span>Shop
+    </a>
+    <div class="sidebar-divider"></div>
+    <a href="#" data-panel="friends">
+      <span class="nav-icon">🌸</span>Friends
+    </a>
+    <a href="#" data-panel="faq">
+      <span class="nav-icon">❓</span>FAQ
+    </a>
+    <a href="#" data-panel="social">
+      <span class="nav-icon">🔗</span>Social Links
+    </a>
+    <div class="sidebar-divider"></div>
+    <a href="#" data-panel="settings">
+      <span class="nav-icon">⚙️</span>Settings
+    </a>
   </nav>
   <div class="sidebar-footer">
-    <a class="sidebar-home-link" href="../index.html" target="_blank">← View Site</a>
+    <a class="sidebar-view-link" href="../index.html" target="_blank">← View Live Site</a>
+    <div class="sidebar-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Not connected</span>
+    </div>
   </div>
 </aside>
 
 <!-- ════ MAIN ════ -->
 <main class="main">
-  <div class="admin-header">
-    <p class="admin-greeting">Good Morning, Sachi ✦</p>
-    <p class="admin-subtitle">Welcome to the Admin Panel</p>
+
+  <div class="page-header">
+    <p class="page-greeting">Good Morning, Sachi ✦</p>
+    <p class="page-subtitle">Welcome to the Admin Panel</p>
   </div>
 
-  <!-- ════════ STORIES TAB ════════ -->
-  <div class="tab-panel active" id="tab-stories">
-
+  <!-- ══════════ STORIES ══════════ -->
+  <div class="panel active" id="panel-stories">
     <div class="sub-tabs">
-      <button class="sub-tab active" onclick="switchSubTab('stories','list',this)">Current Stories</button>
-      <button class="sub-tab" onclick="switchSubTab('stories','write',this)" id="writeTabBtn">Write New Story</button>
+      <button class="sub-tab active" data-subtab="stories-list">Current Stories</button>
+      <button class="sub-tab" data-subtab="stories-write">Write New Story</button>
     </div>
 
     <!-- LIST -->
-    <div class="sub-tab-panel active" id="stories-list">
-      <div class="admin-card">
-        <div class="card-title">
-          Let's add some Whimsies
-          <button class="btn-pink" onclick="switchSubTabById('stories','write')">+ New Story</button>
+    <div class="sub-panel active" id="stories-list">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Let's add some Whimsies</span>
+          <button class="btn-pink" onclick="switchSubtab('stories-write')">+ New Story</button>
         </div>
-        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Current Stories</p>
-        <div class="story-list" id="storyList">
-          <div class="empty-state" style="grid-column:1/-1">
-            <span class="icon">📖</span>
-            No stories yet. Write your first one! ✨
-          </div>
+        <p class="card-meta" style="margin-bottom:1rem">Current Stories</p>
+        <div class="story-grid" id="storyGrid">
+          <div class="loading-wrap"><span class="spinner"></span> Loading stories…</div>
         </div>
       </div>
     </div>
 
     <!-- WRITE / EDIT -->
-    <div class="sub-tab-panel" id="stories-write">
-      <div class="admin-card">
-        <div class="card-title">Time to write the reality ✨</div>
-
-        <input type="hidden" id="editStoryId" value="">
+    <div class="sub-panel" id="stories-write">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title" id="storyFormTitle">Time to write the reality ✨</span>
+        </div>
+        <input type="hidden" id="storyEditId">
 
         <div class="f-group">
           <label class="f-label">Story Title</label>
           <input type="text" class="f-input" id="storyTitle" placeholder="e.g. Fluffy and the Cosmic Break">
         </div>
 
-        <div class="f-row">
+        <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Book No.</label>
-            <input type="text" class="f-input" id="storyBookNo" placeholder="e.g. 01">
+            <input type="text" class="f-input" id="storyBookNo" placeholder="01">
           </div>
           <div class="f-group">
-            <label class="f-label">Book Title <span style="font-size:0.7rem;color:var(--muted)">(if not registered before)</span></label>
-            <input type="text" class="f-input" id="storyBookTitle" placeholder="e.g. Woobly & Friends Vol.1">
+            <label class="f-label">Book Title <span style="font-size:0.68rem;opacity:0.6">(if new)</span></label>
+            <input type="text" class="f-input" id="storyBookTitle" placeholder="Woobly & Friends Vol.1">
           </div>
         </div>
 
-        <div class="f-row">
+        <div class="f-row2">
           <div class="f-group">
-            <label class="f-label">Tag / Category</label>
-            <input type="text" class="f-input" id="storyTag" placeholder="e.g. Story, Lore, Behind the Scenes">
+            <label class="f-label">Category Tag</label>
+            <input type="text" class="f-input" id="storyTag" placeholder="Story, Lore, Behind the Scenes…">
           </div>
           <div class="f-group">
             <label class="f-label">Cover Image</label>
-            <div class="img-upload-wrap" id="storyCoverWrap">
-              <input type="file" accept="image/*" id="storyCoverFile" onchange="handleStoryImg(this)">
-              <div class="img-upload-label">
-                <span>🖼️</span>
-                Click to upload cover image
-              </div>
-              <img class="img-preview" id="storyCoverPreview" alt="">
+            <div class="img-zone" id="storyCoverZone">
+              <input type="file" accept="image/*" id="storyCoverFile">
+              <span class="img-zone-icon">🖼️</span>
+              <span class="img-zone-label">Click to upload</span>
+              <img class="img-preview-thumb" id="storyCoverPreview" alt="">
             </div>
           </div>
         </div>
 
         <div class="f-group">
-          <label class="f-label">Excerpt <span style="font-size:0.7rem;color:var(--muted)">(shown on story card)</span></label>
+          <label class="f-label">Excerpt <span style="font-size:0.68rem;opacity:0.6">(shown on story card)</span></label>
           <input type="text" class="f-input" id="storyExcerpt" placeholder="A short teaser — 1 or 2 sentences">
         </div>
 
         <div class="f-group">
           <label class="f-label">Story Body</label>
-          <!-- Toolbar -->
-          <div class="rich-toolbar">
-            <button class="rich-btn" onclick="richCmd('bold')"><b>B</b></button>
-            <button class="rich-btn" onclick="richCmd('italic')"><i>I</i></button>
-            <button class="rich-btn" onclick="richCmd('underline')"><u>U</u></button>
-            <button class="rich-btn" onclick="insertParagraph()">¶ Para</button>
-            <button class="rich-btn" onclick="insertStoryImage()">📷 Image</button>
-            <button class="rich-btn" onclick="richCmd('removeFormat')">✕ Clear</button>
-          </div>
-          <div class="story-editor" id="storyBody" contenteditable="true"
-               placeholder="Start writing the story…">
+          <div class="quill-wrap">
+            <div id="storyEditor"></div>
           </div>
         </div>
 
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
-          <button class="btn-save" onclick="saveStory()">Save Story ✦</button>
-          <button class="btn-secondary" onclick="switchSubTabById('stories','list')">Cancel</button>
-          <button class="btn-danger" id="deleteStoryBtn" style="display:none" onclick="deleteCurrentStory()">Delete Story</button>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn-save" id="storySaveBtn" onclick="saveStory()">Save Story ✦</button>
+          <button class="btn-secondary" onclick="switchSubtab('stories-list');clearStoryForm()">Cancel</button>
+          <button class="btn-danger" id="storyDeleteBtn" style="display:none" onclick="deleteStory()">Delete Story</button>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ════════ SHOP TAB ════════ -->
-  <div class="tab-panel" id="tab-shop">
-
+  <!-- ══════════ SHOP ══════════ -->
+  <div class="panel" id="panel-shop">
     <div class="sub-tabs">
-      <button class="sub-tab active" onclick="switchSubTab('shop','list',this)">Current Items</button>
-      <button class="sub-tab" onclick="switchSubTab('shop','add',this)">Add Item</button>
+      <button class="sub-tab active" data-subtab="shop-list">Current Items</button>
+      <button class="sub-tab" data-subtab="shop-add">Add Item</button>
     </div>
 
     <!-- LIST -->
-    <div class="sub-tab-panel active" id="shop-list">
-      <div class="admin-card">
-        <div class="card-title">
-          Let's add some Whimsies
-          <button class="btn-pink" onclick="switchSubTabById('shop','add')">+ Add Item</button>
+    <div class="sub-panel active" id="shop-list">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Let's add some Whimsies</span>
+          <button class="btn-pink" onclick="switchSubtab('shop-add');clearShopForm()">+ Add Item</button>
         </div>
-        <p class="shop-count" id="shopCount">Available Items: <strong>0 / 6</strong></p>
-        <div id="shopItemList">
-          <div class="empty-state">
-            <span class="icon">🛍️</span>
-            No shop items yet. Add your first one!
-          </div>
+        <p class="card-meta" id="shopCountLabel" style="margin-bottom:1rem">Available Items: 0 / 6</p>
+        <div id="shopList">
+          <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
         </div>
       </div>
-      <div class="admin-card" style="background:rgba(255,213,79,0.06);border-color:rgba(255,213,79,0.25)">
-        <p style="font-size:0.82rem;color:rgba(255,213,79,0.8);line-height:1.65">
-          <strong style="color:var(--yellow)">✦ How the rotation works:</strong><br>
-          The homepage shows 4 items at a time. If you have 5 or 6 items saved, they rotate automatically every few seconds so visitors see all your items.
-        </p>
+      <div class="info-banner">
+        <strong>✦ How the rotation works:</strong><br>
+        Homepage shows 4 items at a time. If you have 5–6 items, they rotate automatically every few seconds so visitors see everything.
       </div>
     </div>
 
     <!-- ADD / EDIT -->
-    <div class="sub-tab-panel" id="shop-add">
-      <div class="admin-card">
-        <div class="card-title">
-          Let's add some Whimsies
+    <div class="sub-panel" id="shop-add">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title" id="shopFormTitle">Let's add some Whimsies</span>
         </div>
-
-        <input type="hidden" id="editShopId" value="">
+        <input type="hidden" id="shopEditId">
 
         <div class="f-group">
           <label class="f-label">Item Name</label>
           <input type="text" class="f-input" id="shopName" placeholder="e.g. Fluffy Sticker Sheet">
         </div>
 
-        <div class="f-row">
+        <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Price ($)</label>
             <input type="text" class="f-input" id="shopPrice" placeholder="3.00">
           </div>
           <div class="f-group">
             <label class="f-label">Item Link (Payhip URL)</label>
-            <input type="url" class="f-input" id="shopUrl" placeholder="https://payhip.com/b/...">
+            <input type="url" class="f-input" id="shopUrl" placeholder="https://payhip.com/b/…">
           </div>
         </div>
 
-        <div class="f-row">
+        <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Description</label>
-            <textarea class="f-textarea" id="shopDesc" placeholder="Short description of the item…" style="min-height:80px"></textarea>
+            <textarea class="f-textarea" id="shopDesc" placeholder="Short description…" style="min-height:80px"></textarea>
           </div>
           <div class="f-group">
             <label class="f-label">Image</label>
-            <div class="img-upload-wrap" style="height:100%;min-height:80px">
-              <input type="file" accept="image/*" id="shopImgFile" onchange="handleShopImg(this)">
-              <div class="img-upload-label">
-                <span>🖼️</span>Upload image
-              </div>
-              <img class="img-preview" id="shopImgPreview" alt="">
+            <div class="img-zone" id="shopImgZone" style="min-height:80px">
+              <input type="file" accept="image/*" id="shopImgFile">
+              <span class="img-zone-icon">🖼️</span>
+              <span class="img-zone-label">Upload image</span>
+              <img class="img-preview-thumb" id="shopImgPreview" alt="">
             </div>
           </div>
         </div>
 
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
-          <button class="btn-save" onclick="saveShopItem()">Save Item ✦</button>
-          <button class="btn-secondary" onclick="switchSubTabById('shop','list')">Cancel</button>
-          <button class="btn-danger" id="deleteShopBtn" style="display:none" onclick="deleteCurrentShopItem()">Delete Item</button>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" id="shopSaveBtn" onclick="saveShopItem()">Save Item ✦</button>
+          <button class="btn-secondary" onclick="switchSubtab('shop-list');clearShopForm()">Cancel</button>
+          <button class="btn-danger" id="shopDeleteBtn" style="display:none" onclick="deleteShopItem()">Delete Item</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ FRIENDS ══════════ -->
+  <div class="panel" id="panel-friends">
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-subtab="friends-list">Current Friends</button>
+      <button class="sub-tab" data-subtab="friends-add">Add Friend</button>
+    </div>
+
+    <div class="sub-panel active" id="friends-list">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">The Crew</span>
+          <button class="btn-pink" onclick="switchSubtab('friends-add');clearFriendForm()">+ New Friend</button>
+        </div>
+        <div id="friendsList">
+          <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
         </div>
       </div>
     </div>
 
+    <div class="sub-panel" id="friends-add">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title" id="friendFormTitle">Add New Friend</span>
+        </div>
+        <input type="hidden" id="friendEditId">
+
+        <div class="f-row2">
+          <div class="f-group">
+            <label class="f-label">Name</label>
+            <input type="text" class="f-input" id="friendName" placeholder="e.g. Fluffy">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Species / Title</label>
+            <input type="text" class="f-input" id="friendSpecies" placeholder="e.g. The Woobly">
+          </div>
+        </div>
+
+        <div class="f-row2">
+          <div class="f-group">
+            <label class="f-label">Isle / Location</label>
+            <input type="text" class="f-input" id="friendIsle" placeholder="e.g. Greenwillow Isle">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Name Colour</label>
+            <div class="color-options" id="colorOptions">
+              <div class="color-opt selected" style="background:#fe5d9f" data-color="#fe5d9f"></div>
+              <div class="color-opt" style="background:#FFD54F" data-color="#FFD54F"></div>
+              <div class="color-opt" style="background:#9d66f2" data-color="#9d66f2"></div>
+              <div class="color-opt" style="background:#5BBF6A" data-color="#5BBF6A"></div>
+              <div class="color-opt" style="background:#6180f2" data-color="#6180f2"></div>
+              <div class="color-opt" style="background:#FFF8F0" data-color="#FFF8F0"></div>
+            </div>
+            <input type="hidden" id="friendColor" value="#fe5d9f">
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Short Description (homepage card)</label>
+          <input type="text" class="f-input" id="friendShort" placeholder="1-line teaser">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Full Description (About page)</label>
+          <textarea class="f-textarea" id="friendFull" placeholder="Their full story paragraph…"></textarea>
+        </div>
+        <div class="f-group">
+          <label class="f-label">Profile Picture</label>
+          <div class="img-zone" id="friendPfpZone">
+            <input type="file" accept="image/*" id="friendPfpFile">
+            <span class="img-zone-icon">🖼️</span>
+            <span class="img-zone-label">Upload PFP</span>
+            <img class="img-preview-thumb" id="friendPfpPreview" alt="">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" id="friendSaveBtn" onclick="saveFriend()">Save Friend ✦</button>
+          <button class="btn-secondary" onclick="switchSubtab('friends-list');clearFriendForm()">Cancel</button>
+          <button class="btn-danger" id="friendDeleteBtn" style="display:none" onclick="deleteFriend()">Remove</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- ════════ FAQ TAB ════════ -->
-  <div class="tab-panel" id="tab-faq">
-
-    <div class="admin-card">
-      <div class="card-title">FAQ Items</div>
-      <div id="faqList"></div>
+  <!-- ══════════ FAQ ══════════ -->
+  <div class="panel" id="panel-faq">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">FAQ Items</span>
+      </div>
+      <div id="faqList">
+        <div class="loading-wrap"><span class="spinner"></span> Loading…</div>
+      </div>
     </div>
-
-    <div class="admin-card">
-      <div class="card-title">Add New FAQ</div>
-      <input type="hidden" id="editFaqId" value="">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" id="faqFormTitle">Add New FAQ</span>
+      </div>
+      <input type="hidden" id="faqEditId">
       <div class="f-group">
         <label class="f-label">Question</label>
         <input type="text" class="f-input" id="faqQ" placeholder="e.g. Where is everything shipped from?">
       </div>
       <div class="f-group">
         <label class="f-label">Answer</label>
-        <textarea class="f-textarea" id="faqA" placeholder="Write the answer here…" style="min-height:80px"></textarea>
+        <textarea class="f-textarea" id="faqA" placeholder="Write the answer…" style="min-height:80px"></textarea>
       </div>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <button class="btn-save" onclick="saveFaqItem()">Save FAQ ✦</button>
-        <button class="btn-secondary" id="faqCancelEdit" style="display:none" onclick="cancelFaqEdit()">Cancel Edit</button>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <button class="btn-save" onclick="saveFaq()">Save FAQ ✦</button>
+        <button class="btn-secondary" id="faqCancelBtn" style="display:none" onclick="clearFaqForm()">Cancel Edit</button>
       </div>
     </div>
-
   </div>
 
-  <!-- ════════ FRIENDS TAB ════════ -->
-  <div class="tab-panel" id="tab-friends">
-
-    <div class="admin-card">
-      <div class="card-title">Current Friends</div>
-      <div id="friendsList"></div>
-    </div>
-
-    <div class="admin-card">
-      <div class="card-title">Add New Friend</div>
-      <input type="hidden" id="editFriendId" value="">
-      <div class="f-row">
-        <div class="f-group">
-          <label class="f-label">Name</label>
-          <input type="text" class="f-input" id="friendName" placeholder="e.g. Fluffy">
-        </div>
-        <div class="f-group">
-          <label class="f-label">Species / Title</label>
-          <input type="text" class="f-input" id="friendSpecies" placeholder="e.g. The Woobly">
-        </div>
+  <!-- ══════════ SOCIAL LINKS ══════════ -->
+  <div class="panel" id="panel-social">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Social Media Links</span>
       </div>
-      <div class="f-row">
-        <div class="f-group">
-          <label class="f-label">Isle / Location</label>
-          <input type="text" class="f-input" id="friendIsle" placeholder="e.g. Greenwillow Isle">
-        </div>
-        <div class="f-group">
-          <label class="f-label">Name Color</label>
-          <select class="f-select" id="friendColor">
-            <option value="var(--pink)">Pink</option>
-            <option value="var(--yellow)">Yellow</option>
-            <option value="var(--lilac)">Lilac / Purple</option>
-            <option value="var(--green)">Green</option>
-            <option value="var(--blue,#6180f2)">Blue</option>
-            <option value="var(--cream)">Cream / White</option>
-          </select>
-        </div>
-      </div>
-      <div class="f-group">
-        <label class="f-label">Short Description (homepage)</label>
-        <input type="text" class="f-input" id="friendShortDesc" placeholder="1-line teaser shown on crew card">
-      </div>
-      <div class="f-group">
-        <label class="f-label">Full Description (about page)</label>
-        <textarea class="f-textarea" id="friendFullDesc" placeholder="Full story paragraph…" style="min-height:80px"></textarea>
-      </div>
-      <div class="f-group">
-        <label class="f-label">Profile Picture</label>
-        <div class="img-upload-wrap">
-          <input type="file" accept="image/*" id="friendPfpFile" onchange="handleFriendImg(this)">
-          <div class="img-upload-label"><span>🖼️</span>Upload PFP</div>
-          <img class="img-preview" id="friendPfpPreview" alt="">
-        </div>
-      </div>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <button class="btn-save" onclick="saveFriend()">Save Friend ✦</button>
-        <button class="btn-secondary" id="friendCancelEdit" style="display:none" onclick="cancelFriendEdit()">Cancel Edit</button>
-        <button class="btn-danger" id="deleteFriendBtn" style="display:none" onclick="deleteCurrentFriend()">Delete</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ════════ SOCIAL LINKS TAB ════════ -->
-  <div class="tab-panel" id="tab-social">
-    <div class="admin-card">
-      <div class="card-title">Social Media Links</div>
       <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1.25rem">
-        These links update the footer and any social icons across the site. Leave blank to hide.
+        These update the footer icons across the site. Leave blank to hide. Place icon images in <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:4px">assets/icons/</code>
       </p>
-
-      <div id="socialFields">
-        <!-- rendered by JS -->
-      </div>
-
-      <button class="btn-save" onclick="saveSocialLinks()" style="margin-top:0.5rem">Save Links ✦</button>
+      <div id="socialFields"></div>
+      <button class="btn-save" onclick="saveSocial()" style="margin-top:0.5rem">Save Links ✦</button>
     </div>
-    <div class="admin-card" style="background:rgba(255,213,79,0.05);border-color:rgba(255,213,79,0.2)">
-      <p style="font-size:0.82rem;color:rgba(255,213,79,0.75);line-height:1.65">
-        <strong style="color:var(--yellow)">✦ Note:</strong> After saving here, the footer on your website will update when visitors reload the page. Social icon images should be placed in <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px">assets/icons/</code> folder.
+    <div class="info-banner">
+      <strong>✦ Icon files to upload:</strong><br>
+      Put these in your <code>assets/icons/</code> folder: instagram.svg, pinterest.svg, x.svg, tiktok.svg, youtube.svg, patreon.svg
+    </div>
+  </div>
+
+  <!-- ══════════ SETTINGS ══════════ -->
+  <div class="panel" id="panel-settings">
+    <div class="card" style="border-color:rgba(255,213,79,0.3)">
+      <div class="card-head">
+        <span class="card-title">🔑 Supabase Connection</span>
+      </div>
+      <div class="info-banner" style="margin-bottom:1rem">
+        <strong>How to get your keys:</strong><br>
+        1. Go to <strong>supabase.com</strong> → Create free account → New project<br>
+        2. In your project: <strong>Settings → API</strong><br>
+        3. Copy "Project URL" and "anon public" key → paste below<br>
+        4. Then run the SQL from the Setup tab to create your tables
+      </div>
+      <div class="f-group">
+        <label class="f-label">Supabase Project URL</label>
+        <input type="text" class="f-input" id="sbUrl" placeholder="https://xxxxxxxxxxxx.supabase.co">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Supabase Anon Key</label>
+        <input type="text" class="f-input" id="sbKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…">
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
+        <button class="btn-save" onclick="saveSupabaseKeys()">Save & Connect ✦</button>
+        <button class="btn-secondary" onclick="testConnection()">Test Connection</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-title">📋 Database Setup SQL</span></div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">
+        Copy this SQL, go to <strong>Supabase → SQL Editor → New query</strong>, paste and run it once.
       </p>
+      <pre id="setupSql" style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:0.75rem;padding:1rem;font-size:0.72rem;color:var(--cream);overflow-x:auto;line-height:1.6;white-space:pre-wrap"></pre>
+      <button class="btn-secondary" onclick="copySql()" style="margin-top:0.75rem">Copy SQL</button>
     </div>
   </div>
 
@@ -682,506 +744,723 @@ body::before {
 
 <script>
 /* ══════════════════════════════════════════════════════
-   DATA KEYS (all stored in localStorage)
+   CONFIG & SUPABASE INIT
 ══════════════════════════════════════════════════════ */
-const KEYS = {
-  stories: 'wnf_stories',
-  shop:    'wnf_shop_items_v2',
-  faq:     'wnf_faq',
-  friends: 'wnf_friends',
-  social:  'wnf_social'
-};
+const STORAGE_URL_KEY = 'wnf_sb_url';
+const STORAGE_KEY_KEY = 'wnf_sb_key';
 
-/* ══ HELPERS ══ */
-function getData(key, fallback=[]) {
-  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : fallback; }
-  catch { return fallback; }
+let sb = null; // supabase client
+
+function initSupabase() {
+  const url = localStorage.getItem(STORAGE_URL_KEY);
+  const key = localStorage.getItem(STORAGE_KEY_KEY);
+  if (!url || !key) {
+    setStatus(false, 'Not connected');
+    document.getElementById('setupBanner').classList.add('show');
+    return false;
+  }
+  try {
+    sb = window.supabase.createClient(url, key);
+    setStatus(true, 'Connected');
+    document.getElementById('setupBanner').classList.remove('show');
+    // Pre-fill settings fields
+    document.getElementById('sbUrl').value = url;
+    document.getElementById('sbKey').value = key;
+    return true;
+  } catch(e) {
+    setStatus(false, 'Error');
+    return false;
+  }
 }
-function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
-function showToast(msg, isError=false) {
+function setStatus(ok, text) {
+  document.getElementById('statusDot').className = 'status-dot' + (ok ? ' connected' : '');
+  document.getElementById('statusText').textContent = text;
+}
+
+async function saveSupabaseKeys() {
+  const url = document.getElementById('sbUrl').value.trim();
+  const key = document.getElementById('sbKey').value.trim();
+  if (!url || !key) { toast('Fill in both fields!', true); return; }
+  localStorage.setItem(STORAGE_URL_KEY, url);
+  localStorage.setItem(STORAGE_KEY_KEY, key);
+  if (initSupabase()) {
+    toast('Connected to Supabase! ✦');
+    loadAllData();
+  }
+}
+
+async function testConnection() {
+  if (!sb) { toast('Configure keys first!', true); return; }
+  const { error } = await sb.from('stories').select('id').limit(1);
+  if (error) toast('Error: ' + error.message, true);
+  else toast('Connection working! ✦');
+}
+
+/* ══════════════════════════════════════════════════════
+   SETUP SQL
+══════════════════════════════════════════════════════ */
+const SQL = `-- Run this ONCE in Supabase SQL Editor
+
+create table if not exists stories (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  book_no text,
+  book_title text,
+  tag text default 'Story',
+  excerpt text,
+  cover_url text,
+  body text,
+  created_at timestamptz default now()
+);
+
+create table if not exists shop_items (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  price text,
+  url text,
+  description text,
+  img_url text,
+  sort_order int default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists friends (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  species text,
+  isle text,
+  color text default '#fe5d9f',
+  short_desc text,
+  full_desc text,
+  pfp_url text,
+  sort_order int default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists faq_items (
+  id uuid default gen_random_uuid() primary key,
+  question text not null,
+  answer text not null,
+  sort_order int default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists site_settings (
+  key text primary key,
+  value text
+);
+
+-- Allow public read for all tables
+alter table stories enable row level security;
+alter table shop_items enable row level security;
+alter table friends enable row level security;
+alter table faq_items enable row level security;
+alter table site_settings enable row level security;
+
+create policy "Public read stories" on stories for select using (true);
+create policy "Public read shop" on shop_items for select using (true);
+create policy "Public read friends" on friends for select using (true);
+create policy "Public read faq" on faq_items for select using (true);
+create policy "Public read settings" on site_settings for select using (true);
+
+-- Full access (your admin uses anon key — keep key secret)
+create policy "All access stories" on stories for all using (true);
+create policy "All access shop" on shop_items for all using (true);
+create policy "All access friends" on friends for all using (true);
+create policy "All access faq" on faq_items for all using (true);
+create policy "All access settings" on site_settings for all using (true);`;
+
+document.getElementById('setupSql').textContent = SQL;
+
+function copySql() {
+  navigator.clipboard.writeText(SQL);
+  toast('SQL copied! Paste it in Supabase ✦');
+}
+
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+function toast(msg, isErr=false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast' + (isError ? ' error' : '');
+  t.className = 'toast' + (isErr ? ' error' : '');
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* ══ TAB SWITCHING ══ */
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-  renderTabContent(name);
-}
-function switchSubTab(panelPrefix, sub, btn) {
-  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab`).forEach(b => b.classList.remove('active'));
-  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab-panel`).forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(`${panelPrefix}-${sub}`).classList.add('active');
-}
-function switchSubTabById(panelPrefix, sub) {
-  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab`).forEach(b => {
-    b.classList.toggle('active', b.textContent.toLowerCase().includes(sub === 'list' ? 'current' : sub === 'add' ? 'add' : 'write'));
-  });
-  document.querySelectorAll(`#tab-${panelPrefix} .sub-tab-panel`).forEach(p => p.classList.remove('active'));
-  document.getElementById(`${panelPrefix}-${sub}`).classList.add('active');
+function needsDb() {
+  if (!sb) { toast('Connect Supabase first in Settings ⚙️', true); return true; }
+  return false;
 }
 
-function renderTabContent(name) {
-  if (name === 'stories') renderStoryList();
-  if (name === 'shop')    renderShopList();
-  if (name === 'faq')     renderFaqList();
-  if (name === 'friends') renderFriendsList();
-  if (name === 'social')  renderSocialFields();
+/* Upload a base64 image to Supabase Storage and return public URL */
+async function uploadImage(b64, bucket, prefix) {
+  if (!b64 || !sb) return null;
+  try {
+    const res = await fetch(b64);
+    const blob = await res.blob();
+    const ext  = blob.type.split('/')[1] || 'jpg';
+    const path = `${prefix}-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from(bucket).upload(path, blob, { upsert: true });
+    if (error) { console.error(error); return null; }
+    const { data } = sb.storage.from(bucket).getPublicUrl(path);
+    return data.publicUrl;
+  } catch(e) { console.error(e); return null; }
 }
+
+/* Read file input → base64 */
+function readFile(input) {
+  return new Promise(res => {
+    const file = input.files[0];
+    if (!file) { res(null); return; }
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+function previewFile(inputEl, previewEl) {
+  inputEl.addEventListener('change', async () => {
+    const b64 = await readFile(inputEl);
+    if (!b64) return;
+    previewEl.src = b64;
+    previewEl.classList.add('show');
+    previewEl.parentElement.querySelector('.img-zone-icon').style.display = 'none';
+    previewEl.parentElement.querySelector('.img-zone-label').style.display = 'none';
+  });
+}
+
+/* ── SIDEBAR NAV ── */
+document.querySelectorAll('.sidebar-nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.sidebar-nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    const pid = 'panel-' + a.dataset.panel;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(pid).classList.add('active');
+    if (a.dataset.panel === 'faq')    loadFaq();
+    if (a.dataset.panel === 'social') loadSocial();
+  });
+});
+
+/* ── SUB-TABS ── */
+function switchSubtab(id) {
+  const panel = document.getElementById(id).closest('.panel');
+  panel.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  panel.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // find matching tab button by data-subtab
+  panel.querySelectorAll('.sub-tab').forEach(t => {
+    if (t.dataset.subtab === id) t.classList.add('active');
+  });
+}
+document.querySelectorAll('.sub-tab').forEach(btn => {
+  btn.addEventListener('click', () => switchSubtab(btn.dataset.subtab));
+});
 
 /* ══════════════════════════════════════════════════════
    STORIES
 ══════════════════════════════════════════════════════ */
-let _storyCoverB64 = '';
+let storyQuill = null;
+let _storyCoverB64 = null;
+let _storyEditId = null;
 
-function handleStoryImg(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    _storyCoverB64 = e.target.result;
-    const prev = document.getElementById('storyCoverPreview');
-    prev.src = e.target.result; prev.style.display = 'block';
-    document.querySelector('#storyCoverWrap .img-upload-label').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+function initQuill() {
+  if (storyQuill) return;
+  storyQuill = new Quill('#storyEditor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        ['bold','italic','underline'],
+        [{ header: [2,3,false] }],
+        ['image'],
+        [{ align: [] }],
+        ['clean']
+      ]
+    },
+    placeholder: 'Start writing the story…'
+  });
+  // Handle image insert via base64
+  storyQuill.getModule('toolbar').addHandler('image', () => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.onchange = async () => {
+      const b64 = await readFile(input);
+      if (!b64) return;
+      const range = storyQuill.getSelection(true);
+      storyQuill.insertEmbed(range.index, 'image', b64);
+    };
+    input.click();
+  });
 }
 
-function renderStoryList() {
-  const stories = getData(KEYS.stories);
-  const container = document.getElementById('storyList');
-  if (!stories.length) {
-    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span class="icon">📖</span>No stories yet. Write your first one! ✨</div>`;
+async function loadStories() {
+  const grid = document.getElementById('storyGrid');
+  if (!sb) { grid.innerHTML = '<div class="empty-state"><span class="empty-icon">📖</span>Connect Supabase in Settings first.</div>'; return; }
+  grid.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
+  const { data, error } = await sb.from('stories').select('*').order('created_at', { ascending:false });
+  if (error) { grid.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
+  if (!data?.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">📖</span>No stories yet. Write your first one! ✨</div>';
     return;
   }
-  container.innerHTML = stories.map(s => `
-    <div class="story-item">
-      <div class="story-cover-thumb">
-        ${s.cover ? `<img src="${s.cover}" alt="">` : '📖'}
+  grid.innerHTML = data.map(s => `
+    <div class="story-card">
+      <div class="story-card-cover">
+        ${s.cover_url ? `<img src="${s.cover_url}" alt="">` : '📖'}
       </div>
-      <div class="story-item-meta">
-        <span class="story-item-title">${s.title}</span>
-        <span class="story-item-book">${s.bookNo ? 'No.' + s.bookNo : ''}</span>
-      </div>
-      <span class="story-item-date">${s.date}</span>
-      <p class="story-item-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
-      <div class="story-item-actions">
-        <button class="btn-secondary" onclick="editStory('${s.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem">✏️ Edit</button>
-        <button class="btn-danger" onclick="deleteStory('${s.id}')">Delete</button>
+      <div class="story-card-body">
+        <div class="story-card-meta">
+          <span>${s.tag || 'Story'}</span>
+          <span>${s.book_no ? 'No.'+s.book_no : ''}</span>
+        </div>
+        <p class="story-card-title">${s.title}</p>
+        <p class="story-card-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
+        <div class="story-card-actions">
+          <button class="btn-secondary" onclick="editStory(${JSON.stringify(s).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.75rem;font-size:0.75rem">✏️ Edit</button>
+          <button class="btn-danger" onclick="deleteStoryById('${s.id}')">Delete</button>
+        </div>
       </div>
     </div>`).join('');
 }
 
-function editStory(id) {
-  const stories = getData(KEYS.stories);
-  const s = stories.find(x => x.id === id); if (!s) return;
-  document.getElementById('editStoryId').value = id;
+function editStory(s) {
+  initQuill();
+  _storyEditId = s.id;
+  document.getElementById('storyEditId').value = s.id;
   document.getElementById('storyTitle').value = s.title || '';
-  document.getElementById('storyBookNo').value = s.bookNo || '';
-  document.getElementById('storyBookTitle').value = s.bookTitle || '';
+  document.getElementById('storyBookNo').value = s.book_no || '';
+  document.getElementById('storyBookTitle').value = s.book_title || '';
   document.getElementById('storyTag').value = s.tag || '';
   document.getElementById('storyExcerpt').value = s.excerpt || '';
-  document.getElementById('storyBody').innerHTML = s.body || '';
-  if (s.cover) {
-    _storyCoverB64 = s.cover;
+  storyQuill.root.innerHTML = s.body || '';
+  if (s.cover_url) {
     const prev = document.getElementById('storyCoverPreview');
-    prev.src = s.cover; prev.style.display = 'block';
-    document.querySelector('#storyCoverWrap .img-upload-label').style.display = 'none';
+    prev.src = s.cover_url; prev.classList.add('show');
   }
-  document.getElementById('deleteStoryBtn').style.display = 'inline-block';
-  switchSubTabById('stories', 'write');
+  document.getElementById('storyDeleteBtn').style.display = 'inline-block';
+  document.getElementById('storyFormTitle').textContent = 'Editing: ' + s.title;
+  switchSubtab('stories-write');
 }
 
-function saveStory() {
+async function saveStory() {
+  if (needsDb()) return;
+  initQuill();
   const title = document.getElementById('storyTitle').value.trim();
-  if (!title) { showToast('Please add a title! ✦', true); return; }
-  const stories = getData(KEYS.stories);
-  const editId = document.getElementById('editStoryId').value;
-  const story = {
-    id:        editId || uid(),
+  if (!title) { toast('Please add a title!', true); return; }
+  const btn = document.getElementById('storySaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  let coverUrl = document.getElementById('storyCoverPreview').src || null;
+  // If a new file was picked, upload it
+  const fileInput = document.getElementById('storyCoverFile');
+  if (fileInput.files[0]) {
+    const b64 = await readFile(fileInput);
+    const uploaded = await uploadImage(b64, 'story-covers', 'cover');
+    if (uploaded) coverUrl = uploaded;
+    else {
+      // store base64 inline if storage bucket not set up
+      coverUrl = b64;
+    }
+  }
+
+  // Upload any inline story images that are still base64
+  let body = storyQuill.root.innerHTML;
+
+  const row = {
     title,
-    bookNo:    document.getElementById('storyBookNo').value.trim(),
-    bookTitle: document.getElementById('storyBookTitle').value.trim(),
-    tag:       document.getElementById('storyTag').value.trim() || 'Story',
-    excerpt:   document.getElementById('storyExcerpt').value.trim(),
-    body:      document.getElementById('storyBody').innerHTML,
-    cover:     _storyCoverB64,
-    date:      editId ? (stories.find(x=>x.id===editId)?.date || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})) : new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+    book_no:    document.getElementById('storyBookNo').value.trim() || null,
+    book_title: document.getElementById('storyBookTitle').value.trim() || null,
+    tag:        document.getElementById('storyTag').value.trim() || 'Story',
+    excerpt:    document.getElementById('storyExcerpt').value.trim() || null,
+    cover_url:  coverUrl || null,
+    body
   };
+
+  const editId = document.getElementById('storyEditId').value;
+  let error;
   if (editId) {
-    const idx = stories.findIndex(x => x.id === editId);
-    if (idx > -1) stories[idx] = story; else stories.unshift(story);
-  } else { stories.unshift(story); }
-  setData(KEYS.stories, stories);
+    ({ error } = await sb.from('stories').update(row).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('stories').insert(row));
+  }
+
+  btn.disabled = false; btn.textContent = 'Save Story ✦';
+  if (error) { toast(error.message, true); return; }
+  toast('Story saved! ✦');
   clearStoryForm();
-  switchSubTabById('stories','list');
-  renderStoryList();
-  showToast('Story saved! ✦');
+  switchSubtab('stories-list');
+  loadStories();
 }
 
-function deleteStory(id) {
-  if (!confirm('Delete this story? This cannot be undone.')) return;
-  const stories = getData(KEYS.stories).filter(x => x.id !== id);
-  setData(KEYS.stories, stories);
-  renderStoryList();
-  showToast('Story deleted.');
+async function deleteStoryById(id) {
+  if (!confirm('Delete this story?')) return;
+  const { error } = await sb.from('stories').delete().eq('id', id);
+  if (error) { toast(error.message, true); return; }
+  toast('Story deleted.'); loadStories();
 }
-function deleteCurrentStory() {
-  const id = document.getElementById('editStoryId').value;
-  if (id) deleteStory(id);
-  clearStoryForm(); switchSubTabById('stories','list');
+function deleteStory() {
+  const id = document.getElementById('storyEditId').value;
+  if (id) deleteStoryById(id);
+  clearStoryForm(); switchSubtab('stories-list');
 }
+
 function clearStoryForm() {
-  document.getElementById('editStoryId').value='';
-  document.getElementById('storyTitle').value='';
-  document.getElementById('storyBookNo').value='';
-  document.getElementById('storyBookTitle').value='';
-  document.getElementById('storyTag').value='';
-  document.getElementById('storyExcerpt').value='';
-  document.getElementById('storyBody').innerHTML='';
-  _storyCoverB64='';
+  _storyEditId = null;
+  document.getElementById('storyEditId').value = '';
+  document.getElementById('storyTitle').value = '';
+  document.getElementById('storyBookNo').value = '';
+  document.getElementById('storyBookTitle').value = '';
+  document.getElementById('storyTag').value = '';
+  document.getElementById('storyExcerpt').value = '';
+  if (storyQuill) storyQuill.root.innerHTML = '';
   const prev = document.getElementById('storyCoverPreview');
-  prev.src=''; prev.style.display='none';
-  document.querySelector('#storyCoverWrap .img-upload-label').style.display='block';
-  document.getElementById('deleteStoryBtn').style.display='none';
-}
-
-/* Rich text editor commands */
-function richCmd(cmd) { document.execCommand(cmd, false, null); document.getElementById('storyBody').focus(); }
-function insertParagraph() {
-  document.execCommand('insertHTML', false, '<p>&nbsp;</p>');
-  document.getElementById('storyBody').focus();
-}
-function insertStoryImage() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/*';
-  input.onchange = e => {
-    const file = e.target.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      document.getElementById('storyBody').focus();
-      document.execCommand('insertHTML', false, `<img src="${ev.target.result}" style="max-width:100%;border-radius:0.5rem;margin:0.5rem auto;display:block" alt="">`);
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
+  prev.src = ''; prev.classList.remove('show');
+  document.getElementById('storyCoverFile').value = '';
+  document.getElementById('storyDeleteBtn').style.display = 'none';
+  document.getElementById('storyFormTitle').textContent = 'Time to write the reality ✨';
 }
 
 /* ══════════════════════════════════════════════════════
    SHOP
 ══════════════════════════════════════════════════════ */
-let _shopImgB64 = '';
-
-function handleShopImg(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    _shopImgB64 = e.target.result;
-    const prev = document.getElementById('shopImgPreview');
-    prev.src = e.target.result; prev.style.display = 'block';
-    document.querySelector('#shop-add .img-upload-label').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-
-function renderShopList() {
-  const items = getData(KEYS.shop);
-  const container = document.getElementById('shopItemList');
-  const countEl = document.getElementById('shopCount');
-  countEl.innerHTML = `Available Items: <strong>${items.length} / 6</strong>`;
-  if (!items.length) {
-    container.innerHTML = `<div class="empty-state"><span class="icon">🛍️</span>No shop items yet.</div>`;
-    return;
-  }
-  container.innerHTML = items.map(item => `
-    <div class="shop-item-row">
-      <div class="shop-thumb">${item.img ? `<img src="${item.img}" alt="">` : '🌟'}</div>
-      <div class="shop-row-info">
-        <p class="shop-row-name">${item.name}</p>
-        <p class="shop-row-price">${item.price ? '$'+item.price : ''}</p>
+async function loadShop() {
+  const list = document.getElementById('shopList');
+  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase in Settings first.</div>'; return; }
+  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
+  const { data, error } = await sb.from('shop_items').select('*').order('sort_order');
+  const count = data?.length || 0;
+  document.getElementById('shopCountLabel').innerHTML = `Available Items: <strong style="color:var(--yellow)">${count} / 6</strong>`;
+  if (error) { list.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
+  if (!count) { list.innerHTML = '<div class="empty-state"><span class="empty-icon">🛍️</span>No items yet. Add your first one!</div>'; return; }
+  list.innerHTML = data.map(item => `
+    <div class="list-row">
+      <div class="list-row-thumb">${item.img_url ? `<img src="${item.img_url}" alt="">` : '🌟'}</div>
+      <div class="list-row-info">
+        <p class="list-row-name">${item.name}</p>
+        <p class="list-row-meta">${item.description || ''}</p>
       </div>
-      <div class="shop-item-actions">
-        <button class="btn-secondary" onclick="editShopItem('${item.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
-        <button class="btn-danger" onclick="deleteShopItem('${item.id}')">✕</button>
+      <span class="list-row-price">${item.price ? '$'+item.price : ''}</span>
+      <div class="list-row-actions">
+        <button class="btn-secondary" onclick="editShop(${JSON.stringify(item).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
+        <button class="btn-danger" onclick="deleteShopById('${item.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
-function editShopItem(id) {
-  const items = getData(KEYS.shop);
-  const item = items.find(x => x.id === id); if (!item) return;
-  document.getElementById('editShopId').value = id;
+function editShop(item) {
+  document.getElementById('shopEditId').value = item.id;
   document.getElementById('shopName').value = item.name || '';
   document.getElementById('shopPrice').value = item.price || '';
   document.getElementById('shopUrl').value = item.url || '';
-  document.getElementById('shopDesc').value = item.desc || '';
-  if (item.img) {
-    _shopImgB64 = item.img;
+  document.getElementById('shopDesc').value = item.description || '';
+  if (item.img_url) {
     const prev = document.getElementById('shopImgPreview');
-    prev.src = item.img; prev.style.display = 'block';
-    document.querySelector('#shop-add .img-upload-label').style.display = 'none';
+    prev.src = item.img_url; prev.classList.add('show');
   }
-  document.getElementById('deleteShopBtn').style.display = 'inline-block';
-  switchSubTabById('shop','add');
+  document.getElementById('shopDeleteBtn').style.display = 'inline-block';
+  document.getElementById('shopFormTitle').textContent = 'Editing: ' + item.name;
+  switchSubtab('shop-add');
 }
 
-function saveShopItem() {
+async function saveShopItem() {
+  if (needsDb()) return;
   const name = document.getElementById('shopName').value.trim();
-  if (!name) { showToast('Please add an item name!', true); return; }
-  const items = getData(KEYS.shop);
-  const editId = document.getElementById('editShopId').value;
-  if (!editId && items.length >= 6) { showToast('Max 6 items reached. Delete one first.', true); return; }
-  const item = {
-    id:    editId || uid(),
-    name,
-    price: document.getElementById('shopPrice').value.trim(),
-    url:   document.getElementById('shopUrl').value.trim(),
-    desc:  document.getElementById('shopDesc').value.trim(),
-    img:   _shopImgB64
-  };
-  if (editId) {
-    const idx = items.findIndex(x => x.id === editId);
-    if (idx > -1) items[idx] = item; else items.push(item);
-  } else { items.push(item); }
-  setData(KEYS.shop, items);
-  clearShopForm(); switchSubTabById('shop','list'); renderShopList();
-  showToast('Shop item saved! ✦');
-}
+  if (!name) { toast('Add an item name!', true); return; }
+  const { data: existing } = await sb.from('shop_items').select('id');
+  const editId = document.getElementById('shopEditId').value;
+  if (!editId && (existing?.length || 0) >= 6) { toast('Max 6 items. Delete one first.', true); return; }
 
-function deleteShopItem(id) {
-  if (!confirm('Remove this item?')) return;
-  setData(KEYS.shop, getData(KEYS.shop).filter(x => x.id !== id));
-  renderShopList(); showToast('Item removed.');
-}
-function deleteCurrentShopItem() {
-  const id = document.getElementById('editShopId').value;
-  if (id) deleteShopItem(id);
-  clearShopForm(); switchSubTabById('shop','list');
-}
-function clearShopForm() {
-  document.getElementById('editShopId').value='';
-  document.getElementById('shopName').value='';
-  document.getElementById('shopPrice').value='';
-  document.getElementById('shopUrl').value='';
-  document.getElementById('shopDesc').value='';
-  _shopImgB64='';
-  const prev = document.getElementById('shopImgPreview');
-  prev.src=''; prev.style.display='none';
-  document.querySelector('#shop-add .img-upload-label').style.display='block';
-  document.getElementById('deleteShopBtn').style.display='none';
-}
+  const btn = document.getElementById('shopSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
 
-/* ══════════════════════════════════════════════════════
-   FAQ
-══════════════════════════════════════════════════════ */
-const defaultFaq = [
-  { id:'f1', q:'What is the Whimsiverse?', a:'The Whimsiverse is an original fictional universe created by Sachi — a world where every imaginary friend ever created now lives. Think of it as the studio, and Woobly & Friends as the first series.' },
-  { id:'f2', q:'Where is everything shipped from?', a:'Everything is made and shipped from Sri Lanka 🌿 with love. International shipping is included in every physical Patreon tier.' },
-  { id:'f3', q:'How does the Mail Club work?', a:'Join any physical tier on Patreon and every month Sachi will hand-pack and ship your reward — stickers, prints, or the full bundle depending on your tier.' },
-  { id:'f4', q:'Can I buy individual prints without a subscription?', a:'Yes! The shop at shop.wooblynfrens.com has one-off digital downloads and prints available anytime.' },
-  { id:'f5', q:'What tools do you use to make the art?', a:'Everything is drawn in Procreate on iPad. Flat colours, painted textures — a style developed entirely by hand. ✦' },
-  { id:'f6', q:'Will there be more characters and stories?', a:'The Whimsiverse is a big place! More friends are always waiting to be discovered. Stay tuned. 🌸' },
-];
-
-function renderFaqList() {
-  let faqs = getData(KEYS.faq, null);
-  if (faqs === null) { faqs = defaultFaq; setData(KEYS.faq, faqs); }
-  const container = document.getElementById('faqList');
-  if (!faqs.length) {
-    container.innerHTML = `<div class="empty-state"><span class="icon">❓</span>No FAQ items yet.</div>`;
-    return;
+  let imgUrl = document.getElementById('shopImgPreview').src || null;
+  const fileInput = document.getElementById('shopImgFile');
+  if (fileInput.files[0]) {
+    const b64 = await readFile(fileInput);
+    const up = await uploadImage(b64, 'shop-images', 'item');
+    imgUrl = up || b64;
   }
-  container.innerHTML = faqs.map(f => `
-    <div class="faq-row">
-      <div style="flex:1">
-        <p class="faq-row-q">${f.q}</p>
-        <p class="faq-row-a">${f.a.slice(0,100)}${f.a.length>100?'…':''}</p>
-      </div>
-      <div class="faq-row-actions" style="display:flex;gap:0.4rem">
-        <button class="btn-secondary" onclick="editFaq('${f.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
-        <button class="btn-danger" onclick="deleteFaq('${f.id}')">✕</button>
-      </div>
-    </div>`).join('');
+
+  const row = {
+    name,
+    price:       document.getElementById('shopPrice').value.trim() || null,
+    url:         document.getElementById('shopUrl').value.trim() || null,
+    description: document.getElementById('shopDesc').value.trim() || null,
+    img_url:     imgUrl || null,
+    sort_order:  editId ? undefined : (existing?.length || 0)
+  };
+
+  let error;
+  if (editId) ({ error } = await sb.from('shop_items').update(row).eq('id', editId));
+  else        ({ error } = await sb.from('shop_items').insert(row));
+
+  btn.disabled = false; btn.textContent = 'Save Item ✦';
+  if (error) { toast(error.message, true); return; }
+  toast('Shop item saved! ✦');
+  clearShopForm(); switchSubtab('shop-list'); loadShop();
 }
 
-function editFaq(id) {
-  const faqs = getData(KEYS.faq, defaultFaq);
-  const f = faqs.find(x => x.id === id); if (!f) return;
-  document.getElementById('editFaqId').value = id;
-  document.getElementById('faqQ').value = f.q;
-  document.getElementById('faqA').value = f.a;
-  document.getElementById('faqCancelEdit').style.display = 'inline-block';
-  document.getElementById('faqQ').scrollIntoView({ behavior:'smooth', block:'center' });
+async function deleteShopById(id) {
+  if (!confirm('Remove this item?')) return;
+  const { error } = await sb.from('shop_items').delete().eq('id', id);
+  if (error) { toast(error.message, true); return; }
+  toast('Item removed.'); loadShop();
 }
-function cancelFaqEdit() {
-  document.getElementById('editFaqId').value='';
-  document.getElementById('faqQ').value='';
-  document.getElementById('faqA').value='';
-  document.getElementById('faqCancelEdit').style.display='none';
+function deleteShopItem() {
+  const id = document.getElementById('shopEditId').value;
+  if (id) deleteShopById(id);
+  clearShopForm(); switchSubtab('shop-list');
 }
-function saveFaqItem() {
-  const q = document.getElementById('faqQ').value.trim();
-  const a = document.getElementById('faqA').value.trim();
-  if (!q || !a) { showToast('Fill in question and answer!', true); return; }
-  let faqs = getData(KEYS.faq, defaultFaq);
-  const editId = document.getElementById('editFaqId').value;
-  if (editId) {
-    const idx = faqs.findIndex(x => x.id === editId);
-    if (idx > -1) faqs[idx] = { id:editId, q, a };
-  } else { faqs.push({ id:uid(), q, a }); }
-  setData(KEYS.faq, faqs);
-  cancelFaqEdit(); renderFaqList(); showToast('FAQ saved! ✦');
-}
-function deleteFaq(id) {
-  if (!confirm('Delete this FAQ?')) return;
-  setData(KEYS.faq, getData(KEYS.faq, defaultFaq).filter(x => x.id !== id));
-  renderFaqList(); showToast('FAQ deleted.');
+
+function clearShopForm() {
+  document.getElementById('shopEditId').value = '';
+  document.getElementById('shopName').value = '';
+  document.getElementById('shopPrice').value = '';
+  document.getElementById('shopUrl').value = '';
+  document.getElementById('shopDesc').value = '';
+  const prev = document.getElementById('shopImgPreview');
+  prev.src = ''; prev.classList.remove('show');
+  document.getElementById('shopImgFile').value = '';
+  document.getElementById('shopDeleteBtn').style.display = 'none';
+  document.getElementById('shopFormTitle').textContent = "Let's add some Whimsies";
 }
 
 /* ══════════════════════════════════════════════════════
    FRIENDS
 ══════════════════════════════════════════════════════ */
-let _friendPfpB64 = '';
-const defaultFriends = [
-  { id:'fluffy', name:'Fluffy the Woobly', species:'The Woobly', isle:'Whimsiverse Explorer', color:'var(--pink)', shortDesc:'Brave, joyful, first to leap into any adventure', fullDesc:'The most playful Woobly out there — the one who just couldn\'t sit still. One day, he jumped onto his spray-paint rocket — and the adventure began.', pfp:'' },
-  { id:'bella',  name:'Bella & Benny',      species:'The Bears',    isle:'Greenwillow Isle',     color:'var(--yellow)', shortDesc:'Warm and gentle, the heart that holds everyone together', fullDesc:'A gentle teddy bear couple who believe one simple thing: kindness can change everything.', pfp:'' },
-  { id:'mimi',   name:'Mimi the Unicorn',   species:'Unicorn Princess', isle:'Luminella Isle',  color:'var(--lilac)',  shortDesc:'Dreamy and creative, leaves magic wherever she goes', fullDesc:'A unicorn princess with a magical heart companion. Together, they remind others what love feels like.', pfp:'' },
-  { id:'gregy',  name:'Greggy the Frog',    species:'The Frog',    isle:'Puddlehop Isle',        color:'var(--green)', shortDesc:'Curious, a little sleepy, finds wonder in the smallest things', fullDesc:'Clumsy, a little chaotic — but the group wouldn\'t be the same without him. Because wherever Greggy goes, laughs follow.', pfp:'' },
-];
-
-function handleFriendImg(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    _friendPfpB64 = e.target.result;
-    const prev = document.getElementById('friendPfpPreview');
-    prev.src = e.target.result; prev.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-
-function renderFriendsList() {
-  let friends = getData(KEYS.friends, null);
-  if (friends === null) { friends = defaultFriends; setData(KEYS.friends, friends); }
-  const container = document.getElementById('friendsList');
-  if (!friends.length) {
-    container.innerHTML = `<div class="empty-state"><span class="icon">🐸</span>No friends yet!</div>`;
-    return;
-  }
-  container.innerHTML = friends.map(f => `
-    <div class="friend-row">
-      <div class="friend-pfp">${f.pfp ? `<img src="${f.pfp}" alt="">` : '🌸'}</div>
-      <div class="friend-row-info">
-        <p class="friend-row-name">${f.name}</p>
-        <p class="friend-row-species">${f.species} · ${f.isle}</p>
+async function loadFriends() {
+  const list = document.getElementById('friendsList');
+  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase in Settings first.</div>'; return; }
+  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span> Loading…</div>';
+  const { data, error } = await sb.from('friends').select('*').order('sort_order');
+  if (error) { list.innerHTML = `<div class="empty-state">Error: ${error.message}</div>`; return; }
+  if (!data?.length) { list.innerHTML = '<div class="empty-state"><span class="empty-icon">🌸</span>No friends yet. Add the crew!</div>'; return; }
+  list.innerHTML = data.map(f => `
+    <div class="list-row">
+      <div class="list-row-pfp">${f.pfp_url ? `<img src="${f.pfp_url}" alt="">` : '🌸'}</div>
+      <div class="list-row-info">
+        <p class="list-row-name" style="color:${f.color||'#fe5d9f'}">${f.name}</p>
+        <p class="list-row-meta">${f.species || ''} · ${f.isle || ''}</p>
       </div>
-      <div style="display:flex;gap:0.4rem">
-        <button class="btn-secondary" onclick="editFriend('${f.id}')" style="padding:0.35rem 0.75rem;font-size:0.78rem">✏️</button>
-        <button class="btn-danger" onclick="deleteFriend('${f.id}')">✕</button>
+      <div class="list-row-actions">
+        <button class="btn-secondary" onclick="editFriend(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
+        <button class="btn-danger" onclick="deleteFriendById('${f.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
-function editFriend(id) {
-  const friends = getData(KEYS.friends, defaultFriends);
-  const f = friends.find(x => x.id === id); if (!f) return;
-  document.getElementById('editFriendId').value = id;
+function editFriend(f) {
+  document.getElementById('friendEditId').value = f.id;
   document.getElementById('friendName').value = f.name || '';
   document.getElementById('friendSpecies').value = f.species || '';
   document.getElementById('friendIsle').value = f.isle || '';
-  document.getElementById('friendColor').value = f.color || 'var(--pink)';
-  document.getElementById('friendShortDesc').value = f.shortDesc || '';
-  document.getElementById('friendFullDesc').value = f.fullDesc || '';
-  if (f.pfp) {
-    _friendPfpB64 = f.pfp;
+  document.getElementById('friendShort').value = f.short_desc || '';
+  document.getElementById('friendFull').value = f.full_desc || '';
+  document.getElementById('friendColor').value = f.color || '#fe5d9f';
+  document.querySelectorAll('.color-opt').forEach(c => {
+    c.classList.toggle('selected', c.dataset.color === f.color);
+  });
+  if (f.pfp_url) {
     const prev = document.getElementById('friendPfpPreview');
-    prev.src = f.pfp; prev.style.display = 'block';
+    prev.src = f.pfp_url; prev.classList.add('show');
   }
-  document.getElementById('friendCancelEdit').style.display = 'inline-block';
-  document.getElementById('deleteFriendBtn').style.display = 'inline-block';
-  document.getElementById('friendName').scrollIntoView({ behavior:'smooth', block:'center' });
+  document.getElementById('friendDeleteBtn').style.display = 'inline-block';
+  document.getElementById('friendFormTitle').textContent = 'Editing: ' + f.name;
+  switchSubtab('friends-add');
 }
-function cancelFriendEdit() {
-  document.getElementById('editFriendId').value='';
-  ['friendName','friendSpecies','friendIsle','friendShortDesc','friendFullDesc'].forEach(id => document.getElementById(id).value='');
-  _friendPfpB64='';
-  const prev = document.getElementById('friendPfpPreview');
-  prev.src=''; prev.style.display='none';
-  document.getElementById('friendCancelEdit').style.display='none';
-  document.getElementById('deleteFriendBtn').style.display='none';
-}
-function saveFriend() {
+
+async function saveFriend() {
+  if (needsDb()) return;
   const name = document.getElementById('friendName').value.trim();
-  if (!name) { showToast('Please add a name!', true); return; }
-  let friends = getData(KEYS.friends, defaultFriends);
-  const editId = document.getElementById('editFriendId').value;
-  const friend = {
-    id:        editId || uid(),
+  if (!name) { toast('Add a name!', true); return; }
+  const btn = document.getElementById('friendSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  let pfpUrl = document.getElementById('friendPfpPreview').src || null;
+  const fileInput = document.getElementById('friendPfpFile');
+  if (fileInput.files[0]) {
+    const b64 = await readFile(fileInput);
+    const up = await uploadImage(b64, 'friend-pfps', 'pfp');
+    pfpUrl = up || b64;
+  }
+
+  const row = {
     name,
-    species:   document.getElementById('friendSpecies').value.trim(),
-    isle:      document.getElementById('friendIsle').value.trim(),
-    color:     document.getElementById('friendColor').value,
-    shortDesc: document.getElementById('friendShortDesc').value.trim(),
-    fullDesc:  document.getElementById('friendFullDesc').value.trim(),
-    pfp:       _friendPfpB64
+    species:    document.getElementById('friendSpecies').value.trim() || null,
+    isle:       document.getElementById('friendIsle').value.trim() || null,
+    color:      document.getElementById('friendColor').value,
+    short_desc: document.getElementById('friendShort').value.trim() || null,
+    full_desc:  document.getElementById('friendFull').value.trim() || null,
+    pfp_url:    pfpUrl || null,
   };
-  if (editId) { const idx = friends.findIndex(x => x.id === editId); if (idx>-1) friends[idx]=friend; else friends.push(friend); }
-  else friends.push(friend);
-  setData(KEYS.friends, friends);
-  cancelFriendEdit(); renderFriendsList(); showToast('Friend saved! ✦');
+
+  const editId = document.getElementById('friendEditId').value;
+  let error;
+  if (editId) ({ error } = await sb.from('friends').update(row).eq('id', editId));
+  else        ({ error } = await sb.from('friends').insert(row));
+
+  btn.disabled = false; btn.textContent = 'Save Friend ✦';
+  if (error) { toast(error.message, true); return; }
+  toast('Friend saved! ✦');
+  clearFriendForm(); switchSubtab('friends-list'); loadFriends();
 }
-function deleteFriend(id) {
-  if (!confirm('Remove this friend from the Whimsiverse?')) return;
-  setData(KEYS.friends, getData(KEYS.friends, defaultFriends).filter(x => x.id !== id));
-  renderFriendsList(); showToast('Friend removed.');
+
+async function deleteFriendById(id) {
+  if (!confirm('Remove this friend?')) return;
+  const { error } = await sb.from('friends').delete().eq('id', id);
+  if (error) { toast(error.message, true); return; }
+  toast('Friend removed.'); loadFriends();
 }
-function deleteCurrentFriend() {
-  const id = document.getElementById('editFriendId').value;
-  if (id) deleteFriend(id);
-  cancelFriendEdit();
+function deleteFriend() {
+  const id = document.getElementById('friendEditId').value;
+  if (id) deleteFriendById(id);
+  clearFriendForm(); switchSubtab('friends-list');
+}
+
+function clearFriendForm() {
+  document.getElementById('friendEditId').value = '';
+  ['friendName','friendSpecies','friendIsle','friendShort','friendFull'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('friendColor').value = '#fe5d9f';
+  document.querySelectorAll('.color-opt').forEach((c,i) => c.classList.toggle('selected', i===0));
+  const prev = document.getElementById('friendPfpPreview');
+  prev.src = ''; prev.classList.remove('show');
+  document.getElementById('friendPfpFile').value = '';
+  document.getElementById('friendDeleteBtn').style.display = 'none';
+  document.getElementById('friendFormTitle').textContent = 'Add New Friend';
+}
+
+// Color picker
+document.querySelectorAll('.color-opt').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.color-opt').forEach(x => x.classList.remove('selected'));
+    c.classList.add('selected');
+    document.getElementById('friendColor').value = c.dataset.color;
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════════════ */
+async function loadFaq() {
+  const list = document.getElementById('faqList');
+  if (!sb) { list.innerHTML = '<div class="empty-state">Connect Supabase first.</div>'; return; }
+  list.innerHTML = '<div class="loading-wrap"><span class="spinner"></span></div>';
+  const { data, error } = await sb.from('faq_items').select('*').order('sort_order');
+  if (error || !data?.length) {
+    list.innerHTML = '<div class="empty-state"><span class="empty-icon">❓</span>No FAQ items yet.</div>';
+    return;
+  }
+  list.innerHTML = data.map(f => `
+    <div class="list-row">
+      <div class="list-row-info">
+        <p class="list-row-name">${f.question}</p>
+        <p class="list-row-meta">${f.answer.slice(0,80)}${f.answer.length>80?'…':''}</p>
+      </div>
+      <div class="list-row-actions">
+        <button class="btn-secondary" onclick="editFaq(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="padding:0.3rem 0.6rem;font-size:0.75rem">✏️</button>
+        <button class="btn-danger" onclick="deleteFaqById('${f.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function editFaq(f) {
+  document.getElementById('faqEditId').value = f.id;
+  document.getElementById('faqQ').value = f.question;
+  document.getElementById('faqA').value = f.answer;
+  document.getElementById('faqCancelBtn').style.display = 'inline-block';
+  document.getElementById('faqFormTitle').textContent = 'Editing FAQ';
+  document.getElementById('faqQ').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+async function saveFaq() {
+  if (needsDb()) return;
+  const q = document.getElementById('faqQ').value.trim();
+  const a = document.getElementById('faqA').value.trim();
+  if (!q || !a) { toast('Fill in both fields!', true); return; }
+  const editId = document.getElementById('faqEditId').value;
+  let error;
+  if (editId) ({ error } = await sb.from('faq_items').update({ question:q, answer:a }).eq('id', editId));
+  else        ({ error } = await sb.from('faq_items').insert({ question:q, answer:a, sort_order:Date.now() }));
+  if (error) { toast(error.message, true); return; }
+  toast('FAQ saved! ✦'); clearFaqForm(); loadFaq();
+}
+
+async function deleteFaqById(id) {
+  if (!confirm('Delete FAQ?')) return;
+  await sb.from('faq_items').delete().eq('id', id);
+  toast('Deleted.'); loadFaq();
+}
+
+function clearFaqForm() {
+  document.getElementById('faqEditId').value = '';
+  document.getElementById('faqQ').value = '';
+  document.getElementById('faqA').value = '';
+  document.getElementById('faqCancelBtn').style.display = 'none';
+  document.getElementById('faqFormTitle').textContent = 'Add New FAQ';
 }
 
 /* ══════════════════════════════════════════════════════
    SOCIAL LINKS
 ══════════════════════════════════════════════════════ */
-const SOCIAL_DEFAULTS = {
-  instagram: 'https://instagram.com/wooblynfrens',
-  pinterest: 'https://pinterest.com/wooblynfrens',
-  x:         'https://x.com/wooblynfrens',
-  patreon:   'https://www.patreon.com/c/wooblynfrens',
-  shop:      'https://shop.wooblynfrens.com',
-  tiktok:    '',
-  youtube:   '',
-};
+const SOCIAL_PLATFORMS = [
+  { key:'instagram', label:'Instagram' },
+  { key:'pinterest', label:'Pinterest' },
+  { key:'x',         label:'X / Twitter' },
+  { key:'tiktok',    label:'TikTok' },
+  { key:'youtube',   label:'YouTube' },
+  { key:'patreon',   label:'Patreon' },
+  { key:'shop',      label:'Shop URL' },
+];
 
-function renderSocialFields() {
-  const saved = getData(KEYS.social, SOCIAL_DEFAULTS);
-  const platforms = ['instagram','pinterest','x','patreon','shop','tiktok','youtube'];
-  document.getElementById('socialFields').innerHTML = platforms.map(p => `
-    <div class="social-row">
-      <span class="social-icon-label">${p.charAt(0).toUpperCase()+p.slice(1)}</span>
-      <input type="url" class="f-input" id="social_${p}" value="${saved[p]||''}" placeholder="https://…" style="margin:0">
+async function loadSocial() {
+  if (!sb) { renderSocialFields({}); return; }
+  const { data } = await sb.from('site_settings').select('*');
+  const vals = {};
+  (data||[]).forEach(r => { vals[r.key] = r.value; });
+  renderSocialFields(vals);
+}
+
+function renderSocialFields(vals) {
+  document.getElementById('socialFields').innerHTML = SOCIAL_PLATFORMS.map(p => `
+    <div class="f-group" style="display:flex;align-items:center;gap:0.75rem">
+      <label class="f-label" style="width:90px;margin:0;flex-shrink:0">${p.label}</label>
+      <input type="url" class="f-input" id="social_${p.key}" value="${vals['social_'+p.key]||''}" placeholder="https://…" style="margin:0">
     </div>`).join('');
 }
 
-function saveSocialLinks() {
-  const platforms = ['instagram','pinterest','x','patreon','shop','tiktok','youtube'];
-  const data = {};
-  platforms.forEach(p => { data[p] = document.getElementById('social_' + p).value.trim(); });
-  setData(KEYS.social, data);
-  showToast('Social links saved! ✦');
+async function saveSocial() {
+  if (needsDb()) return;
+  const rows = SOCIAL_PLATFORMS.map(p => ({
+    key:   'social_' + p.key,
+    value: document.getElementById('social_' + p.key).value.trim()
+  }));
+  const { error } = await sb.from('site_settings').upsert(rows, { onConflict: 'key' });
+  if (error) { toast(error.message, true); return; }
+  toast('Social links saved! ✦');
 }
 
-/* ══ INIT ══ */
-renderStoryList();
+/* ══════════════════════════════════════════════════════
+   IMAGE PREVIEWS SETUP
+══════════════════════════════════════════════════════ */
+previewFile(document.getElementById('storyCoverFile'), document.getElementById('storyCoverPreview'));
+previewFile(document.getElementById('shopImgFile'),    document.getElementById('shopImgPreview'));
+previewFile(document.getElementById('friendPfpFile'),  document.getElementById('friendPfpPreview'));
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+function loadAllData() {
+  loadStories();
+  loadShop();
+  loadFriends();
+}
+
+initSupabase();
+initQuill();
+if (sb) loadAllData();
 </script>
 </body>
 </html>
