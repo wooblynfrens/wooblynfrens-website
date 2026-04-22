@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 
 /* ══ HERO — FULL BLEED IMAGE ══ */
@@ -789,6 +790,25 @@ function updateFooterSocials() {
   } catch(e) {}
 }
 updateFooterSocials();
+
+/* ════ NETLIFY IDENTITY ════ */
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on('init', user => {
+    if (!user) {
+      window.netlifyIdentity.on('login', () => {
+        document.location.href = '/admin/';
+      });
+    }
+  });
+
+  // Accept-invite / recovery links often land on the site root with a token in the URL.
+  // Open the widget automatically so the password/signup flow appears instead of the plain homepage.
+  const tokenHints = ['invite_token', 'recovery_token', 'confirmation_token', 'token='];
+  const currentUrl = `${window.location.hash} ${window.location.search}`;
+  if (tokenHints.some(token => currentUrl.includes(token))) {
+    window.netlifyIdentity.open();
+  }
+}
 </script>
 </body>
 </html>
