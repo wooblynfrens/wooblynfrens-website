@@ -70,32 +70,8 @@
 .post-body strong { color:var(--yellow); }
 .post-body em { color:var(--pink); font-style:normal; }
 .post-body img { width:100%; border-radius:1rem; margin:1rem 0; border:3px solid rgba(157,102,242,0.4); }
+/* Book-style first letter */
 .post-body p:first-of-type::first-letter { font-size:2.8em; font-family:'Fredoka One',cursive; float:left; line-height:0.7; margin:0 6px 0 0; color:var(--yellow); }
-.post-body p { text-align:justify; margin-bottom:1.4rem; }
-
-/* Audio player */
-.audio-player {
-  background:rgba(42,18,80,0.8); border:2px solid rgba(157,102,242,0.4);
-  border-radius:1.25rem; padding:1rem 1.25rem;
-  display:flex; align-items:center; gap:1rem;
-  margin-bottom:2rem; flex-wrap:wrap;
-}
-.audio-play-btn {
-  background:var(--pink); border:none; border-radius:50%;
-  width:44px; height:44px; cursor:pointer; font-size:1.1rem;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 3px 0 #a03060; flex-shrink:0;
-  transition:transform 0.15s;
-}
-.audio-play-btn:hover { transform:scale(1.1); }
-.audio-controls { flex:1; display:flex; flex-direction:column; gap:0.4rem; min-width:150px; }
-.audio-label { font-size:0.72rem; color:rgba(255,255,255,0.5); letter-spacing:1px; text-transform:uppercase; }
-.audio-progress { width:100%; height:6px; border-radius:3px; accent-color:var(--pink); cursor:pointer; }
-.audio-time { font-size:0.72rem; color:rgba(255,255,255,0.45); }
-.audio-skip { background:none; border:1px solid rgba(157,102,242,0.4); color:var(--cream);
-  border-radius:50px; padding:0.25rem 0.75rem; font-size:0.78rem; cursor:pointer;
-  font-family:'Fredoka',sans-serif; transition:all 0.15s; }
-.audio-skip:hover { background:rgba(157,102,242,0.2); }
 
 @media(max-width:768px) {
   .blog-grid { grid-template-columns:1fr; }
@@ -114,8 +90,8 @@
     <li><a href="../index.html">Home</a></li>
     <li><a href="index.html" class="active">Stories</a></li>
     <li><a href="../about/index.html">About</a></li>
+    <li><a href="https://shop.wooblynfrens.com" target="_blank" class="nav-shop">Shop ✦</a></li>
   </ul>
-  <a href="https://shop.wooblynfrens.com" target="_blank" class="nav-shop nav-shop-fixed">Shop ✦</a>
 </nav>
 
 <section class="page-hero">
@@ -138,7 +114,7 @@
 <section class="section-blog">
   <div class="blog-list-view" id="blogListView">
     <p class="section-eyebrow reveal" style="text-align:center">✦ latest tales ✦</p>
-    <h2 class="section-heading reveal" style="text-align:center">Latest Tales from <span class="c-pink">Woobly & Friends</span></h2>
+    <h2 class="section-heading reveal" style="text-align:center">From the <span class="c-pink">Studio</span></h2>
     <div class="blog-grid" id="blogGrid">
       <div class="blog-empty" style="grid-column:1/-1">
         <span class="blog-empty-icon">📖</span>
@@ -230,123 +206,18 @@
     const story = await WNF.getStory(id);
     if (!story) return;
     const date = story.created_at ? new Date(story.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '';
-    const storyContent = story.content || story.body || '';
-    // Strip HTML tags to get plain text for TTS
-    const plainText = storyContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g,' ').trim();
-
     postContent.innerHTML = `
       ${story.cover_url ? `<img class="post-cover" src="${story.cover_url}" alt="${story.title}">` : ''}
       <p class="post-tag">${story.tag || 'Story'}${story.book_no ? ' · Book No. '+story.book_no : ''}</p>
       <h1 class="post-title">${story.title}</h1>
       <p class="post-date">${date}</p>
-      <div class="audio-player" id="audioPlayer">
-        <button class="audio-play-btn" id="audioPlayBtn" title="Play narration">▶</button>
-        <div class="audio-controls">
-          <span class="audio-label">🎙 Story Narration</span>
-          <input type="range" class="audio-progress" id="audioProgress" value="0" min="0" max="100" step="0.1">
-          <span class="audio-time" id="audioTime">0:00</span>
-        </div>
-        <button class="audio-skip" id="audioBack">⏮ 10s</button>
-        <button class="audio-skip" id="audioFwd">10s ⏭</button>
-      </div>
-      <div class="post-body">${storyContent}</div>`;
-
-    // Text-to-Speech using Web Speech API with best female voice
-    let utterance = null;
-    let synth = window.speechSynthesis;
-    let isPlaying = false;
-    let chunks = [];
-    let currentChunk = 0;
-
-    function getVoice() {
-      const voices = synth.getVoices();
-      // Prefer natural female voices
-      const preferred = ['Google UK English Female','Microsoft Zira','Samantha','Karen','Moira','Tessa','Fiona'];
-      for (const name of preferred) {
-        const v = voices.find(v => v.name.includes(name));
-        if (v) return v;
-      }
-      // Fallback: first female English voice
-      return voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
-        || voices.find(v => v.lang.startsWith('en'))
-        || voices[0];
-    }
-
-    // Split text into chunks for progress tracking
-    function splitChunks(text) {
-      return text.match(/[^.!?]+[.!?]+/g) || [text];
-    }
-    chunks = splitChunks(plainText);
-
-    function speak(fromChunk = 0) {
-      synth.cancel();
-      currentChunk = fromChunk;
-      const remaining = chunks.slice(fromChunk).join(' ');
-      utterance = new SpeechSynthesisUtterance(remaining);
-      utterance.rate = 0.88;
-      utterance.pitch = 1.1;
-      utterance.volume = 1;
-      // Warm storytelling voice
-      const voice = getVoice();
-      if (voice) utterance.voice = voice;
-
-      utterance.onboundary = (e) => {
-        if (e.name === 'sentence') {
-          currentChunk = Math.min(currentChunk + 1, chunks.length - 1);
-          const pct = (currentChunk / chunks.length) * 100;
-          document.getElementById('audioProgress').value = pct;
-          const elapsed = Math.round((currentChunk / chunks.length) * (plainText.length / 15));
-          document.getElementById('audioTime').textContent = formatTime(elapsed);
-        }
-      };
-      utterance.onend = () => {
-        isPlaying = false;
-        document.getElementById('audioPlayBtn').textContent = '▶';
-        document.getElementById('audioProgress').value = 100;
-      };
-      synth.speak(utterance);
-    }
-
-    function formatTime(s) { return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0'); }
-
-    // Wait for voices to load
-    if (synth.getVoices().length === 0) {
-      synth.addEventListener('voiceschanged', () => {}, {once:true});
-    }
-
-    document.getElementById('audioPlayBtn').addEventListener('click', () => {
-      if (isPlaying) {
-        synth.pause();
-        isPlaying = false;
-        document.getElementById('audioPlayBtn').textContent = '▶';
-      } else {
-        if (synth.paused) {
-          synth.resume();
-        } else {
-          speak(currentChunk);
-        }
-        isPlaying = true;
-        document.getElementById('audioPlayBtn').textContent = '⏸';
-      }
-    });
-
-    document.getElementById('audioBack').addEventListener('click', () => {
-      currentChunk = Math.max(0, currentChunk - 3);
-      if (isPlaying) speak(currentChunk);
-    });
-
-    document.getElementById('audioFwd').addEventListener('click', () => {
-      currentChunk = Math.min(chunks.length - 1, currentChunk + 3);
-      if (isPlaying) speak(currentChunk);
-    });
-
+      <div class="post-body">${story.body || ''}</div>`;
     listView.classList.add('hidden');
     postView.classList.add('active');
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
   backBtn.addEventListener('click', () => {
-    window.speechSynthesis.cancel();
     postView.classList.remove('active');
     listView.classList.remove('hidden');
     window.scrollTo({ top:0, behavior:'smooth' });

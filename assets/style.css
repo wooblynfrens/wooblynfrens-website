@@ -57,7 +57,7 @@ nav.scrolled {
 /* BIG LOGO */
 .nav-logo { display:flex; align-items:center; text-decoration:none; flex-shrink:0; }
 .nav-logo img {
-  height:72px; width:auto; display:block;
+  height:48px; width:auto; display:block;
   filter:drop-shadow(0 3px 10px rgba(0,0,0,0.55));
   transition:transform 0.2s;
 }
@@ -240,7 +240,7 @@ footer {
 ══════════════════════════════════════════ */
 @media (max-width:768px) {
   nav { padding:0.55rem 1.25rem; }
-  .nav-logo img { height:58px; }
+  .nav-logo img { height:50px; }
   .nav-hamburger { display:flex; }
   .nav-links {
     position:fixed; top:0; right:-100%; bottom:0;
@@ -254,24 +254,12 @@ footer {
   }
   .nav-links.open { right:0; }
   .nav-links a { font-size:1.1rem; padding:0.65rem 1.25rem; width:100%; }
-  .nav-shop-fixed { font-size:0.85rem; padding:0.4rem 0.9rem; }
+  .nav-shop { margin-left:0 !important; margin-top:0.5rem; display:block; text-align:center; }
   .section-heading { font-size:clamp(1.7rem,8vw,2.4rem); }
   .section-body { font-size:0.98rem; padding:0 0.25rem; }
   .btn { font-size:0.95rem; padding:0.65rem 1.75rem; }
 }
 @media (max-width:480px) {
-  .nav-logo img { height:48px; }
+  .nav-logo img { height:42px; }
   .section-eyebrow { font-size:0.7rem; letter-spacing:3px; }
 }
-
-/* Nav shop fixed button — always visible outside hamburger */
-.nav-shop-fixed {
-  font-family:'Fredoka One',cursive; font-size:0.95rem;
-  background:var(--pink); color:var(--white);
-  padding:0.45rem 1.1rem; border-radius:50px;
-  border:2px solid #a03060; text-decoration:none;
-  box-shadow:0 3px 0 #a03060;
-  transition:transform 0.15s, box-shadow 0.15s;
-  white-space:nowrap; flex-shrink:0; margin-left:0.5rem;
-}
-.nav-shop-fixed:hover { transform:translateY(-2px); box-shadow:0 5px 0 #a03060; }
