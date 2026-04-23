@@ -1,30 +1,20 @@
 /**
- * wnf-data.js — Woobly & Friends Supabase data layer v2
+ * wnf-data.js — Woobly & Friends Supabase data layer v3
  * Include on any public page that needs live data from Supabase.
- *
- * SETUP: Replace the two values below with your Supabase project details.
- * Supabase → Settings → API → Project URL + anon public key
  */
 
-// ════════════════════════════════════════
-//  REPLACE THESE WITH YOUR VALUES
-// ════════════════════════════════════════
-const SUPABASE_URL      = 'https://ubfscsqjirqmuuqctook.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InViZnNjc3FqaXJxbXV1cWN0b29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDI2MjUsImV4cCI6MjA5MjQxODYyNX0.j9fi_89oBRMOK7Pyc5-RtiM2kIJbOkWnI92-8nzn02g';
-// ════════════════════════════════════════
+const SUPABASE_URL      = 'https://ifnxgkrsibdtvktddnnn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmbnhna3JzaWJkdHZrdGRkbm5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzcxMDcsImV4cCI6MjA5MjUxMzEwN30.j822XEgDhPqJ1k9oGJBD4WcSSl89bevHEWRCQpBhgjg';
 
 let _sb = null;
 function _client() {
   if (_sb) return _sb;
   if (!window.supabase) { console.error('[WNF] Supabase SDK not loaded'); return null; }
-  if (SUPABASE_URL.includes('YOUR_')) { console.warn('[WNF] Supabase not configured in wnf-data.js'); return null; }
   _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   return _sb;
 }
 
-/**
- * Get all stories (for the stories page grid)
- */
+/** Get all stories (for the stories page grid) */
 async function getStories() {
   const sb = _client(); if (!sb) return [];
   const { data, error } = await sb
@@ -35,9 +25,7 @@ async function getStories() {
   return data || [];
 }
 
-/**
- * Get a single story by id (for the story reader)
- */
+/** Get a single story by id */
 async function getStory(id) {
   const sb = _client(); if (!sb) return null;
   const { data, error } = await sb
@@ -49,10 +37,7 @@ async function getStory(id) {
   return data;
 }
 
-/**
- * Get shop items — used on homepage for "New on Shop" section
- * Returns up to 6 items ordered by sort_order
- */
+/** Get shop items — used on homepage. Fields: name, price, url, img_url */
 async function getShopItems() {
   const sb = _client(); if (!sb) return [];
   const { data, error } = await sb
@@ -63,9 +48,7 @@ async function getShopItems() {
   return data || [];
 }
 
-/**
- * Get friends — used on homepage crew section + about page
- */
+/** Get friends — fields: name, species, isle, color, short_desc, full_desc, pfp_url */
 async function getFriends() {
   const sb = _client(); if (!sb) return [];
   const { data, error } = await sb
@@ -76,9 +59,7 @@ async function getFriends() {
   return data || [];
 }
 
-/**
- * Get FAQ items — used on about page
- */
+/** Get FAQ items */
 async function getFaq() {
   const sb = _client(); if (!sb) return [];
   const { data, error } = await sb
@@ -89,10 +70,7 @@ async function getFaq() {
   return data || [];
 }
 
-/**
- * Get social links — used in footer
- * Returns { instagram: 'https://...', x: 'https://...', ... }
- */
+/** Get social links from site_settings */
 async function getSocialLinks() {
   const sb = _client(); if (!sb) return {};
   const { data, error } = await sb
@@ -107,12 +85,4 @@ async function getSocialLinks() {
   return result;
 }
 
-// Expose to global scope so all pages can call WNF.getShopItems() etc.
-window.WNF = {
-  getStories,
-  getStory,
-  getShopItems,
-  getFriends,
-  getFaq,
-  getSocialLinks
-};
+window.WNF = { getStories, getStory, getShopItems, getFriends, getFaq, getSocialLinks };
