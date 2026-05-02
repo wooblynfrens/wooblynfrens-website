@@ -234,6 +234,115 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   .mob-btn{display:flex;}
   .story-grid,.f-row2,.f-row3{grid-template-columns:1fr;}
 }
+
+/* ══ REVIEWS NAV BADGE ══ */
+.rv-nav-badge {
+  display:inline-block;background:var(--pink);color:#fff;
+  border-radius:50px;font-size:0.6rem;padding:1px 6px;
+  font-family:'Fredoka',sans-serif;font-weight:700;
+  margin-left:0.3rem;vertical-align:middle;
+}
+
+/* ══ REVIEWS PANEL ══ */
+.rv-subtabs {
+  display:flex;gap:0.6rem;margin-bottom:1.5rem;flex-wrap:wrap;
+}
+.rv-stab {
+  background:rgba(255,255,255,0.06);
+  border:2px solid var(--border);
+  color:var(--muted);border-radius:50px;
+  padding:0.45rem 1.25rem;
+  font-family:'Fredoka One',cursive;font-size:0.85rem;
+  cursor:pointer;transition:all 0.15s;position:relative;
+}
+.rv-stab:hover { color:var(--cream);border-color:rgba(157,102,242,0.5); }
+.rv-stab.active { background:var(--lilac);border-color:var(--lilac);color:#fff; }
+.rv-stab .rv-count {
+  display:inline-block;background:var(--pink);color:#fff;
+  border-radius:50px;font-size:0.6rem;padding:1px 6px;
+  font-family:'Fredoka',sans-serif;font-weight:700;
+  margin-left:0.3rem;vertical-align:middle;
+}
+
+.rv-subpanel { display:none; }
+.rv-subpanel.active { display:block; }
+
+/* Review admin card */
+.rv-card {
+  background:rgba(157,102,242,0.08);
+  border:2px solid var(--border);
+  border-radius:1rem;padding:1.15rem 1.25rem;
+  margin-bottom:0.85rem;transition:border-color 0.15s;
+}
+.rv-card:hover { border-color:var(--lilac); }
+.rv-top {
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:1rem;
+  margin-bottom:0.75rem;flex-wrap:wrap;
+}
+.rv-meta { flex:1; }
+.rv-name-row {
+  display:flex;align-items:center;gap:0.5rem;
+  flex-wrap:wrap;margin-bottom:0.3rem;
+}
+.rv-name {
+  font-family:'Fredoka One',cursive;font-size:0.95rem;color:var(--cream);
+}
+.rv-badge {
+  font-size:0.62rem;padding:2px 9px;border-radius:50px;
+  font-family:'Fredoka',sans-serif;font-weight:600;
+  border:1px solid transparent;
+}
+.rv-badge.website  { background:rgba(254,93,159,0.18);color:var(--pink);border-color:rgba(254,93,159,0.35); }
+.rv-badge.social   { background:rgba(97,128,242,0.18);color:#8ba0ff;border-color:rgba(97,128,242,0.35); }
+.rv-badge.seed     { background:rgba(255,213,79,0.12);color:var(--yellow);border-color:rgba(255,213,79,0.3); }
+.rv-stars-row { margin-bottom:0.2rem; }
+.rv-stars-row .s { font-size:0.95rem; }
+.rv-stars-row .s.on  { color:var(--yellow); }
+.rv-stars-row .s.off { color:rgba(255,255,255,0.18); }
+.rv-date { font-size:0.72rem;color:var(--muted); }
+.rv-thumb {
+  width:62px;height:62px;border-radius:0.6rem;
+  object-fit:cover;border:2px solid var(--border);flex-shrink:0;
+}
+.rv-when    { font-size:0.78rem;color:var(--pink);margin-bottom:0.4rem;font-family:'Fredoka One',cursive; }
+.rv-text    { font-size:0.88rem;color:rgba(255,255,255,0.78);line-height:1.65;margin-bottom:0.55rem;font-style:italic; }
+.rv-improve { font-size:0.78rem;color:var(--muted);margin-bottom:0.65rem; }
+.rv-actions { display:flex;gap:0.5rem;flex-wrap:wrap; }
+
+.btn-approve {
+  background:rgba(91,191,106,0.2);color:var(--green);
+  border:2px solid rgba(91,191,106,0.35);border-radius:50px;
+  padding:0.35rem 1rem;font-family:'Fredoka One',cursive;
+  font-size:0.78rem;cursor:pointer;transition:background 0.15s;
+}
+.btn-approve:hover { background:rgba(91,191,106,0.45); }
+.btn-unapprove {
+  background:rgba(255,213,79,0.12);color:var(--yellow);
+  border:2px solid rgba(255,213,79,0.3);border-radius:50px;
+  padding:0.35rem 1rem;font-family:'Fredoka One',cursive;
+  font-size:0.78rem;cursor:pointer;transition:background 0.15s;
+}
+.btn-unapprove:hover { background:rgba(255,213,79,0.28); }
+
+/* Star input in manual form */
+.rv-star-input { display:flex;gap:0.4rem;margin-top:0.25rem; }
+.rv-star-btn {
+  font-size:1.9rem;background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,0.2);transition:color 0.15s,transform 0.15s;
+  padding:0;line-height:1;
+}
+.rv-star-btn.on { color:var(--yellow);text-shadow:0 2px 6px rgba(255,213,79,0.5); }
+.rv-star-btn:hover { transform:scale(1.2); }
+
+/* Platform badge in add-form select */
+.rv-platform-badge {
+  display:inline-block;background:rgba(97,128,242,0.2);
+  color:#8ba0ff;border:1px solid rgba(97,128,242,0.35);
+  border-radius:50px;font-size:0.65rem;padding:2px 8px;
+  margin-left:0.4rem;font-family:'Fredoka',sans-serif;font-weight:600;
+}
+
 </style>
 </head>
 <body>
@@ -306,6 +415,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
     <a href="#" data-p="friends"><span class="ni">🌸</span>Friends</a>
     <a href="#" data-p="faq"><span class="ni">❓</span>FAQ</a>
     <a href="#" data-p="social"><span class="ni">🔗</span>Social Links</a>
+    <a href="#" data-p="reviews"><span class="ni">⭐</span>Reviews <span class="rv-nav-badge" id="rvNavBadge" style="display:none"></span></a>
     <div class="sidebar-div"></div>
     <a href="#" data-p="settings"><span class="ni">⚙️</span>Settings</a>
   </nav>
@@ -592,7 +702,242 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
       <button class="btn-save" onclick="changePwd()">Update Password ✦</button>
     </div>
   </div>
+    <!-- PENDING -->
+    <div id="revPanel-pending">
+      <div class="admin-card">
+        <div class="card-title">Pending Reviews <span class="badge" id="pendingCardBadge">0</span></div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Reviews submitted by visitors waiting for your approval. Approve the ones you want shown on the homepage. ✦</p>
+        <div id="pendingList">
+          <div class="empty-state"><span class="icon">⏳</span>No pending reviews right now — all clear!</div>
+        </div>
+      </div>
+    </div>
 
+    <!-- APPROVED -->
+    <div id="revPanel-approved" style="display:none">
+      <div class="admin-card">
+        <div class="card-title">Approved Reviews</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">These show on your homepage carousel. You can unapprove or delete any of them.</p>
+        <div id="approvedList">
+          <div class="empty-state"><span class="icon">✅</span>No approved reviews yet. Approve some from Pending!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD MANUAL -->
+    <div id="revPanel-add" style="display:none">
+      <div class="admin-card">
+        <div class="card-title">Add a Manual Review ✏️</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1.25rem">Got a lovely DM on Instagram or a comment on X? Add it here so it shows on the site! ✦</p>
+
+        <input type="hidden" id="editManualRevId" value="">
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Reviewer Name</label>
+            <input type="text" class="f-input" id="manualRevName" placeholder="e.g. Luna, @starrydreamer">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Source Platform</label>
+            <select class="f-select" id="manualRevSource">
+              <option value="Instagram">Instagram</option>
+              <option value="X / Twitter">X / Twitter</option>
+              <option value="Pinterest">Pinterest</option>
+              <option value="DRiP">DRiP</option>
+              <option value="Email">Email</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Star Rating</label>
+          <div style="display:flex;gap:0.5rem;margin-top:0.25rem" id="manualStarRow">
+            <button class="star-btn-admin" data-val="1" onclick="setManualStar(1)">★</button>
+            <button class="star-btn-admin" data-val="2" onclick="setManualStar(2)">★</button>
+            <button class="star-btn-admin" data-val="3" onclick="setManualStar(3)">★</button>
+            <button class="star-btn-admin" data-val="4" onclick="setManualStar(4)">★</button>
+            <button class="star-btn-admin" data-val="5" onclick="setManualStar(5)">★</button>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Their Review / What they said</label>
+          <textarea class="f-textarea" id="manualRevText" placeholder="Paste or type what they said…" style="min-height:100px"></textarea>
+        </div>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">When they discovered Whimsiverse <span style="font-size:0.7rem;color:var(--muted)">(optional)</span></label>
+            <select class="f-select" id="manualRevWhen">
+              <option value="">— Leave blank or choose —</option>
+              <option value="Just found it today! 🌟">Just found it today! 🌟</option>
+              <option value="Within the last week ✨">Within the last week ✨</option>
+              <option value="Within the last month 🌸">Within the last month 🌸</option>
+              <option value="A few months ago 🍃">A few months ago 🍃</option>
+              <option value="I've been here since the beginning 💜">I've been here since the beginning 💜</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">What they'd improve <span style="font-size:0.7rem;color:var(--muted)">(optional)</span></label>
+            <input type="text" class="f-input" id="manualRevImprove" placeholder="e.g. More sticker variety!">
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Purchase Photo <span style="font-size:0.7rem;color:var(--muted)">(optional)</span></label>
+          <div class="img-upload-wrap" id="manualRevImgWrap">
+            <input type="file" accept="image/*" id="manualRevImgFile" onchange="handleManualRevImg(this)">
+            <div class="img-upload-label"><span>📷</span>Upload screenshot or photo</div>
+            <img class="img-preview" id="manualRevImgPreview" alt="">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem">
+          <button class="btn-save" onclick="saveManualReview()">Save & Approve ✦</button>
+          <button class="btn-secondary" id="cancelManualRevBtn" style="display:none" onclick="cancelManualRevEdit()">Cancel Edit</button>
+          <button class="btn-danger" id="deleteManualRevBtn" style="display:none" onclick="deleteManualRev()">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ══ REVIEWS ══ -->
+  <div class="panel" id="panel-reviews">
+
+    <div class="rv-subtabs">
+      <button class="rv-stab active" data-rv="rv-pending">
+        ⏳ Pending <span class="rv-count" id="rvPendingCount">0</span>
+      </button>
+      <button class="rv-stab" data-rv="rv-approved">✅ Approved</button>
+      <button class="rv-stab" data-rv="rv-add">✏️ Add from Socials</button>
+    </div>
+
+    <!-- PENDING -->
+    <div class="rv-subpanel active" id="rv-pending">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Pending Reviews</span>
+          <span class="badge" id="rvPendingBadge" style="background:var(--pink)">0</span>
+        </div>
+        <p class="card-meta" style="margin-bottom:1rem">
+          Reviews submitted by visitors. Approve the ones you want shown on the homepage carousel. ✦
+        </p>
+        <div id="rvPendingList">
+          <div class="empty-state">
+            <span style="font-size:2.5rem;display:block;margin-bottom:0.5rem">⏳</span>
+            No pending reviews right now — all clear!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROVED -->
+    <div class="rv-subpanel" id="rv-approved">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Approved Reviews</span>
+          <span class="badge" id="rvApprovedBadge">0</span>
+        </div>
+        <p class="card-meta" style="margin-bottom:1rem">
+          These are live on your homepage carousel. You can unapprove or delete any of them.
+        </p>
+        <div id="rvApprovedList">
+          <div class="empty-state">
+            <span style="font-size:2.5rem;display:block;margin-bottom:0.5rem">✅</span>
+            No approved reviews yet. Approve some from Pending!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD MANUAL -->
+    <div class="rv-subpanel" id="rv-add">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Add a Review from Socials ✏️</span>
+        </div>
+        <p class="card-meta" style="margin-bottom:1.25rem">
+          Got a lovely DM on Instagram, a comment on X, or a message on DRiP? Add it here so it shows on your site. ✦
+        </p>
+
+        <input type="hidden" id="rvEditId" value="">
+
+        <div class="f-row2">
+          <div class="f-group">
+            <label class="f-label">Reviewer Name</label>
+            <input type="text" class="f-input" id="rvManualName" placeholder="e.g. Luna, @starrydreamer">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Source Platform</label>
+            <select class="f-input" id="rvManualPlatform" style="cursor:pointer">
+              <option value="Instagram">Instagram</option>
+              <option value="X / Twitter">X / Twitter</option>
+              <option value="Pinterest">Pinterest</option>
+              <option value="DRiP">DRiP</option>
+              <option value="Email">Email</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Star Rating</label>
+          <div class="rv-star-input" id="rvManualStarRow">
+            <button class="rv-star-btn on" data-v="1" type="button" onclick="rvSetStar(1)">★</button>
+            <button class="rv-star-btn on" data-v="2" type="button" onclick="rvSetStar(2)">★</button>
+            <button class="rv-star-btn on" data-v="3" type="button" onclick="rvSetStar(3)">★</button>
+            <button class="rv-star-btn on" data-v="4" type="button" onclick="rvSetStar(4)">★</button>
+            <button class="rv-star-btn on" data-v="5" type="button" onclick="rvSetStar(5)">★</button>
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Their Review / What they said <span style="color:var(--pink)">✦</span></label>
+          <textarea class="f-input" id="rvManualText" style="min-height:100px;resize:vertical;line-height:1.7"
+            placeholder="Paste or type exactly what they said…"></textarea>
+        </div>
+
+        <div class="f-row2">
+          <div class="f-group">
+            <label class="f-label">When they discovered Whimsiverse <span style="opacity:0.5;font-size:0.7rem">(optional)</span></label>
+            <select class="f-input" id="rvManualWhen" style="cursor:pointer">
+              <option value="">— Leave blank —</option>
+              <option value="Just found it today! 🌟">Just found it today! 🌟</option>
+              <option value="Within the last week ✨">Within the last week ✨</option>
+              <option value="Within the last month 🌸">Within the last month 🌸</option>
+              <option value="A few months ago 🍃">A few months ago 🍃</option>
+              <option value="I've been here since the beginning 💜">I've been here since the beginning 💜</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">What they'd improve <span style="opacity:0.5;font-size:0.7rem">(optional)</span></label>
+            <input type="text" class="f-input" id="rvManualImprove" placeholder="e.g. More sticker variety!">
+          </div>
+        </div>
+
+        <div class="f-group">
+          <label class="f-label">Screenshot / Purchase Photo <span style="opacity:0.5;font-size:0.7rem">(optional)</span></label>
+          <div class="img-zone" id="rvManualImgZone" onclick="document.getElementById('rvManualImgFile').click()"
+               style="cursor:pointer;aspect-ratio:unset;height:90px;flex-direction:row;gap:0.75rem">
+            <input type="file" accept="image/*" id="rvManualImgFile" style="display:none" onchange="rvHandleImg(this)">
+            <span class="img-zone-ico" style="font-size:1.5rem">📷</span>
+            <span class="img-zone-lbl" style="font-size:0.82rem">Click to upload screenshot or photo</span>
+            <img id="rvManualImgThumb" class="img-thumb" style="display:none;width:60px;height:60px;border-radius:0.5rem;object-fit:cover">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.85rem;flex-wrap:wrap;margin-top:0.25rem">
+          <button class="btn-save" type="button" onclick="rvSaveManual()">Save & Approve ✦</button>
+          <button class="btn-sec" type="button" id="rvCancelEdit" style="display:none" onclick="rvClearManualForm()">Cancel Edit</button>
+          <button class="btn-del" type="button" id="rvDeleteBtn" style="display:none" onclick="rvDeleteApproved(document.getElementById('rvEditId').value, true)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </main>
 </div><!-- end #appRoot -->
 
@@ -890,9 +1235,10 @@ document.querySelectorAll('.sidebar-nav a').forEach(a => {
     a.classList.add('active');
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-' + a.dataset.p).classList.add('active');
-    if (a.dataset.p === 'faq')    loadFaq();
-    if (a.dataset.p === 'social') loadSocial();
+    if (a.dataset.p === 'faq')     loadFaq();
+    if (a.dataset.p === 'social')  loadSocial();
     if (a.dataset.p === 'friends') loadFriends();
+    if (a.dataset.p === 'reviews') { rvRenderPending(); rvUpdateBadge(); }
   });
 });
 
@@ -1337,6 +1683,284 @@ function loadAllData() {
 setupPreview('storyCoverFile', 'storyCoverThumb');
 setupPreview('shopImgFile',    'shopImgThumb');
 setupPreview('friendPfpFile',  'friendPfpThumb');
+
+/* ══════════════════════════════════════════════════════
+   REVIEWS
+══════════════════════════════════════════════════════ */
+const RV_PENDING  = 'wnf_reviews_pending';
+const RV_APPROVED = 'wnf_reviews_approved';
+let rvManualStars = 5;
+let rvManualImgB64 = '';
+
+/* Sub-tab switching */
+document.querySelectorAll('.rv-stab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rv-stab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.rv-subpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.rv).classList.add('active');
+    if (btn.dataset.rv === 'rv-pending')  rvRenderPending();
+    if (btn.dataset.rv === 'rv-approved') rvRenderApproved();
+  });
+});
+
+/* Wire reviews into sidebar nav click */
+document.querySelectorAll('.sidebar-nav a').forEach(a => {
+  if (a.dataset.p === 'reviews') {
+    a.addEventListener('click', () => {
+      rvRenderPending();
+      rvUpdateBadge();
+    });
+  }
+});
+
+/* Storage */
+function rvGetPending()  { try { const d=localStorage.getItem(RV_PENDING);  return d?JSON.parse(d):[]; } catch { return []; } }
+function rvGetApproved() { try { const d=localStorage.getItem(RV_APPROVED); return d?JSON.parse(d):[]; } catch { return []; } }
+function rvSavePending(a)  { localStorage.setItem(RV_PENDING,  JSON.stringify(a)); }
+function rvSaveApproved(a) { localStorage.setItem(RV_APPROVED, JSON.stringify(a)); }
+
+function rvUpdateBadge() {
+  const n = rvGetPending().length;
+  const badge = document.getElementById('rvNavBadge');
+  const pc    = document.getElementById('rvPendingCount');
+  const pb    = document.getElementById('rvPendingBadge');
+  if (badge) { badge.textContent = n; badge.style.display = n > 0 ? 'inline-block' : 'none'; }
+  if (pc) pc.textContent = n;
+  if (pb) pb.textContent = n;
+}
+
+/* Render helpers */
+function rvStarHTML(n) {
+  return Array(5).fill(0).map((_,i) => `<span class="s ${i<n?'on':'off'}">★</span>`).join('');
+}
+function rvBadge(source, platform) {
+  if (source === 'seed')      return `<span class="rv-badge seed">Whimsiverse</span>`;
+  if (source === 'social')    return `<span class="rv-badge social">${platform||'Social'}</span>`;
+  return `<span class="rv-badge website">Website</span>`;
+}
+
+function rvRenderPending() {
+  const list = rvGetPending();
+  const el   = document.getElementById('rvPendingList');
+  rvUpdateBadge();
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:2rem"><span style="font-size:2.5rem;display:block;margin-bottom:0.5rem">⏳</span>No pending reviews — all clear! ✦</div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => `
+    <div class="rv-card">
+      <div class="rv-top">
+        <div class="rv-meta">
+          <div class="rv-name-row">
+            <span class="rv-name">${r.name}</span>
+            ${rvBadge(r.source, r.platform)}
+          </div>
+          <div class="rv-stars-row">${rvStarHTML(r.stars)}</div>
+          <div class="rv-date">${r.date}</div>
+        </div>
+        ${r.purchaseImg ? `<img class="rv-thumb" src="${r.purchaseImg}" alt="">` : ''}
+      </div>
+      ${r.when ? `<p class="rv-when">✦ ${r.when}</p>` : ''}
+      <p class="rv-text">"${r.feeling}"</p>
+      ${r.improve ? `<p class="rv-improve">💡 "${r.improve}"</p>` : ''}
+      <div class="rv-actions">
+        <button class="btn-approve" onclick="rvApprove('${r.id}')">✅ Approve & Show on Site</button>
+        <button class="btn-del" onclick="rvReject('${r.id}')" style="padding:0.35rem 1rem;font-size:0.78rem">✕ Reject</button>
+      </div>
+    </div>`).join('');
+}
+
+function rvRenderApproved() {
+  const list = rvGetApproved();
+  const el   = document.getElementById('rvApprovedList');
+  const b    = document.getElementById('rvApprovedBadge');
+  if (b) b.textContent = list.length;
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:2rem"><span style="font-size:2.5rem;display:block;margin-bottom:0.5rem">✅</span>No approved reviews yet.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => `
+    <div class="rv-card">
+      <div class="rv-top">
+        <div class="rv-meta">
+          <div class="rv-name-row">
+            <span class="rv-name">${r.name}</span>
+            ${rvBadge(r.source, r.platform)}
+          </div>
+          <div class="rv-stars-row">${rvStarHTML(r.stars)}</div>
+          <div class="rv-date">${r.date}</div>
+        </div>
+        ${r.purchaseImg ? `<img class="rv-thumb" src="${r.purchaseImg}" alt="">` : ''}
+      </div>
+      ${r.when ? `<p class="rv-when">✦ ${r.when}</p>` : ''}
+      <p class="rv-text">"${r.feeling}"</p>
+      ${r.improve ? `<p class="rv-improve">💡 "${r.improve}"</p>` : ''}
+      <div class="rv-actions">
+        ${r.source !== 'seed' ? `<button class="btn-unapprove" onclick="rvUnapprove('${r.id}')">↩ Move to Pending</button>` : ''}
+        ${r.source === 'social' ? `<button class="btn-sec" onclick="rvEditManual('${r.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem;border-radius:50px">✏️ Edit</button>` : ''}
+        ${r.source !== 'seed' ? `<button class="btn-del" onclick="rvDeleteApproved('${r.id}', false)" style="padding:0.35rem 0.85rem;font-size:0.78rem">✕ Delete</button>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function rvApprove(id) {
+  let p = rvGetPending();
+  let a = rvGetApproved();
+  const rev = p.find(r => r.id === id);
+  if (!rev) return;
+  rev.status = 'approved';
+  rvSavePending(p.filter(r => r.id !== id));
+  rvSaveApproved([rev, ...a]);
+  rvRenderPending();
+  toast('Review approved and live on site! ✦');
+}
+
+function rvReject(id) {
+  if (!confirm('Reject and delete this review?')) return;
+  rvSavePending(rvGetPending().filter(r => r.id !== id));
+  rvRenderPending();
+  toast('Review rejected.');
+}
+
+function rvUnapprove(id) {
+  let a = rvGetApproved();
+  let p = rvGetPending();
+  const rev = a.find(r => r.id === id);
+  if (!rev) return;
+  rev.status = 'pending';
+  rvSaveApproved(a.filter(r => r.id !== id));
+  rvSavePending([rev, ...p]);
+  rvRenderApproved();
+  rvUpdateBadge();
+  toast('Moved back to pending.');
+}
+
+function rvDeleteApproved(id, fromEditForm) {
+  if (!id) return;
+  if (!confirm('Permanently delete this review?')) return;
+  rvSaveApproved(rvGetApproved().filter(r => r.id !== id));
+  if (fromEditForm) {
+    rvClearManualForm();
+    // switch to approved subpanel
+    document.querySelectorAll('.rv-stab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.rv-subpanel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.rv-stab[data-rv="rv-approved"]').classList.add('active');
+    document.getElementById('rv-approved').classList.add('active');
+  }
+  rvRenderApproved();
+  toast('Review deleted.');
+}
+
+/* Manual star rating */
+function rvSetStar(val) {
+  rvManualStars = val;
+  document.querySelectorAll('#rvManualStarRow .rv-star-btn').forEach(b => {
+    b.classList.toggle('on', parseInt(b.dataset.v) <= val);
+  });
+}
+
+/* Image upload */
+function rvHandleImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    rvManualImgB64 = e.target.result;
+    const th = document.getElementById('rvManualImgThumb');
+    th.src = e.target.result; th.style.display = 'block';
+    document.querySelector('#rvManualImgZone .img-zone-ico').style.display = 'none';
+    document.querySelector('#rvManualImgZone .img-zone-lbl').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Save manual review */
+function rvSaveManual() {
+  const name = document.getElementById('rvManualName').value.trim();
+  const text = document.getElementById('rvManualText').value.trim();
+  if (!name || !text) { toast('Fill in name and review text! ✦', true); return; }
+  const editId   = document.getElementById('rvEditId').value;
+  const platform = document.getElementById('rvManualPlatform').value;
+  const review = {
+    id:          editId || Date.now().toString(36),
+    name,
+    stars:       rvManualStars,
+    feeling:     text,
+    when:        document.getElementById('rvManualWhen').value,
+    improve:     document.getElementById('rvManualImprove').value.trim(),
+    purchaseImg: rvManualImgB64,
+    platform,
+    source:      'social',
+    status:      'approved',
+    date:        new Date().toLocaleDateString('en-US', {month:'long', year:'numeric'})
+  };
+  let approved = rvGetApproved();
+  if (editId) {
+    const idx = approved.findIndex(r => r.id === editId);
+    if (idx > -1) approved[idx] = review; else approved.unshift(review);
+  } else {
+    approved.unshift(review);
+  }
+  rvSaveApproved(approved);
+  rvClearManualForm();
+  // Switch to approved tab
+  document.querySelectorAll('.rv-stab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.rv-subpanel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.rv-stab[data-rv="rv-approved"]').classList.add('active');
+  document.getElementById('rv-approved').classList.add('active');
+  rvRenderApproved();
+  toast('Review saved and live on site! ✦');
+}
+
+/* Edit a social review */
+function rvEditManual(id) {
+  const rev = rvGetApproved().find(r => r.id === id);
+  if (!rev) return;
+  document.getElementById('rvEditId').value    = id;
+  document.getElementById('rvManualName').value    = rev.name || '';
+  document.getElementById('rvManualText').value    = rev.feeling || '';
+  document.getElementById('rvManualWhen').value    = rev.when || '';
+  document.getElementById('rvManualImprove').value = rev.improve || '';
+  document.getElementById('rvManualPlatform').value = rev.platform || 'Instagram';
+  if (rev.purchaseImg) {
+    rvManualImgB64 = rev.purchaseImg;
+    const th = document.getElementById('rvManualImgThumb');
+    th.src = rev.purchaseImg; th.style.display = 'block';
+    document.querySelector('#rvManualImgZone .img-zone-ico').style.display = 'none';
+    document.querySelector('#rvManualImgZone .img-zone-lbl').style.display = 'none';
+  }
+  rvSetStar(rev.stars || 5);
+  document.getElementById('rvCancelEdit').style.display = 'inline-block';
+  document.getElementById('rvDeleteBtn').style.display  = 'inline-block';
+  // Switch to add tab
+  document.querySelectorAll('.rv-stab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.rv-subpanel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.rv-stab[data-rv="rv-add"]').classList.add('active');
+  document.getElementById('rv-add').classList.add('active');
+}
+
+function rvClearManualForm() {
+  document.getElementById('rvEditId').value       = '';
+  document.getElementById('rvManualName').value   = '';
+  document.getElementById('rvManualText').value   = '';
+  document.getElementById('rvManualWhen').value   = '';
+  document.getElementById('rvManualImprove').value= '';
+  document.getElementById('rvManualPlatform').value = 'Instagram';
+  rvManualImgB64 = '';
+  const th = document.getElementById('rvManualImgThumb');
+  if (th) { th.src=''; th.style.display='none'; }
+  const ico = document.querySelector('#rvManualImgZone .img-zone-ico');
+  const lbl = document.querySelector('#rvManualImgZone .img-zone-lbl');
+  if (ico) ico.style.display = 'block';
+  if (lbl) lbl.style.display = 'block';
+  document.getElementById('rvCancelEdit').style.display = 'none';
+  document.getElementById('rvDeleteBtn').style.display  = 'none';
+  rvSetStar(5);
+}
+
+/* Init badge on load */
+rvUpdateBadge();
+
 </script>
 </body>
 </html>
