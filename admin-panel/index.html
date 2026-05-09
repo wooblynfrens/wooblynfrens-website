@@ -1689,7 +1689,6 @@ setupPreview('friendPfpFile',  'friendPfpThumb');
 ══════════════════════════════════════════════════════ */
 const RV_PENDING  = 'wnf_reviews_pending';
 const RV_APPROVED = 'wnf_reviews_approved';
-const RV_SEEDS    = 'wnf_reviews_seeds';
 let rvManualStars = 5;
 let rvManualImgB64 = '';
 
@@ -1720,13 +1719,9 @@ function rvGetPending()  { try { const d=localStorage.getItem(RV_PENDING);  retu
 function rvGetApproved() { try { const d=localStorage.getItem(RV_APPROVED); return d?JSON.parse(d):[]; } catch { return []; } }
 function rvSavePending(a)  { localStorage.setItem(RV_PENDING,  JSON.stringify(a)); }
 function rvSaveApproved(a) { localStorage.setItem(RV_APPROVED, JSON.stringify(a)); }
-function rvGetSeeds() {
-  try { const d = localStorage.getItem(RV_SEEDS); return d ? JSON.parse(d) : []; } catch { return []; }
-}
-function rvSaveSeeds(a) { localStorage.setItem(RV_SEEDS, JSON.stringify(a)); }
 
 function rvUpdateBadge() {
-  const n = rvGetPending().length; const sn = rvGetSeeds().length;
+  const n = rvGetPending().length;
   const badge = document.getElementById('rvNavBadge');
   const pc    = document.getElementById('rvPendingCount');
   const pb    = document.getElementById('rvPendingBadge');
@@ -1777,94 +1772,36 @@ function rvRenderPending() {
 }
 
 function rvRenderApproved() {
-  const seeds    = rvGetSeeds();
-  const approved = rvGetApproved();
-  const all      = [...seeds, ...approved];
-  const el       = document.getElementById('rvApprovedList');
-  const b        = document.getElementById('rvApprovedBadge');
-  if (b) b.textContent = all.length;
-  if (!all.length) {
+  const list = rvGetApproved();
+  const el   = document.getElementById('rvApprovedList');
+  const b    = document.getElementById('rvApprovedBadge');
+  if (b) b.textContent = list.length;
+  if (!list.length) {
     el.innerHTML = `<div class="empty-state" style="padding:2rem"><span style="font-size:2.5rem;display:block;margin-bottom:0.5rem">✅</span>No approved reviews yet.</div>`;
     return;
   }
-
-  const seedSection = seeds.length ? `
-    <div style="margin-bottom:0.5rem">
-      <p style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);font-family:'Fredoka One',cursive;margin-bottom:0.75rem">✦ Example Reviews (editable)</p>
-      ${seeds.map(r => `
-        <div class="rv-card" style="border-color:rgba(255,213,79,0.25)">
-          <div class="rv-top">
-            <div class="rv-meta">
-              <div class="rv-name-row">
-                <span class="rv-name">${r.name}</span>
-                ${rvBadge('seed', '')}
-              </div>
-              <div class="rv-stars-row">${rvStarHTML(r.stars)}</div>
-              <div class="rv-date">${r.date}</div>
-            </div>
+  el.innerHTML = list.map(r => `
+    <div class="rv-card">
+      <div class="rv-top">
+        <div class="rv-meta">
+          <div class="rv-name-row">
+            <span class="rv-name">${r.name}</span>
+            ${rvBadge(r.source, r.platform)}
           </div>
-          ${r.when ? `<p class="rv-when">✦ ${r.when}</p>` : ''}
-          <p class="rv-text">"${r.feeling}"</p>
-          ${r.improve ? `<p class="rv-improve">💡 "${r.improve}"</p>` : ''}
-          <div class="rv-actions">
-            <button class="btn-sec" onclick="rvEditSeed('${r.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem;border-radius:50px">✏️ Edit</button>
-            <button class="btn-del" onclick="rvDeleteSeed('${r.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem">✕ Remove</button>
-          </div>
-        </div>`).join('')}
-    </div>` : '';
-
-  const approvedSection = approved.length ? `
-    <div>
-      <p style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--lilac);font-family:'Fredoka One',cursive;margin-bottom:0.75rem">✦ Community Reviews</p>
-      ${approved.map(r => `
-        <div class="rv-card">
-          <div class="rv-top">
-            <div class="rv-meta">
-              <div class="rv-name-row">
-                <span class="rv-name">${r.name}</span>
-                ${rvBadge(r.source, r.platform)}
-              </div>
-              <div class="rv-stars-row">${rvStarHTML(r.stars)}</div>
-              <div class="rv-date">${r.date}</div>
-            </div>
-            ${r.purchaseImg ? `<img class="rv-thumb" src="${r.purchaseImg}" alt="">` : ''}
-          </div>
-          ${r.when ? `<p class="rv-when">✦ ${r.when}</p>` : ''}
-          <p class="rv-text">"${r.feeling}"</p>
-          ${r.improve ? `<p class="rv-improve">💡 "${r.improve}"</p>` : ''}
-          <div class="rv-actions">
-            <button class="btn-unapprove" onclick="rvUnapprove('${r.id}')">↩ Move to Pending</button>
-            ${r.source === 'social' ? `<button class="btn-sec" onclick="rvEditManual('${r.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem;border-radius:50px">✏️ Edit</button>` : ''}
-            <button class="btn-del" onclick="rvDeleteApproved('${r.id}', false)" style="padding:0.35rem 0.85rem;font-size:0.78rem">✕ Delete</button>
-          </div>
-        </div>`).join('')}
-    </div>` : '';
-
-  el.innerHTML = seedSection + approvedSection;
-}
-
-/* Edit a seed review — pre-fills the Add form */
-function rvEditSeed(id) {
-  const seed = rvGetSeeds().find(r => r.id === id);
-  if (!seed) return;
-  document.getElementById('rvEditId').value       = 'seed:' + id;
-  document.getElementById('rvManualName').value   = seed.name || '';
-  document.getElementById('rvManualText').value   = seed.feeling || '';
-  document.getElementById('rvManualWhen').value   = seed.when || '';
-  document.getElementById('rvManualImprove').value= seed.improve || '';
-  document.getElementById('rvManualPlatform').value = 'Other';
-  rvSetStar(seed.stars || 5);
-  document.getElementById('rvCancelEdit').style.display = 'inline-block';
-  document.getElementById('rvDeleteBtn').style.display  = 'inline-block';
-  document.querySelector('.rv-stab[data-rv="rv-add"]').click();
-}
-
-/* Delete a seed review */
-function rvDeleteSeed(id) {
-  if (!confirm('Remove this example review from the site?')) return;
-  rvSaveSeeds(rvGetSeeds().filter(r => r.id !== id));
-  rvRenderApproved();
-  toast('Example review removed.');
+          <div class="rv-stars-row">${rvStarHTML(r.stars)}</div>
+          <div class="rv-date">${r.date}</div>
+        </div>
+        ${r.purchaseImg ? `<img class="rv-thumb" src="${r.purchaseImg}" alt="">` : ''}
+      </div>
+      ${r.when ? `<p class="rv-when">✦ ${r.when}</p>` : ''}
+      <p class="rv-text">"${r.feeling}"</p>
+      ${r.improve ? `<p class="rv-improve">💡 "${r.improve}"</p>` : ''}
+      <div class="rv-actions">
+        ${r.source !== 'seed' ? `<button class="btn-unapprove" onclick="rvUnapprove('${r.id}')">↩ Move to Pending</button>` : ''}
+        ${r.source === 'social' ? `<button class="btn-sec" onclick="rvEditManual('${r.id}')" style="padding:0.35rem 0.85rem;font-size:0.78rem;border-radius:50px">✏️ Edit</button>` : ''}
+        ${r.source !== 'seed' ? `<button class="btn-del" onclick="rvDeleteApproved('${r.id}', false)" style="padding:0.35rem 0.85rem;font-size:0.78rem">✕ Delete</button>` : ''}
+      </div>
+    </div>`).join('');
 }
 
 function rvApprove(id) {
@@ -1944,25 +1881,6 @@ function rvSaveManual() {
   if (!name || !text) { toast('Fill in name and review text! ✦', true); return; }
   const editId   = document.getElementById('rvEditId').value;
   const platform = document.getElementById('rvManualPlatform').value;
-
-  /* Handle seed edit */
-  if (editId && editId.startsWith('seed:')) {
-    const seedId  = editId.replace('seed:', '');
-    const seeds   = rvGetSeeds();
-    const idx     = seeds.findIndex(r => r.id === seedId);
-    const updated = { id:seedId, name, stars:rvManualStars, feeling:text,
-      when:document.getElementById('rvManualWhen').value,
-      improve:document.getElementById('rvManualImprove').value.trim(),
-      purchaseImg:rvManualImgB64, source:'seed',
-      date: idx>-1 ? seeds[idx].date : new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}) };
-    if (idx > -1) seeds[idx] = updated; else seeds.push(updated);
-    rvSaveSeeds(seeds);
-    rvClearManualForm();
-    document.querySelector('.rv-stab[data-rv="rv-approved"]').click();
-    toast('Example review updated! ✦');
-    return;
-  }
-
   const review = {
     id:          editId || Date.now().toString(36),
     name,

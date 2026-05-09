@@ -325,12 +325,12 @@
 
 /* ══ NEWSLETTER ══ */
 .section-newsletter {
-  position:relative; padding:3rem 2rem 3.5rem; text-align:center; overflow:hidden;
+  position:relative; padding:5rem 2rem; text-align:center; overflow:hidden;
 }
 .newsletter-box {
   background:rgba(42,18,80,0.72); border:3px solid rgba(157,102,242,0.4);
-  border-radius:2rem; padding:2rem 2.5rem;
-  max-width:560px; margin:1.5rem auto 0;
+  border-radius:2rem; padding:3rem 2.5rem;
+  max-width:560px; margin:2rem auto 0;
   backdrop-filter:blur(8px);
   box-shadow:8px 8px 0 rgba(0,0,0,0.3); position:relative; z-index:2;
 }
@@ -389,7 +389,7 @@
 /* ══ REVIEWS SECTION ══ */
 .section-reviews {
   background:var(--purple-dark);
-  padding:3rem 2rem 3rem;
+  padding:5rem 2rem 5rem;
   text-align:center;
   position:relative;
   overflow:hidden;
@@ -452,11 +452,11 @@
 /* ══ REVIEW MODAL ══ */
 .review-modal-backdrop { position:fixed; inset:0; z-index:9000; background:rgba(20,8,45,0.88); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
 .review-modal-backdrop.open { opacity:1; pointer-events:all; }
-.review-modal-box { background:var(--purple-dark); border:3px solid rgba(157,102,242,0.5); border-radius:2rem; padding:2.5rem 2.5rem 2rem; max-width:580px; width:100%; max-height:85vh; overflow-y:auto; overflow-x:hidden; box-shadow:10px 10px 0 rgba(0,0,0,0.4); transform:scale(0.92) translateY(20px); transition:transform 0.35s cubic-bezier(0.25,0.8,0.25,1); position:relative; }
+.review-modal-box { background:var(--purple-dark); border:3px solid rgba(157,102,242,0.5); border-radius:2rem; padding:2.5rem 2.5rem 2rem; max-width:580px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:10px 10px 0 rgba(0,0,0,0.4); transform:scale(0.92) translateY(20px); transition:transform 0.35s cubic-bezier(0.25,0.8,0.25,1); position:relative; }
 .review-modal-backdrop.open .review-modal-box { transform:scale(1) translateY(0); }
 .review-modal-box::-webkit-scrollbar { width:6px; }
 .review-modal-box::-webkit-scrollbar-thumb { background:rgba(157,102,242,0.4); border-radius:3px; }
-.modal-close-btn { position:sticky; top:0; float:right; margin-bottom:-36px; margin-right:-0.5rem; background:rgba(42,18,80,0.95); border:2px solid rgba(157,102,242,0.5); color:var(--cream); border-radius:50%; width:36px; height:36px; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s,transform 0.15s; z-index:10; flex-shrink:0; }
+.modal-close-btn { position:absolute; top:1.25rem; right:1.25rem; background:rgba(157,102,242,0.2); border:2px solid rgba(157,102,242,0.4); color:var(--cream); border-radius:50%; width:36px; height:36px; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s,transform 0.15s; }
 .modal-close-btn:hover { background:var(--pink); border-color:var(--pink); transform:rotate(90deg); }
 .modal-eyebrow { font-family:'Fredoka One',cursive; font-size:0.72rem; letter-spacing:4px; text-transform:uppercase; color:var(--yellow); margin-bottom:0.35rem; }
 .modal-title { font-family:'Fredoka One',cursive; font-size:1.6rem; color:var(--white); -webkit-text-stroke:1px var(--purple-deep); paint-order:stroke fill; margin-bottom:0.4rem; }
@@ -976,23 +976,15 @@ let rvAutoTimer    = null;
 let rvStarSelected = 0;
 let rvImgB64       = '';
 
-// Seed reviews are now stored in localStorage under RV_SEEDS key so admin can manage them.
-// On first load we write defaults if nothing exists yet.
-const RV_SEEDS = 'wnf_reviews_seeds';
-const _defaultSeeds = [
+const rvSeedReviews = [
   { id:'seed1', name:'Mika ✨',        stars:5, feeling:"Stepping into the Whimsiverse felt like being a little kid again — everything is soft and magical and full of wonder. Fluffy literally made me smile on a really hard day.", when:"I've been here since the beginning 💜", improve:'',                                                     purchaseImg:'', date:'April 2025',  source:'seed' },
   { id:'seed2', name:'dreamy.sol 🌙', stars:5, feeling:"The art style is so unique and cosy — I found Woobly & Friends on DRiP and it was an instant love. Mimi is my absolute favourite. The stickers are even cuter in person!", when:'A few months ago 🍃',          improve:'Would love a Greggy plushie someday!!',                 purchaseImg:'', date:'March 2025', source:'seed' },
   { id:'seed3', name:'Luna Rose 🌸',  stars:5, feeling:"Sachi's art has this special quality where it makes you feel safe and happy. I ordered prints and they arrived beautifully packaged from Sri Lanka — that personal touch means everything.", when:'Within the last month 🌸', improve:'More characters please! I want to know everyone in the Whimsiverse.', purchaseImg:'', date:'April 2025',  source:'seed' }
 ];
-(function(){ try { if (!localStorage.getItem(RV_SEEDS)) localStorage.setItem(RV_SEEDS, JSON.stringify(_defaultSeeds)); } catch(e){} })();
-
-function rvGetSeeds() {
-  try { const d = localStorage.getItem(RV_SEEDS); return d ? JSON.parse(d) : _defaultSeeds; } catch { return _defaultSeeds; }
-}
 
 function rvGetApproved() {
-  try { const d = localStorage.getItem(REVIEWS_APPROVED_KEY); return [...rvGetSeeds(), ...(d ? JSON.parse(d) : [])]; }
-  catch { return rvGetSeeds(); }
+  try { const d = localStorage.getItem(REVIEWS_APPROVED_KEY); return [...rvSeedReviews, ...(d ? JSON.parse(d) : [])]; }
+  catch { return rvSeedReviews; }
 }
 
 function rvStarsHtml(n) {
