@@ -1290,7 +1290,10 @@ async function loadStories() {
   const grid = document.getElementById('storyGrid');
   if (!sb) { grid.innerHTML='<div class="empty-state">Not connected.</div>'; return; }
   grid.innerHTML = '<div class="loading"><span class="spin"></span>Loading…</div>';
-  const { data, error } = await sb.from('stories').select('*').order('created_at',{ascending:false});
+  const { data, error } = await sb
+    .from('stories')
+    .select('id,slug,title,tag,excerpt,cover_url,book_no,book_title,created_at')
+    .order('created_at',{ascending:false});
   if (error) { grid.innerHTML=`<div class="empty-state">Error: ${error.message}</div>`; return; }
   if (!data?.length) { grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><span class="empty-ico">📖</span>No stories yet. Write your first one! ✨</div>'; return; }
   grid.innerHTML = data.map(s => `
@@ -1302,11 +1305,18 @@ async function loadStories() {
         <p class="list-meta" style="margin-bottom:0.45rem">/story/${s.slug || slugifyStory(s.title)}</p>
         <p class="scard-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
         <div class="scard-actions">
-          <button class="btn-2" style="padding:0.28rem 0.7rem;font-size:0.73rem" onclick='editStory(${JSON.stringify(s).replace(/'/g,"\\'")} )'>✏️ Edit</button>
+          <button class="btn-2" style="padding:0.28rem 0.7rem;font-size:0.73rem" onclick="editStoryById('${s.id}')">Edit</button>
           <button class="btn-del" onclick="deleteStoryById('${s.id}')">Delete</button>
         </div>
       </div>
     </div>`).join('');
+}
+
+async function editStoryById(id) {
+  if (!sb) { toast('Not connected!', true); return; }
+  const { data, error } = await sb.from('stories').select('*').eq('id', id).single();
+  if (error) { toast(error.message, true); return; }
+  editStory(data);
 }
 
 function editStory(s) {

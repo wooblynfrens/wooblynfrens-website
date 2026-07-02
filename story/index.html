@@ -404,11 +404,12 @@
 
   async function loadStories() {
     const directKey = currentStoryKey();
-    storyList = await WNF.getStories();
     if (directKey) {
       await openStory(directKey, false);
+      WNF.getStories().then(stories => { storyList = stories; });
       return;
     }
+    storyList = await WNF.getStories();
     renderStoryGrid(storyList);
   }
   function renderStoryGrid(stories) {
