@@ -3,52 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stories - Woobly & Friends | Tales from the Whimsiverse</title>
-<meta name="description" content="Read magical stories and lore from the Whimsiverse, an imaginary universe where Woobly, Mimi, Fluffy, Bella, Benny, Greggy and their friends live.">
-<meta name="keywords" content="Woobly and Friends stories, Whimsiverse lore, magical stories, cute character stories, imaginary friends, fantasy art stories">
-<meta name="author" content="Sachi - Woobly & Friends">
-<meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" id="canonicalLink" href="https://wooblynfrens.com/story/">
+<title>Stories — Woobly & Friends | Tales from the Whimsiverse</title>
+<meta name="description" content="Read magical stories and lore from the Whimsiverse. Follow Woobly, Mimi, Fluffy, Bella, Benny and Greggy on adventures full of wonder and heart.">
+<meta name="keywords" content="Woobly and Friends stories, Whimsiverse lore, magical stories, cute character stories, children stories, fantasy stories">
+<meta name="author" content="Sachi — Woobly & Friends">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://wooblynfrens.com/story/">
 
-<meta property="og:type" id="ogType" content="website">
-<meta property="og:url" id="ogUrl" content="https://wooblynfrens.com/story/">
-<meta property="og:title" id="ogTitle" content="Stories - Woobly & Friends | Tales from the Whimsiverse">
-<meta property="og:description" id="ogDescription" content="Read magical stories from the Whimsiverse, a universe beyond ours where imaginary friends live.">
-<meta property="og:image" id="ogImage" content="https://wooblynfrens.com/assets/hero_image.jpg">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wooblynfrens.com/story/">
+<meta property="og:title" content="Stories — Woobly & Friends | Tales from the Whimsiverse">
+<meta property="og:description" content="Read magical stories from the Whimsiverse. Adventures, lore and heart from Woobly & Friends.">
+<meta property="og:image" content="https://wooblynfrens.com/assets/hero_image.jpg">
 <meta property="og:site_name" content="Woobly & Friends">
-<meta property="og:locale" content="en_US">
 
+<!-- Twitter/X Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" id="twitterTitle" content="Stories - Woobly & Friends">
-<meta name="twitter:description" id="twitterDescription" content="Read magical stories from the Whimsiverse.">
-<meta name="twitter:image" id="twitterImage" content="https://wooblynfrens.com/assets/hero_image.jpg">
+<meta name="twitter:title" content="Stories — Woobly & Friends">
+<meta name="twitter:description" content="Read magical stories from the Whimsiverse.">
+<meta name="twitter:image" content="https://wooblynfrens.com/assets/hero_image.jpg">
 <meta name="twitter:site" content="@wooblynfrens">
 
-<script type="application/ld+json" id="storySchema">
+<!-- Structured Data — Blog -->
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
+  "@type": "Blog",
   "name": "Tales from the Whimsiverse",
   "url": "https://wooblynfrens.com/story/",
   "description": "Magical stories and lore from the world of Woobly & Friends.",
   "publisher": {
-    "@type": "Organization",
-    "name": "Woobly & Friends",
-    "url": "https://wooblynfrens.com",
-    "logo": "https://wooblynfrens.com/assets/logo.png"
-  },
-  "creator": {
     "@type": "Person",
-    "name": "Sachi"
+    "name": "Sachi",
+    "url": "https://wooblynfrens.com"
   }
 }
 </script>
 
-<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="../assets/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 .page-hero {
@@ -56,7 +52,7 @@
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:9rem 2rem 4rem; text-align:center; overflow:hidden;
 }
-.page-hero-bg { position:absolute;inset:0;z-index:0;background-image:url('/assets/purplebg.jpg');background-size:cover;background-position:center; }
+.page-hero-bg { position:absolute;inset:0;z-index:0;background-image:url('../assets/purplebg.jpg');background-size:cover;background-position:center; }
 .page-hero-bg-fallback { position:absolute;inset:0;z-index:0;background:linear-gradient(160deg,#3d1f6e 0%,#5a2d8f 60%,#2a1250 100%); }
 .page-hero > * { position:relative;z-index:2; }
 .page-hero-title {
@@ -65,13 +61,13 @@
   opacity:0; animation:popIn 0.55s ease forwards 0.2s;
 }
 .page-hero-title .c-yellow { color:var(--yellow); -webkit-text-stroke:2px var(--orange); }
-.page-hero-sub { font-size:1.1rem; color:var(--cream); max-width:520px; line-height:1.7; margin:1rem auto 0; opacity:0; animation:popIn 0.5s ease forwards 0.4s; }
+.page-hero-sub { font-size:1.1rem; color:var(--cream); max-width:460px; line-height:1.7; margin:1rem auto 0; opacity:0; animation:popIn 0.5s ease forwards 0.4s; }
 
 .section-blog { background:var(--purple-dark); padding:5rem 2rem; }
-.blog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; max-width:1040px; margin:2.5rem auto 0; }
+.blog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; max-width:1000px; margin:2.5rem auto 0; }
 .blog-card {
   background:var(--purple-deep); border:3px solid rgba(157,102,242,0.4);
-  border-radius:1.25rem; overflow:hidden; box-shadow:6px 6px 0 rgba(0,0,0,0.35);
+  border-radius:1.75rem; overflow:hidden; box-shadow:6px 6px 0 rgba(0,0,0,0.35);
   transition:transform 0.2s, box-shadow 0.2s; cursor:pointer;
   text-decoration:none; color:var(--white); display:flex; flex-direction:column;
 }
@@ -83,184 +79,99 @@
 .blog-card-title { font-family:'Fredoka One',cursive; font-size:1.15rem; color:var(--cream); margin-bottom:0.5rem; line-height:1.3; }
 .blog-card-excerpt { font-size:0.85rem; color:rgba(255,255,255,0.65); line-height:1.65; flex:1; }
 .blog-card-date { font-size:0.75rem; color:rgba(255,255,255,0.38); margin-top:0.85rem; }
-.blog-empty { text-align:center; padding:4rem 2rem; max-width:520px; margin:0 auto; }
+.blog-empty { text-align:center; padding:4rem 2rem; max-width:500px; margin:0 auto; }
 .blog-empty-icon { font-size:4rem; display:block; margin-bottom:1rem; animation:bob 3s ease-in-out infinite; }
 .blog-empty-title { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--cream); margin-bottom:0.75rem; }
 .blog-empty-text { font-size:0.92rem; color:rgba(255,255,255,0.55); line-height:1.7; }
 
+/* Single post */
 .post-view { display:none; }
 .post-view.active { display:block; }
 .blog-list-view.hidden { display:none; }
-.reader-shell {
-  max-width:1400px; margin:0 auto; position:relative;
-  padding:0 1rem 2rem;
+.back-btn {
+  background:none; border:2px solid rgba(157,102,242,0.5); color:var(--cream);
+  font-family:'Fredoka One',cursive; font-size:0.95rem; padding:0.5rem 1.25rem;
+  border-radius:50px; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem;
+  transition:all 0.15s; margin-bottom:2rem;
 }
-.reader-topbar {
-  display:flex; align-items:center; justify-content:space-between; gap:1rem;
-  margin:0 auto 1.2rem; max-width:1280px;
-}
-.back-btn,.reader-pill {
-  background:rgba(90,45,143,0.55); border:2px solid rgba(157,102,242,0.7); color:var(--cream);
-  font-family:'Fredoka One',cursive; font-size:0.95rem; padding:0.62rem 1.35rem;
-  border-radius:50px; display:inline-flex; align-items:center; gap:0.55rem;
-  box-shadow:0 4px 0 rgba(42,18,80,0.85); text-decoration:none;
-}
-.back-btn { cursor:pointer; }
-.back-btn:hover { color:var(--yellow); border-color:var(--yellow); transform:translateY(-2px); }
-.reader-pill { color:var(--white); }
-.reader-dots { display:flex; gap:0.6rem; align-items:center; justify-content:flex-end; }
-.reader-dot { width:13px; height:13px; border-radius:50%; border:none; background:rgba(157,102,242,0.35); }
-.reader-dot.active { background:var(--pink); box-shadow:0 0 0 3px rgba(255,255,255,0.85) inset; }
+.back-btn:hover { background:rgba(157,102,242,0.2); border-color:var(--lilac); color:var(--yellow); }
+.post-container { max-width:720px; margin:0 auto; }
+.post-cover { width:100%; border-radius:1.5rem; margin-bottom:2rem; border:3px solid rgba(157,102,242,0.4); box-shadow:8px 8px 0 rgba(0,0,0,0.3); }
+.post-tag { font-size:0.78rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--pink); margin-bottom:0.5rem; }
+.post-title { font-family:'Fredoka One',cursive; font-size:clamp(1.8rem,4vw,2.8rem); color:var(--white); -webkit-text-stroke:1px var(--purple-dark); line-height:1.1; margin-bottom:0.75rem; }
+.post-date { font-size:0.8rem; color:rgba(255,255,255,0.4); margin-bottom:2rem; }
+.post-body { font-size:1rem; color:var(--cream); line-height:1.9; }
+.post-body h2 { font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--yellow); margin:2rem 0 0.75rem; }
+.post-body h3 { font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--pink); margin:1.5rem 0 0.5rem; }
+.post-body p { margin-bottom:1.25rem; }
+.post-body strong { color:var(--yellow); }
+.post-body em { color:var(--pink); font-style:normal; }
+.post-body img { width:100%; border-radius:1rem; margin:1rem 0; border:3px solid rgba(157,102,242,0.4); }
+.post-body p:first-of-type::first-letter { font-size:2.8em; font-family:'Fredoka One',cursive; float:left; line-height:0.7; margin:0 6px 0 0; color:var(--yellow); }
+.post-body p { text-align:justify; margin-bottom:1.4rem; }
 
-.book-stage {
-  position:relative; min-height:760px; border-radius:1.25rem;
-  background:rgba(42,18,80,0.45);
-  box-shadow:0 18px 48px rgba(0,0,0,0.35);
+/* Audio player */
+.audio-player {
+  background:rgba(42,18,80,0.8); border:2px solid rgba(157,102,242,0.4);
+  border-radius:1.25rem; padding:1rem 1.25rem;
+  display:flex; align-items:center; gap:1rem;
+  margin-bottom:2rem; flex-wrap:wrap;
 }
-.book-bg {
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:fill; z-index:0; pointer-events:none;
-}
-.book-spread {
-  position:relative; z-index:1;
-  display:grid; grid-template-columns:1fr 1fr; gap:3.5rem;
-  padding:4.4rem 5.5rem 5rem;
-  min-height:760px;
-}
-.book-page {
-  min-width:0;
-  display:flex; flex-direction:column;
-}
-.book-brand {
-  width:min(180px,42%); height:auto; margin:0 0 1.2rem 0;
-  filter:drop-shadow(0 3px 0 rgba(255,255,255,0.5));
-}
-.book-cover-wrap {
-  flex:1; display:flex; align-items:center; justify-content:center;
-}
-.book-cover-art {
-  width:100%; max-height:520px; object-fit:cover; border-radius:1.3rem;
-  border:5px solid rgba(255,255,255,0.65);
-  box-shadow:0 10px 24px rgba(80,43,20,0.18);
-}
-.book-cover-placeholder {
-  width:100%; min-height:430px; border-radius:1.3rem;
-  display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(145deg,rgba(254,93,159,0.2),rgba(255,213,79,0.22),rgba(97,128,242,0.18));
-  color:#6d3d64; font-size:5rem; border:4px dashed rgba(157,102,242,0.35);
-}
-.book-title-ribbon {
-  width:fit-content; max-width:100%;
-  margin:0 auto 1.2rem; padding:0.7rem 1.8rem;
-  background:linear-gradient(90deg,#fe5d9f,#c65ad8);
-  color:var(--white); border-radius:1rem 0.35rem 1rem 0.35rem;
-  font-family:'Fredoka One',cursive; font-size:clamp(1.25rem,2vw,1.9rem); line-height:1.15;
-  text-align:center; box-shadow:0 4px 0 rgba(160,48,96,0.85);
-  text-shadow:0 2px 0 rgba(42,18,80,0.28);
-}
-.book-meta {
-  text-align:center; color:#8a4d71; font-family:'Fredoka One',cursive;
-  font-size:0.82rem; letter-spacing:1.6px; text-transform:uppercase;
-  margin-bottom:1.25rem;
-}
-.book-body {
-  color:#2f1d58; font-size:clamp(1rem,1.35vw,1.25rem); line-height:1.75;
-  max-height:485px; overflow:auto; padding:0 0.7rem 0 0.2rem;
-}
-.book-body::-webkit-scrollbar { width:7px; }
-.book-body::-webkit-scrollbar-thumb { background:rgba(254,93,159,0.35); border-radius:999px; }
-.book-body p { margin-bottom:1.15rem; }
-.book-body h2,.book-body h3 { font-family:'Fredoka One',cursive; color:#9a3474; margin:1.1rem 0 0.5rem; }
-.book-body strong { color:#7c3b99; }
-.book-body em { color:#d13f8a; font-style:normal; }
-.book-body img { max-width:100%; border-radius:1rem; margin:1rem 0; }
-.book-body p:first-of-type::first-letter {
-  font-family:'Fredoka One',cursive; font-size:3.1em; line-height:0.72;
-  float:left; margin:0.12rem 0.35rem 0 0; color:#d74b9a;
-}
-.reader-actions {
-  position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
-  gap:1rem; max-width:1120px; margin:-3.2rem auto 0; padding:0 1.5rem;
-}
-.audio-player,.page-count {
-  background:linear-gradient(180deg,#5b2b93,#3d1f6e);
-  border:3px solid rgba(157,102,242,0.75); border-radius:50px;
-  box-shadow:0 5px 0 rgba(42,18,80,0.85);
-  color:var(--white); font-family:'Fredoka One',cursive;
-}
-.audio-player { padding:0.65rem 1rem; display:flex; align-items:center; gap:0.8rem; min-width:250px; }
 .audio-play-btn {
-  width:38px; height:38px; border-radius:50%; border:none; cursor:pointer;
-  background:var(--pink); color:var(--white); font-family:'Fredoka One',cursive;
-  box-shadow:0 3px 0 #a03060;
+  background:var(--pink); border:none; border-radius:50%;
+  width:44px; height:44px; cursor:pointer; font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 0 #a03060; flex-shrink:0;
+  transition:transform 0.15s;
 }
-.audio-controls { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.25rem; }
-.audio-label { font-size:0.76rem; color:var(--cream); }
-.audio-progress { width:100%; height:6px; accent-color:var(--pink); }
-.audio-time { font-size:0.7rem; color:rgba(255,255,255,0.6); }
-.audio-skip { display:none; }
-.page-count { padding:0.8rem 1.8rem; font-size:1.4rem; display:flex; align-items:center; gap:0.7rem; }
-.reader-favorite { padding:0.8rem 1.4rem; }
-.reader-arrow {
-  position:absolute; z-index:3; top:50%; transform:translateY(-50%);
-  width:66px; height:66px; border-radius:50%;
-  background:linear-gradient(180deg,#6b3fa0,#3d1f6e);
-  color:var(--white); border:3px solid rgba(157,102,242,0.8);
-  font-family:'Fredoka One',cursive; font-size:2.2rem; cursor:pointer;
-  box-shadow:0 5px 0 rgba(42,18,80,0.85);
-}
-.reader-arrow:hover { color:var(--yellow); transform:translateY(-50%) scale(1.06); }
-.reader-arrow.prev { left:-1rem; }
-.reader-arrow.next { right:-1rem; }
+.audio-play-btn:hover { transform:scale(1.1); }
+.audio-controls { flex:1; display:flex; flex-direction:column; gap:0.4rem; min-width:150px; }
+.audio-label { font-size:0.72rem; color:rgba(255,255,255,0.5); letter-spacing:1px; text-transform:uppercase; }
+.audio-progress { width:100%; height:6px; border-radius:3px; accent-color:var(--pink); cursor:pointer; }
+.audio-time { font-size:0.72rem; color:rgba(255,255,255,0.45); }
+.audio-skip { background:none; border:1px solid rgba(157,102,242,0.4); color:var(--cream);
+  border-radius:50px; padding:0.25rem 0.75rem; font-size:0.78rem; cursor:pointer;
+  font-family:'Fredoka',sans-serif; transition:all 0.15s; }
+.audio-skip:hover { background:rgba(157,102,242,0.2); }
 
-@media(max-width:980px) {
-  .section-blog { padding:4rem 1rem; }
-  .reader-topbar { flex-direction:column; align-items:flex-start; }
-  .book-stage { min-height:auto; background:#fff6e8; border:4px solid rgba(157,102,242,0.45); }
-  .book-bg { display:none; }
-  .book-spread { grid-template-columns:1fr; gap:1.5rem; padding:2rem 1.25rem 5.5rem; min-height:auto; }
-  .book-brand { width:150px; margin:0 auto 1rem; }
-  .book-cover-art,.book-cover-placeholder { min-height:260px; max-height:420px; }
-  .book-body { max-height:none; overflow:visible; font-size:1.04rem; }
-  .reader-actions { margin:-4.4rem auto 0; flex-direction:column; align-items:center; }
-  .audio-player { width:min(100%,360px); }
-  .reader-favorite { display:none; }
-  .reader-arrow { display:none; }
-}
 @media(max-width:768px) {
   .blog-grid { grid-template-columns:1fr; }
-  .page-hero { min-height:42vh; padding:7rem 1rem 3rem; }
 }
+
+
+
+
+
 </style>
 </head>
 <body>
 
 <nav id="mainNav">
-  <a href="/index.html" class="nav-logo">
-    <img src="/assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <a href="../index.html" class="nav-logo">
+    <img src="../assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
     <span class="nav-logo-text" style="display:none">Woobly & Friends</span>
   </a>
   <button class="nav-hamburger" id="navHamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="/index.html">Home</a></li>
-    <li><a href="/story/" class="active">Stories</a></li>
-    <li><a href="/about/">About</a></li>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="index.html" class="active">Stories</a></li>
+    <li><a href="../about/index.html">About</a></li>
   </ul>
-  <a href="https://shop.wooblynfrens.com" target="_blank" class="nav-shop nav-shop-fixed">Shop</a>
+  <a href="https://shop.wooblynfrens.com" target="_blank" class="nav-shop nav-shop-fixed">Shop ✦</a>
 </nav>
 
-<section class="page-hero" id="pageHero">
+<section class="page-hero">
   <div class="page-hero-bg-fallback"></div>
   <div class="page-hero-bg"></div>
   <div class="stars-layer" aria-hidden="true">
-    <span class="star twinkle" style="top:15%;left:6%;width:32px;animation-delay:0s"><img src="/assets/star_yellow.svg" alt=""></span>
-    <span class="star float"   style="top:25%;right:8%;width:24px;animation-delay:0.8s"><img src="/assets/star_pink.svg" alt=""></span>
-    <span class="star spin"    style="bottom:25%;left:12%;width:22px;animation-delay:0.4s"><img src="/assets/star_blue.svg" alt=""></span>
-    <span class="star twinkle" style="bottom:20%;right:10%;width:28px;animation-delay:1.2s"><img src="/assets/star_white.svg" alt=""></span>
+    <span class="star twinkle" style="top:15%;left:6%;width:32px;animation-delay:0s"><img src="../assets/star_yellow.svg" alt=""></span>
+    <span class="star float"   style="top:25%;right:8%;width:24px;animation-delay:0.8s"><img src="../assets/star_pink.svg" alt=""></span>
+    <span class="star spin"    style="bottom:25%;left:12%;width:22px;animation-delay:0.4s"><img src="../assets/star_blue.svg" alt=""></span>
+    <span class="star twinkle" style="bottom:20%;right:10%;width:28px;animation-delay:1.2s"><img src="../assets/star_white.svg" alt=""></span>
   </div>
-  <p class="section-eyebrow" style="opacity:0;animation:popIn 0.5s ease forwards 0.1s">tales from the whimsiverse</p>
+  <p class="section-eyebrow" style="opacity:0;animation:popIn 0.5s ease forwards 0.1s">✦ tales from the whimsiverse ✦</p>
   <h1 class="page-hero-title"><span class="c-yellow">Stories</span> & Lore</h1>
-  <p class="page-hero-sub">Adventures, quiet moments, and magical tales from a universe beyond ours where imaginary friends live.</p>
+  <p class="page-hero-sub">Adventures, behind-the-scenes, and magical tales from the Whimsiverse.</p>
   <svg style="position:absolute;bottom:0;left:0;right:0;z-index:3" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
     <path d="M0,25 C300,50 600,0 900,30 C1100,50 1300,10 1440,25 L1440,50 L0,50 Z" fill="#3d1f6e"/>
   </svg>
@@ -268,55 +179,48 @@
 
 <section class="section-blog">
   <div class="blog-list-view" id="blogListView">
-    <p class="section-eyebrow reveal" style="text-align:center">latest tales</p>
+    <p class="section-eyebrow reveal" style="text-align:center">✦ latest tales ✦</p>
     <h2 class="section-heading reveal" style="text-align:center">Latest Tales from <span class="c-pink">Woobly & Friends</span></h2>
     <div class="blog-grid" id="blogGrid">
       <div class="blog-empty" style="grid-column:1/-1">
-        <span class="blog-empty-icon">Book</span>
-        <p class="blog-empty-title">Loading stories...</p>
+        <span class="blog-empty-icon">📖</span>
+        <p class="blog-empty-title">Loading stories…</p>
       </div>
     </div>
   </div>
   <div class="post-view" id="postView">
-    <div class="reader-shell">
-      <div class="reader-topbar">
-        <button class="back-btn" id="backBtn">Back to Stories</button>
-        <div class="reader-pill" id="readerChapter">Chapter 01 - Tale 01</div>
-        <div class="reader-dots" aria-hidden="true">
-          <span class="reader-dot active"></span><span class="reader-dot"></span><span class="reader-dot"></span><span class="reader-dot"></span>
-        </div>
-      </div>
+    <div class="post-container">
+      <button class="back-btn" id="backBtn">← Back to Stories</button>
       <div id="postContent"></div>
     </div>
   </div>
 </section>
 
 <footer>
-  <a href="/index.html">
-    <img class="footer-logo-img" src="/assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <a href="../index.html">
+    <img class="footer-logo-img" src="../assets/logo.png" alt="Woobly & Friends" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
     <span class="footer-logo-text" style="display:none">Woobly & Friends</span>
   </a>
   <div class="footer-links" style="margin-bottom:0.85rem">
     <a href="https://shop.wooblynfrens.com" target="_blank">Shop</a>
     <a href="https://www.patreon.com/c/wooblynfrens" target="_blank">Patreon</a>
-    <a href="/story/">Stories</a>
-    <a href="/about/">About</a>
+    <a href="index.html">Stories</a>
+    <a href="../about/index.html">About</a>
   </div>
   <div class="footer-socials" id="footerSocials">
     <a href="https://instagram.com/wooblynfrens" target="_blank" class="social-icon-link" title="Instagram">
-      <img src="/assets/icons/instagram.svg" alt="Instagram" onerror="this.parentElement.innerHTML='<span>IG</span>'">
+      <img src="../assets/icons/instagram.svg" alt="Instagram" onerror="this.parentElement.innerHTML='<span>IG</span>'">
     </a>
   </div>
   <div class="footer-bottom">
-    <a href="/privacy/" class="footer-policy">Privacy Policy</a>
-    <span class="footer-dot">.</span>
-    <p class="footer-copy">Made with imagination by Sachi - Whimsiverse 2026</p>
+    <a href="../privacy/index.html" class="footer-policy">Privacy Policy</a>
+    <span class="footer-dot">·</span>
+    <p class="footer-copy">Made with ✦ imagination by Sachi · Whimsiverse © 2025</p>
   </div>
 </footer>
 
-<script src="/assets/wnf-data.js"></script>
+<script src="../assets/wnf-data.js"></script>
 <script>
-  const SITE_URL = 'https://wooblynfrens.com';
   const nav = document.getElementById('mainNav');
   const ham = document.getElementById('navHamburger');
   const nl  = document.getElementById('navLinks');
@@ -324,221 +228,117 @@
   nl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); nl.classList.remove('open'); }));
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-  const grid = document.getElementById('blogGrid');
+  const grid     = document.getElementById('blogGrid');
   const listView = document.getElementById('blogListView');
   const postView = document.getElementById('postView');
   const postContent = document.getElementById('postContent');
-  const backBtn = document.getElementById('backBtn');
-  const pageHero = document.getElementById('pageHero');
-  let storyList = [];
-
-  function textOnly(html) {
-    const div = document.createElement('div');
-    div.innerHTML = html || '';
-    return div.textContent.replace(/\s+/g, ' ').trim();
-  }
-  function escapeHtml(value) {
-    return String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-  function slugify(value) {
-    return String(value || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'story';
-  }
-  function storySlug(story) {
-    return story.slug || slugify(story.title || story.id);
-  }
-  function storyUrl(story) {
-    return `/story/${storySlug(story)}`;
-  }
-  function absoluteUrl(path) {
-    if (!path) return `${SITE_URL}/assets/hero_image.jpg`;
-    if (path.startsWith('http')) return path;
-    return `${SITE_URL}${path.startsWith('/') ? path : '/' + path}`;
-  }
-  function currentStoryKey() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('story')) return params.get('story');
-    const parts = window.location.pathname.split('/').filter(Boolean);
-    return parts[0] === 'story' && parts[1] ? decodeURIComponent(parts[1]) : '';
-  }
-  function setMeta(story) {
-    const isStory = !!story;
-    const title = isStory ? `${story.title} - Woobly & Friends Story` : 'Stories - Woobly & Friends | Tales from the Whimsiverse';
-    const desc = isStory ? (story.excerpt || textOnly(story.body).slice(0, 155) || 'Read this magical Woobly & Friends tale from the Whimsiverse.') : 'Read magical stories and lore from the Whimsiverse, an imaginary universe where Woobly & Friends live.';
-    const url = isStory ? `${SITE_URL}${storyUrl(story)}` : `${SITE_URL}/story/`;
-    const img = absoluteUrl(isStory ? story.cover_url : '/assets/hero_image.jpg');
-    document.title = title;
-    document.querySelector('meta[name="description"]').setAttribute('content', desc);
-    document.getElementById('canonicalLink').setAttribute('href', url);
-    document.getElementById('ogType').setAttribute('content', isStory ? 'article' : 'website');
-    document.getElementById('ogUrl').setAttribute('content', url);
-    document.getElementById('ogTitle').setAttribute('content', title);
-    document.getElementById('ogDescription').setAttribute('content', desc);
-    document.getElementById('ogImage').setAttribute('content', img);
-    document.getElementById('twitterTitle').setAttribute('content', title);
-    document.getElementById('twitterDescription').setAttribute('content', desc);
-    document.getElementById('twitterImage').setAttribute('content', img);
-    document.getElementById('storySchema').textContent = JSON.stringify(isStory ? {
-      '@context':'https://schema.org',
-      '@type':'CreativeWork',
-      headline: story.title,
-      name: story.title,
-      description: desc,
-      image: img,
-      url,
-      datePublished: story.created_at || undefined,
-      genre: story.tag || 'Story',
-      isPartOf: story.book_title || 'Woobly & Friends',
-      author: { '@type':'Person', name:'Sachi' },
-      publisher: { '@type':'Organization', name:'Woobly & Friends', logo:{ '@type':'ImageObject', url:`${SITE_URL}/assets/logo.png` } }
-    } : {
-      '@context':'https://schema.org',
-      '@type':'CollectionPage',
-      name:'Tales from the Whimsiverse',
-      url:`${SITE_URL}/story/`,
-      description:desc,
-      publisher:{ '@type':'Organization', name:'Woobly & Friends', url:SITE_URL, logo:`${SITE_URL}/assets/logo.png` },
-      creator:{ '@type':'Person', name:'Sachi' }
-    });
-  }
+  const backBtn  = document.getElementById('backBtn');
 
   async function loadStories() {
-    const directKey = currentStoryKey();
-    if (directKey) {
-      await openStory(directKey, false);
-      WNF.getStories().then(stories => { storyList = stories; });
-      return;
-    }
-    storyList = await WNF.getStories();
-    renderStoryGrid(storyList);
-  }
-  function renderStoryGrid(stories) {
-    setMeta(null);
+    const stories = await WNF.getStories();
     if (!stories.length) {
       grid.innerHTML = `<div class="blog-empty" style="grid-column:1/-1">
-        <span class="blog-empty-icon">Book</span>
+        <span class="blog-empty-icon">📖</span>
         <p class="blog-empty-title">Stories coming soon!</p>
-        <p class="blog-empty-text">Sachi is writing the first tales from the Whimsiverse. Check back soon; the magic is on its way.</p>
+        <p class="blog-empty-text">Sachi is writing the first tales from the Whimsiverse. Check back soon — the magic is on its way. ✦</p>
       </div>`;
       return;
     }
-    grid.innerHTML = stories.map(story => {
+    grid.innerHTML = '';
+    stories.forEach(story => {
       const date = story.created_at ? new Date(story.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '';
-      return `<a class="blog-card reveal" href="${storyUrl(story)}">
+      const card = document.createElement('div');
+      card.className = 'blog-card reveal';
+      card.innerHTML = `
         <div class="blog-card-cover">
-          ${story.cover_url ? `<img src="${escapeHtml(story.cover_url)}" alt="${escapeHtml(story.title)}">` : 'Story'}
+          ${story.cover_url ? `<img src="${story.cover_url}" alt="${story.title}">` : '🌟'}
         </div>
         <div class="blog-card-body">
-          <p class="blog-card-tag">${escapeHtml(story.tag || 'Story')}</p>
-          <p class="blog-card-title">${escapeHtml(story.title)}</p>
-          <p class="blog-card-excerpt">${escapeHtml(story.excerpt || '')}</p>
+          <p class="blog-card-tag">${story.tag || 'Story'}</p>
+          <p class="blog-card-title">${story.title}</p>
+          <p class="blog-card-excerpt">${story.excerpt || ''}</p>
           <p class="blog-card-date">${date}</p>
-        </div>
-      </a>`;
-    }).join('');
+        </div>`;
+      card.addEventListener('click', () => openStory(story.id));
+      grid.appendChild(card);
+    });
     const obs = new IntersectionObserver(entries => {
       entries.forEach((e,i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('on'), i*90); obs.unobserve(e.target); } });
     }, { threshold:0.1 });
     grid.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   }
 
-  async function openStory(key, pushState = true) {
-    const story = await WNF.getStory(key);
-    if (!story) {
-      renderStoryGrid(storyList);
-      grid.insertAdjacentHTML('afterbegin', `<div class="blog-empty" style="grid-column:1/-1"><p class="blog-empty-title">Story not found</p><p class="blog-empty-text">That tale may have moved. Pick another story below.</p></div>`);
-      return;
-    }
-    if (pushState) history.pushState({ story: storySlug(story) }, '', storyUrl(story));
-    setMeta(story);
+  async function openStory(id) {
+    const story = await WNF.getStory(id);
+    if (!story) return;
     const date = story.created_at ? new Date(story.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '';
     const storyContent = story.body || '';
-    const plainText = textOnly(storyContent);
-    const taleNo = story.book_no ? String(story.book_no).padStart(2, '0') : '01';
-    document.getElementById('readerChapter').textContent = `${story.book_title || 'Chapter 01'} - Tale ${taleNo}`;
-    pageHero.style.display = 'none';
+    // Strip HTML tags to get plain text for TTS
+    const plainText = storyContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g,' ').trim();
+
     postContent.innerHTML = `
-      <div class="book-stage">
-        <img class="book-bg" src="/book/book.png" alt="" aria-hidden="true">
-        <button class="reader-arrow prev" type="button" aria-label="Previous story" id="prevStory">‹</button>
-        <button class="reader-arrow next" type="button" aria-label="Next story" id="nextStory">›</button>
-        <div class="book-spread">
-          <div class="book-page">
-            <img class="book-brand" src="/assets/logo.png" alt="Woobly & Friends">
-            <div class="book-cover-wrap">
-              ${story.cover_url ? `<img class="book-cover-art" src="${escapeHtml(story.cover_url)}" alt="${escapeHtml(story.title)} cover art">` : '<div class="book-cover-placeholder">Story</div>'}
-            </div>
-          </div>
-          <article class="book-page">
-            <h1 class="book-title-ribbon">${escapeHtml(story.title)}</h1>
-            <p class="book-meta">${escapeHtml(story.tag || 'Story')}${date ? ' - ' + date : ''}</p>
-            <div class="book-body">${storyContent}</div>
-          </article>
+      ${story.cover_url ? `<img class="post-cover" src="${story.cover_url}" alt="${story.title}">` : ''}
+      <p class="post-tag">${story.tag || 'Story'}${story.book_no ? ' · Book No. '+story.book_no : ''}</p>
+      <h1 class="post-title">${story.title}</h1>
+      <p class="post-date">${date}</p>
+      <div class="audio-player" id="audioPlayer">
+        <button class="audio-play-btn" id="audioPlayBtn" title="Play narration">▶</button>
+        <div class="audio-controls">
+          <span class="audio-label">🎙 Story Narration</span>
+          <input type="range" class="audio-progress" id="audioProgress" value="0" min="0" max="100" step="0.1">
+          <span class="audio-time" id="audioTime">0:00</span>
         </div>
+        <button class="audio-skip" id="audioBack">⏮ 10s</button>
+        <button class="audio-skip" id="audioFwd">10s ⏭</button>
       </div>
-      <div class="reader-actions">
-        <div class="audio-player" id="audioPlayer">
-          <button class="audio-play-btn" id="audioPlayBtn" title="Read to me">▶</button>
-          <div class="audio-controls">
-            <span class="audio-label">Read to me</span>
-            <input type="range" class="audio-progress" id="audioProgress" value="0" min="0" max="100" step="0.1">
-            <span class="audio-time" id="audioTime">0:00</span>
-          </div>
-          <button class="audio-skip" id="audioBack">Back</button>
-          <button class="audio-skip" id="audioFwd">Forward</button>
-        </div>
-        <div class="page-count">Book <span>1 / 1</span></div>
-        <div class="reader-pill reader-favorite">Add to Favorites</div>
-      </div>`;
-    wireStoryNav(story);
-    wireNarration(plainText);
-    listView.classList.add('hidden');
-    postView.classList.add('active');
-    window.scrollTo({ top:0, behavior:'smooth' });
-  }
+      <div class="post-body">${storyContent}</div>`;
 
-  function wireStoryNav(story) {
-    const idx = storyList.findIndex(s => s.id === story.id);
-    document.getElementById('prevStory').addEventListener('click', () => {
-      if (!storyList.length) return;
-      openStory(storySlug(storyList[(idx - 1 + storyList.length) % storyList.length]));
-    });
-    document.getElementById('nextStory').addEventListener('click', () => {
-      if (!storyList.length) return;
-      openStory(storySlug(storyList[(idx + 1) % storyList.length]));
-    });
-  }
-
-  function wireNarration(plainText) {
+    // Text-to-Speech using Web Speech API with best female voice
     let utterance = null;
-    const synth = window.speechSynthesis;
+    let synth = window.speechSynthesis;
     let isPlaying = false;
-    let chunks = plainText.match(/[^.!?]+[.!?]+/g) || (plainText ? [plainText] : []);
+    let chunks = [];
     let currentChunk = 0;
+
     function getVoice() {
       const voices = synth.getVoices();
+      // Prefer natural female voices
       const preferred = ['Google UK English Female','Microsoft Zira','Samantha','Karen','Moira','Tessa','Fiona'];
       for (const name of preferred) {
         const v = voices.find(v => v.name.includes(name));
         if (v) return v;
       }
-      return voices.find(v => v.lang.startsWith('en')) || voices[0];
+      // Fallback: first female English voice
+      return voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
+        || voices.find(v => v.lang.startsWith('en'))
+        || voices[0];
     }
-    function formatTime(s) { return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0'); }
+
+    // Split text into chunks for progress tracking
+    function splitChunks(text) {
+      return text.match(/[^.!?]+[.!?]+/g) || [text];
+    }
+    chunks = splitChunks(plainText);
+
     function speak(fromChunk = 0) {
-      if (!chunks.length) return;
       synth.cancel();
       currentChunk = fromChunk;
-      utterance = new SpeechSynthesisUtterance(chunks.slice(fromChunk).join(' '));
+      const remaining = chunks.slice(fromChunk).join(' ');
+      utterance = new SpeechSynthesisUtterance(remaining);
       utterance.rate = 0.88;
       utterance.pitch = 1.1;
+      utterance.volume = 1;
+      // Warm storytelling voice
       const voice = getVoice();
       if (voice) utterance.voice = voice;
-      utterance.onboundary = e => {
+
+      utterance.onboundary = (e) => {
         if (e.name === 'sentence') {
           currentChunk = Math.min(currentChunk + 1, chunks.length - 1);
-          document.getElementById('audioProgress').value = (currentChunk / chunks.length) * 100;
-          document.getElementById('audioTime').textContent = formatTime(Math.round((currentChunk / chunks.length) * (plainText.length / 15)));
+          const pct = (currentChunk / chunks.length) * 100;
+          document.getElementById('audioProgress').value = pct;
+          const elapsed = Math.round((currentChunk / chunks.length) * (plainText.length / 15));
+          document.getElementById('audioTime').textContent = formatTime(elapsed);
         }
       };
       utterance.onend = () => {
@@ -548,41 +348,55 @@
       };
       synth.speak(utterance);
     }
+
+    function formatTime(s) { return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0'); }
+
+    // Wait for voices to load
+    if (synth.getVoices().length === 0) {
+      synth.addEventListener('voiceschanged', () => {}, {once:true});
+    }
+
     document.getElementById('audioPlayBtn').addEventListener('click', () => {
       if (isPlaying) {
         synth.pause();
         isPlaying = false;
         document.getElementById('audioPlayBtn').textContent = '▶';
       } else {
-        if (synth.paused) synth.resume(); else speak(currentChunk);
+        if (synth.paused) {
+          synth.resume();
+        } else {
+          speak(currentChunk);
+        }
         isPlaying = true;
-        document.getElementById('audioPlayBtn').textContent = 'Ⅱ';
+        document.getElementById('audioPlayBtn').textContent = '⏸';
       }
     });
+
+    document.getElementById('audioBack').addEventListener('click', () => {
+      currentChunk = Math.max(0, currentChunk - 3);
+      if (isPlaying) speak(currentChunk);
+    });
+
+    document.getElementById('audioFwd').addEventListener('click', () => {
+      currentChunk = Math.min(chunks.length - 1, currentChunk + 3);
+      if (isPlaying) speak(currentChunk);
+    });
+
+    listView.classList.add('hidden');
+    postView.classList.add('active');
+    window.scrollTo({ top:0, behavior:'smooth' });
   }
 
   backBtn.addEventListener('click', () => {
     window.speechSynthesis.cancel();
-    history.pushState({}, '', '/story/');
-    pageHero.style.display = '';
     postView.classList.remove('active');
     listView.classList.remove('hidden');
-    renderStoryGrid(storyList);
     window.scrollTo({ top:0, behavior:'smooth' });
-  });
-  window.addEventListener('popstate', () => {
-    window.speechSynthesis.cancel();
-    const key = currentStoryKey();
-    if (key) openStory(key, false);
-    else {
-      pageHero.style.display = '';
-      postView.classList.remove('active');
-      listView.classList.remove('hidden');
-      renderStoryGrid(storyList);
-    }
   });
 
   loadStories();
+
+  // Scroll reveal
   const obs = new IntersectionObserver(entries => {
     entries.forEach((e,i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('on'), i*90); obs.unobserve(e.target); } });
   }, { threshold:0.1 });

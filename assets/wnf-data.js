@@ -19,34 +19,19 @@ async function getStories() {
   const sb = _client(); if (!sb) return [];
   const { data, error } = await sb
     .from('stories')
-    .select('id,slug,title,tag,excerpt,cover_url,book_no,book_title,created_at')
+    .select('id,title,tag,excerpt,cover_url,book_no,created_at')
     .order('created_at', { ascending: false });
-  if (error) {
-    console.warn('[WNF] getStories with slug failed, retrying legacy schema:', error);
-    const legacy = await sb
-      .from('stories')
-      .select('id,title,tag,excerpt,cover_url,book_no,book_title,created_at')
-      .order('created_at', { ascending: false });
-    if (legacy.error) { console.error('[WNF] getStories:', legacy.error); return []; }
-    return legacy.data || [];
-  }
+  if (error) { console.error('[WNF] getStories:', error); return []; }
   return data || [];
 }
 
 /** Get a single story by id */
-async function getStory(idOrSlug) {
+async function getStory(id) {
   const sb = _client(); if (!sb) return null;
-  const { data: slugData, error: slugError } = await sb
-    .from('stories')
-    .select('*')
-    .eq('slug', idOrSlug)
-    .maybeSingle();
-  if (!slugError && slugData) return slugData;
-
   const { data, error } = await sb
     .from('stories')
     .select('*')
-    .eq('id', idOrSlug)
+    .eq('id', id)
     .single();
   if (error) { console.error('[WNF] getStory:', error); return null; }
   return data;
