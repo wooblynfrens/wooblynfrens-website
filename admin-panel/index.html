@@ -460,6 +460,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
           <label class="f-label">Story Title</label>
           <input type="text" class="f-input" id="storyTitle" placeholder="e.g. Fluffy and the Cosmic Break">
         </div>
+        <div class="f-group">
+          <label class="f-label">Custom Story Link <span style="opacity:0.55;font-size:0.65rem">(optional)</span></label>
+          <input type="text" class="f-input" id="storySlug" placeholder="e.g. fluffy-cosmic-break">
+          <p class="card-meta" style="margin-top:0.35rem">Your story will open at /story/your-custom-link</p>
+        </div>
         <div class="f-row2">
           <div class="f-group">
             <label class="f-label">Book No.</label>
@@ -954,11 +959,15 @@ const SQL_DDL = `-- Run ONCE in Supabase → SQL Editor → New query
 create table if not exists stories (
   id uuid default gen_random_uuid() primary key,
   title text not null,
+  slug text unique,
   book_no text, book_title text,
   tag text default 'Story',
   excerpt text, cover_url text, body text,
   created_at timestamptz default now()
 );
+
+alter table stories add column if not exists slug text;
+create unique index if not exists stories_slug_unique on stories(slug) where slug is not null;
 
 create table if not exists shop_items (
   id uuid default gen_random_uuid() primary key,
@@ -1269,6 +1278,11 @@ function initQuill() {
   });
 }
 
+function slugifyStory(value) {
+  return String(value || '').toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 function goWriteStory()  { initQuill(); clearStoryForm(); activateSub('stories-write'); }
 function goStoryList()   { activateSub('stories-list'); clearStoryForm(); loadStories(); }
 
@@ -1285,6 +1299,7 @@ async function loadStories() {
       <div class="scard-body">
         <div class="scard-meta"><span>${s.tag||'Story'}</span><span>${s.book_no?'No.'+s.book_no:''}</span></div>
         <p class="scard-title">${s.title}</p>
+        <p class="list-meta" style="margin-bottom:0.45rem">/story/${s.slug || slugifyStory(s.title)}</p>
         <p class="scard-excerpt">${(s.excerpt||'').slice(0,80)}${s.excerpt?.length>80?'…':''}</p>
         <div class="scard-actions">
           <button class="btn-2" style="padding:0.28rem 0.7rem;font-size:0.73rem" onclick='editStory(${JSON.stringify(s).replace(/'/g,"\\'")} )'>✏️ Edit</button>
@@ -1298,6 +1313,8 @@ function editStory(s) {
   initQuill();
   document.getElementById('storyEditId').value = s.id;
   document.getElementById('storyTitle').value = s.title||'';
+  document.getElementById('storySlug').value = s.slug||slugifyStory(s.title||'');
+  document.getElementById('storySlug').dataset.manual = 'true';
   document.getElementById('storyBookNo').value = s.book_no||'';
   document.getElementById('storyBookTitle').value = s.book_title||'';
   document.getElementById('storyTag').value = s.tag||'';
@@ -1317,6 +1334,7 @@ async function saveStory() {
   initQuill();
   const title = document.getElementById('storyTitle').value.trim();
   if (!title) { toast('Please add a title!', true); return; }
+  const customSlug = slugifyStory(document.getElementById('storySlug').value || title);
   const btn = document.getElementById('storySaveBtn');
   btn.disabled=true; btn.textContent='Saving…';
 
@@ -1331,6 +1349,7 @@ async function saveStory() {
 
   const row = {
     title,
+    slug:       customSlug,
     book_no:    document.getElementById('storyBookNo').value.trim()||null,
     book_title: document.getElementById('storyBookTitle').value.trim()||null,
     tag:        document.getElementById('storyTag').value.trim()||'Story',
@@ -1362,7 +1381,8 @@ function deleteStory() {
 }
 function clearStoryForm() {
   document.getElementById('storyEditId').value='';
-  ['storyTitle','storyBookNo','storyBookTitle','storyTag','storyExcerpt'].forEach(id=>document.getElementById(id).value='');
+  ['storyTitle','storySlug','storyBookNo','storyBookTitle','storyTag','storyExcerpt'].forEach(id=>document.getElementById(id).value='');
+  delete document.getElementById('storySlug').dataset.manual;
   if (quill) quill.root.innerHTML='';
   const th = document.getElementById('storyCoverThumb');
   th.src=''; th.classList.remove('show');
@@ -1683,6 +1703,16 @@ function loadAllData() {
 setupPreview('storyCoverFile', 'storyCoverThumb');
 setupPreview('shopImgFile',    'shopImgThumb');
 setupPreview('friendPfpFile',  'friendPfpThumb');
+document.getElementById('storyTitle')?.addEventListener('input', () => {
+  const slugInput = document.getElementById('storySlug');
+  if (!slugInput.dataset.manual) slugInput.value = slugifyStory(document.getElementById('storyTitle').value);
+});
+document.getElementById('storySlug')?.addEventListener('input', e => {
+  e.target.dataset.manual = 'true';
+});
+document.getElementById('storySlug')?.addEventListener('blur', e => {
+  e.target.value = slugifyStory(e.target.value);
+});
 
 /* ══════════════════════════════════════════════════════
    REVIEWS
